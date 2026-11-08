@@ -24,7 +24,7 @@ try {
     const migrated = spawnSync(process.execPath, [...wrangler, 'd1', 'execute', 'DB', '--local', '--config', config, '--persist-to', state, '--file', `drizzle/${file}`], { stdio: ['ignore', log, log] });
     if (migrated.status !== 0) throw new Error('Local test migration failed.');
   }
-  server = spawn(process.execPath, [...wrangler, 'dev', '--config', config, '--local', '--persist-to', state, '--ip', '127.0.0.1', '--port', String(port), '--inspector-port', '0'], { stdio: ['ignore', log, log] });
+  server = spawn(process.execPath, [...wrangler, 'dev', '--config', config, '--local', '--persist-to', state, '--ip', '127.0.0.1', '--port', String(port), '--inspector-port', '0', '--var', 'DEMO_ADMIN_TOKEN:local-test-only'], { stdio: ['ignore', log, log] });
   const origin = `http://127.0.0.1:${port}`;
   let ready = false;
   for (let attempt = 0; attempt < 120; attempt++) {

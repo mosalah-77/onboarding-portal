@@ -53,3 +53,8 @@ export const assets = sqliteTable('assets', {
   name: text('name').notNull(), content_type: text('content_type').notNull(), size: integer('size').notNull(),
   status: text('status').notNull(), actor: text('actor').notNull(), created_at: integer('created_at').notNull(),
 }, t => [uniqueIndex('asset_operation').on(t.project_id, t.operation_key)]);
+
+export const assetWrites = sqliteTable('asset_writes', {
+  id: text('id').primaryKey(), run_id: text('run_id').notNull().references(() => runs.id, { onDelete: 'cascade' }),
+  asset_id: text('asset_id').notNull().references(() => assets.id, { onDelete: 'cascade' }), created_at: integer('created_at').notNull(),
+}, t => [index('run_asset_writes').on(t.run_id)]);

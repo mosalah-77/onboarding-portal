@@ -2,6 +2,7 @@ import { PortalError } from './brief.ts';
 import { checkCsrf, requireActor, sessionView, startDemo, type Persona } from './session.ts';
 import { getProject, saveRevision, submitBrief, createRequest, commentOnRequest, resolveRequest, approveBrief, reopenBrief } from './workflow.ts';
 import { uploadAsset, downloadAsset } from './assets.ts';
+import { cleanupExpiredRuns, requireOperator } from './cleanup.ts';
 export type PortalEnv = { DB: D1Database; BUCKET: R2Bucket; DEMO_ADMIN_TOKEN?: string };
 
 export async function jsonBody(request: Request): Promise<Record<string, unknown>> {
@@ -26,9 +27,19 @@ export async function jsonBody(request: Request): Promise<Record<string, unknown
 export async function handlePortalRequest(request: Request, env: PortalEnv): Promise<Response> {
   try {
     const path = new URL(request.url).pathname.slice('/api/portal'.length).split('/').filter(Boolean);
-    if (request.method === 'POST' && path.join('/') === 'demo') { await jsonBody(request); return await startDemo(env.DB, request); }
+    if (request.method === 'POST' && path.join('/') === 'admin/cleanup') {
+      await requireOperator(request, env); const body = await jsonBody(request);
+      return Response.json(await cleanupExpiredRuns(env, body.limit as number), { headers: { 'Cache-Control': 'no-store' } });
+    }
+    if (request.method === 'POST' && path.join('/') === 'demo') {
+      let existing;
+      try { existing = await requireActor(request, env.DB); } catch (error) { if (!(error instanceof PortalError) || error.status !== 401) throw error; }
+      if (existing) checkCsrf(request, existing);
+      await jsonBody(request); return await startDemo(env.DB, request);
+    }
     const actor = await requireActor(request, env.DB);
     if (request.method === 'POST') checkCsrf(request, actor);
+    if (request.method === 'POST' && path.join('/') === 'demo/reset') { await jsonBody(request); return await startDemo(env.DB, request, actor); }
     if (request.method === 'GET' && path.length === 2 && path[0] === 'assets') return await downloadAsset(env, actor, path[1]);
     let result: unknown;
     if (request.method === 'GET' && path.join('/') === 'session') result = await sessionView(env.DB, actor);

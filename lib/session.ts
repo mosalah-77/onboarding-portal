@@ -34,11 +34,13 @@ export async function sessionView(db: D1Database, a: ActorContext) {
   const run = await db.prepare('SELECT expires_at FROM runs WHERE id=?').bind(a.runId).first<{ expires_at: number }>();
   return { runId: a.runId, persona: a.personaId, personaName: personaNames[a.personaId], role: a.role, csrf: a.csrf, expiresAt: run?.expires_at, projects: rows.results };
 }
-export async function startDemo(db: D1Database, request: Request): Promise<Response> {
+export async function startDemo(db: D1Database, request: Request, reset?: ActorContext): Promise<Response> {
   checkOrigin(request);
   const runId = id(), token = id() + id(), sessionId = await digest(token), csrf = id(), now = Date.now();
-  const batch = [db.prepare('INSERT INTO runs (id,created_at,expires_at) SELECT ?,?,? WHERE (SELECT COUNT(*) FROM runs WHERE expires_at>?)<20').bind(runId, now, now + 86400000, now)];
+  const batch = [db.prepare(`INSERT INTO runs (id,created_at,expires_at) SELECT ?,?,? WHERE (SELECT COUNT(*) FROM runs)<20
+    AND (? IS NULL OR EXISTS(SELECT 1 FROM runs r JOIN sessions s ON s.run_id=r.id WHERE r.id=? AND r.expires_at>? AND s.id=? AND s.persona=?))`).bind(runId, now, now + 86400000, reset?.runId ?? null, reset?.runId ?? null, now, reset?.sessionId ?? null, reset?.personaId ?? null)];
   const exists = 'EXISTS(SELECT 1 FROM runs WHERE id=?)';
+  if (reset) batch.push(db.prepare(`UPDATE runs SET expires_at=0 WHERE id=? AND ${exists}`).bind(reset.runId, runId));
   for (const [index, label] of ['A', 'B'].entries()) {
     const workspace = id(), project = id(), revision = id(), persona = index ? 'client-b' : 'client-a';
     const brief = { goal: index ? 'Present a synthetic neighbourhood workshop.' : 'Help visitors understand our fictional studio services.', audience: index ? 'Local residents looking for a workshop' : '', pages: ['Home', 'Services', 'Contact'], constraints: '', deadline: null, assetPlan: 'create', assetIds: [] };
@@ -51,7 +53,7 @@ export async function startDemo(db: D1Database, request: Request): Promise<Respo
   }
   batch.push(db.prepare(`INSERT INTO sessions (id,run_id,persona,csrf) SELECT ?,?,'client-a',? WHERE ${exists}`).bind(sessionId, runId, csrf, runId));
   const result = await db.batch(batch);
-  if (!result[0].meta.changes) throw new PortalError(429, 'Demo capacity reached. Try again after an existing session expires.');
+  if (!result[0].meta.changes) throw new PortalError(429, 'Demo capacity reached or this session changed. The operator must clear expired demos before more can start.');
   const secure = new URL(request.url).protocol === 'https:' ? '; Secure' : '';
   const cookie = `portal_session=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=86400${secure}`;
   const a = await requireActor(new Request(request.url, { headers: { cookie: `portal_session=${token}` } }), db);
