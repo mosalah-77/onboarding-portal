@@ -198,6 +198,20 @@ test('real backend: tenant boundaries, saves and retries', async t => {
     if (project.state === 'approved') assert.equal(project.blockers.length, 0);
     else assert.equal((await a.call(`/projects/${projectId}/approve`, { revisionId: project.latestRevision.id, expectedToken: project.token, key: crypto.randomUUID() })).status, 422);
   });
+  await t.test('reset revokes the old run and authenticated cleanup removes only expired storage', async () => {
+    assert.equal((await a.call('/demo/reset', {}, { headers: { 'X-CSRF-Token': '' } })).status, 403);
+    const reset = await a.call('/demo/reset', {});
+    assert.equal(reset.status, 200);
+    assert.notEqual(reset.data.runId, started.data.runId);
+    assert.equal((await a.call(`/projects/${projectId}`)).status, 404);
+    assert.equal((await other.call(`/projects/${otherStart.data.projects[0].id}`)).status, 200);
+    assert.equal((await a.call('/admin/cleanup', { limit: 5 })).status, 401);
+    const cleanup = await a.call('/admin/cleanup', { limit: 5 }, { headers: { Authorization: 'Bearer local-test-only' } });
+    assert.equal(cleanup.status, 200);
+    assert.equal(cleanup.data.runsRemoved, 1);
+    assert.ok(cleanup.data.assetsRemoved > 0);
+    assert.equal((await a.call('/session')).status, 200);
+  });
   await t.test('the final demo capacity slot cannot be reserved twice', async () => {
     for (let i = 0; i < 17; i++) assert.equal((await demo()).started.status, 200);
     const last = await Promise.all([demo(), demo()]);

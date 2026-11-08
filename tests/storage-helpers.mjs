@@ -34,7 +34,7 @@ export async function fixture() {
   const request = new Request('http://localhost/api/portal/demo', { method: 'POST', headers: { Origin: 'http://localhost', 'X-Portal-Request': '1' } });
   const response = await startDemo(db, request), session = await response.json();
   const actor = await requireActor(new Request(request.url, { headers: { cookie: response.headers.get('set-cookie').split(';')[0] } }), db);
-  return { env: { DB: db, BUCKET: bucket }, actor, projectId: session.projects[0].id, close: () => sqlite.close() };
+  return { env: { DB: db, BUCKET: bucket }, actor, cookie: response.headers.get('set-cookie').split(';')[0], projectId: session.projects[0].id, close: () => sqlite.close() };
 }
 export const png = new Uint8Array(Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', 'base64'));
 export const stream = bytes => new Blob([bytes]).stream();

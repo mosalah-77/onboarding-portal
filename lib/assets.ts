@@ -52,6 +52,13 @@ export async function uploadAsset(env: PortalEnv, actor: ActorContext, projectId
   }
   if (asset.digest !== hash || asset.name !== name || asset.content_type !== contentType) throw new PortalError(409, 'This retry key belongs to a different file.');
   if (asset.status === 'ready') return view(asset);
+  const writeId = id();
+  const claim = await db.prepare(`INSERT INTO asset_writes (id,run_id,asset_id,created_at)
+    SELECT ?,?,?,? WHERE EXISTS(SELECT 1 FROM runs r JOIN sessions s ON s.run_id=r.id
+      WHERE r.id=? AND r.expires_at>? AND s.id=? AND s.persona=?)`).bind(writeId, actor.runId, asset.id, Date.now(), actor.runId, Date.now(), actor.sessionId, actor.personaId).run();
+  if (!claim.meta.changes) throw new PortalError(409, 'The demo changed or expired during this upload. Reload before retrying.');
+  // A durable write claim keeps cleanup away until even a failed storage call has settled.
+  try {
   const stored = await env.BUCKET.put(asset.storage_key, bytes, { onlyIf: { etagDoesNotMatch: '*' }, customMetadata: { sha256: hash }, httpMetadata: { contentType } });
   if (!stored && (await env.BUCKET.head(asset.storage_key))?.customMetadata?.sha256 !== hash) throw new PortalError(503, 'The stored upload could not be verified. Please retry.');
   const pending = `EXISTS(SELECT 1 FROM assets a JOIN runs r ON r.id=a.run_id WHERE a.id=? AND a.status='pending' AND r.expires_at>?)`;
@@ -64,6 +71,10 @@ export async function uploadAsset(env: PortalEnv, actor: ActorContext, projectId
   const ready = await prior();
   if (ready?.status !== 'ready') throw new PortalError(409, 'The demo expired during this upload. Start a new demo.');
   return view(ready);
+  } finally {
+    // shortcut: abrupt Worker termination can leave a claim; inspect it during operator maintenance rather than time it out unsafely.
+    await db.prepare('DELETE FROM asset_writes WHERE id=?').bind(writeId).run();
+  }
 }
 
 export async function downloadAsset(env: PortalEnv, actor: ActorContext, assetId: string): Promise<Response> {
