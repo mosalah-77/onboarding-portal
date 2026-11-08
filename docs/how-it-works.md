@@ -1,8 +1,8 @@
 # How a brief moves through the portal
 
-Author: GPT/Codex. Updated 8 November 2026, through implementation Task 4.
+Author: GPT/Codex. Updated 8 November 2026, through the implemented browser workflow and demo lifecycle.
 
-This is Mohamed's project guide. Start with one action and follow its value into storage. The diagrams describe observable code and design decisions. Solid arrows show implemented backend behaviour; dashed arrows marked “planned” show unfinished work. The browser screens and deployment are still being built.
+This is Mohamed's project guide. Start with one action and follow its value into storage. The diagrams describe observable code and design decisions. The browser workflow and backend are implemented. Deployment verification is recorded separately.
 
 ## Follow one change
 
@@ -10,7 +10,7 @@ Imagine Client A enters “Local residents” in the audience field. Saving crea
 
 ```mermaid
 flowchart TD
-  A[Client enters an audience] -. planned screen .-> B[POST project revisions: brief + expected token + retry key]
+  A[Client enters an audience] --> B[POST project revisions: brief + expected token + retry key]
   B --> C{Session, CSRF and project membership valid?}
   C -->|No| X[401, 403 or 404: no change]
   C -->|Yes| D{Fields have valid types, lengths and dates?}
@@ -59,7 +59,7 @@ Persona switching is a demo facility. It demonstrates the three roles within you
 | Approval | `approvals` and accepted-version pointer | Approval refers to a specific immutable version. |
 | Uploaded bytes | Private R2 objects; metadata in `assets` | File access passes through the same membership boundary. |
 
-D1 stores structured records. R2 stores file bytes. React will display the server's result. The browser is never the authority for permissions, readiness or approval.
+D1 stores structured records. R2 stores file bytes. React displays the server's result. The browser is never the authority for permissions, readiness or approval.
 
 ## Find the code and its proof
 
@@ -91,7 +91,8 @@ When an implementation task changes the flow, update the matching diagram and ev
 flowchart TD
   A[File bytes + name + type + retry key] --> B[Check membership, streamed size and file signature]
   B --> C[Reserve a pending assets row and quota in SQL]
-  C --> D[Write private R2 object only if its key is absent]
+  C --> W[Record a durable upload write claim]
+  W --> D[Write private R2 object only if its key is absent]
   D --> E[Mark ready and record activity in one SQL batch]
   E --> F[Attach the ready asset ID when saving a brief]
   D -->|Storage fails| G[Keep pending row; saved brief stays unchanged]
@@ -121,3 +122,34 @@ flowchart LR
 The current draft and the accepted version are separate pointers. A new draft does not move the accepted pointer. Only a successful owner approval does. The transaction checks the project token before writing any approval, receipt or event, so a concurrent save or required request cannot slip into an already-checked approval.
 
 The checklist is derived from the accepted facts: each page produces a task linked to that page entry. A blank deadline stays “Not agreed”. A requested date is still a request, even in the handoff. Read `approveBrief`, `reopenBrief` and `checklist` alongside `tests/approval.test.mjs`.
+
+## Follow a failed save in the browser
+
+```mermaid
+flowchart TD
+  A[Edit React draft in browser memory] --> B[Save: freeze input, project token and retry key]
+  B --> C{Server response}
+  C -->|Success| D[Show returned saved version and activity]
+  C -->|422| E[Keep edits; associate errors with fields]
+  C -->|409| F[Keep edits; offer loading latest saved version]
+  F --> G[Review differences, then save against current token]
+  C -->|Network or 5xx| H[Keep original operation for Retry]
+  H --> B
+  A --> I[Warn before leaving unsaved inputs]
+```
+
+`components/portal.tsx` owns the draft, baseline and pending action. `lib/client.ts` sends the request and returns structured errors. A retry uses the same operation key and input. The component's load generation also rejects an outdated response; a deliberately delayed-response browser scenario is not yet verified. Unsaved text is not durable across closing the browser.
+
+## Expiry, reset and cleanup
+
+```mermaid
+flowchart LR
+  A[Run expires or visitor resets] --> B[Server denies further access]
+  B --> C{Any upload write claims?}
+  C -->|Yes| D[Keep stored data and reserved capacity]
+  C -->|No| E[Operator deletes private objects]
+  E -->|All deleted| F[Delete run and cascade SQL metadata]
+  E -->|Failure| G[Keep metadata; retry safely]
+```
+
+An upload releases its claim after its storage attempt ends. If the Worker terminates first, an operator must investigate the remaining claim. This fails closed: it holds capacity instead of risking an orphan file. Read `lib/cleanup.ts`, `tests/cleanup.test.mjs` and [operator instructions](operator.md). At most 20 runs remain stored, including expired runs waiting for cleanup.
