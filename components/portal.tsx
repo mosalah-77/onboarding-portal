@@ -1,7 +1,6 @@
 'use client';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ApiError, requestPortal } from '@/lib/client';
-import type { BriefInput } from '@/lib/brief';
+import { ApiError, requestPortal, reconcileEditor, type EditorState } from '@/lib/client';
 import type { AssetView, ProjectView } from '@/lib/workflow';
 import { BriefEditor } from './brief-editor';
 import { RequestsPanel } from './requests-panel';
@@ -15,31 +14,31 @@ const actions: Record<string, string> = { demo_created: 'Synthetic brief created
 
 export function Portal() {
   const [session, setSession] = useState<Session | null>(null), [project, setProject] = useState<ProjectView | null>(null);
-  const [draft, setDraft] = useState<BriefInput | null>(null), [editToken, setEditToken] = useState(0);
+  const [editor, setEditor] = useState<EditorState | null>(null);
+  const draft = editor?.draft ?? null, editToken = editor?.token ?? 0;
   const [loading, setLoading] = useState(true), [pending, setPending] = useState(false);
   const [error, setError] = useState<ApiError | null>(null), [notice, setNotice] = useState('');
   const [retry, setRetry] = useState<Job | null>(null), [reason, setReason] = useState('');
   const [auxDirty, setAuxDirty] = useState<Record<string, boolean>>({});
   const [confirm, setConfirm] = useState<{ action: () => void; text: string } | null>(null);
-  const epoch = useRef(0), baseline = useRef<BriefInput | null>(null), draftVersion = useRef('');
+  const epoch = useRef(0);
   const dialog = useRef<HTMLDialogElement>(null), heading = useRef<HTMLHeadingElement>(null), errorBox = useRef<HTMLDivElement>(null);
   const noticeBox = useRef<HTMLDivElement>(null);
-  const dirty = !!draft && JSON.stringify(draft) !== JSON.stringify(baseline.current);
+  const dirty = !!editor && JSON.stringify(editor.draft) !== JSON.stringify(editor.baseline);
   const anyUnsaved = dirty || !!retry || !!reason.trim() || Object.values(auxDirty).some(Boolean);
   const busy = pending || !!retry;
-  const applyProject = useCallback((p: ProjectView, reset = false) => {
+  const applyProject = useCallback((p: ProjectView, mode: 'sync' | 'replace' | 'preserve' = 'sync') => {
     setProject(p);
-    if (reset) { setDraft(p.latestRevision.brief); baseline.current = p.latestRevision.brief; draftVersion.current = p.latestRevision.id; setEditToken(p.token); }
-    else if (draftVersion.current === p.latestRevision.id) setEditToken(p.token);
+    setEditor(current => reconcileEditor(current, p, mode));
   }, []);
   const loadProject = useCallback(async (id: string, keepEdits = false) => {
     const ticket = ++epoch.current; setLoading(true); setError(null); setNotice(''); setRetry(null);
-    if (!keepEdits) { setProject(null); setDraft(null); setReason(''); setAuxDirty({}); }
+    if (!keepEdits) { setProject(null); setEditor(null); setReason(''); setAuxDirty({}); }
     try {
       const p = await requestPortal<ProjectView>(`/projects/${id}`);
       if (ticket !== epoch.current) return;
-      applyProject(p, !keepEdits);
-      if (keepEdits) { baseline.current = p.latestRevision.brief; draftVersion.current = p.latestRevision.id; setEditToken(p.token); setNotice('Latest version loaded. Your edits are preserved; review the saved version in history before saving again.'); }
+      applyProject(p, keepEdits ? 'preserve' : 'replace');
+      if (keepEdits) setNotice('Latest version loaded. Your edits are preserved; review the saved version in history before saving again.');
       const url = new URL(window.location.href); url.searchParams.set('project', id); window.history.replaceState(null, '', url);
     } catch (e) { if (ticket === epoch.current) setError(e instanceof ApiError ? e : new ApiError(0, 'The project could not be loaded.')); }
     finally { if (ticket === epoch.current) setLoading(false); }
@@ -72,7 +71,7 @@ export function Portal() {
     finally { setPending(false); }
   }
   async function switchPersona(persona: string) {
-    const ticket = ++epoch.current; setPending(true); setLoading(true); setProject(null); setDraft(null); setError(null); setRetry(null);
+    const ticket = ++epoch.current; setPending(true); setLoading(true); setProject(null); setEditor(null); setError(null); setRetry(null);
     try {
       const s = await requestPortal<Session>('/persona', session?.csrf, { persona });
       if (ticket !== epoch.current) return;
@@ -87,11 +86,11 @@ export function Portal() {
         const asset = await requestPortal<AssetView>(job.path, session?.csrf, job.body, job.file);
         const p = await requestPortal<ProjectView>(`/projects/${project!.id}`);
         if (ticket !== epoch.current) return false;
-        applyProject(p); setDraft(d => d ? { ...d, assetIds: d.assetIds.includes(asset.id) ? d.assetIds : [...d.assetIds, asset.id] } : d);
+        applyProject(p); setEditor(e => e ? { ...e, draft: { ...e.draft, assetIds: e.draft.assetIds.includes(asset.id) ? e.draft.assetIds : [...e.draft.assetIds, asset.id] } } : e);
       } else {
         const response = await requestPortal<{ project: ProjectView }>(job.path, session?.csrf, job.body);
         if (ticket !== epoch.current) return false;
-        applyProject(response.project, job.kind === 'save');
+        applyProject(response.project, job.kind === 'save' ? 'replace' : 'sync');
       }
       setNotice(job.message); job.onSuccess?.(); if (job.path.endsWith('/reopen')) setReason('');
       const s = await requestPortal<Session>('/session').catch(() => null);
@@ -155,6 +154,7 @@ export function Portal() {
               </li>;
             })}
           </ol>
+          {dirty && editor && editor.revisionId !== project.latestRevision.id ? <div className="notice" role="status"><p>Your unsaved edits began with version {editor.version}. Version {project.latestRevision.version} is now saved. Review it before saving or submitting.</p><button disabled={pending || loading} onClick={() => void loadProject(project.id, true)}>Load latest and keep my edits</button></div> : null}
           <div className="work-columns">
             <section className={`readiness ${project.blockers.length ? 'needs-input' : 'ready'}`}><h2>{project.state === 'approved' ? 'Version approved' : project.blockers.length ? 'Inputs needed' : project.state === 'submitted' ? 'Ready for owner review' : project.acceptedRevision?.id === project.latestRevision.id ? 'Save a new revision' : 'Ready to submit'}</h2>
               <p>Based on saved version {project.latestRevision.version}.{dirty ? ' Save your edits to update this check.' : ''}</p>
@@ -162,7 +162,7 @@ export function Portal() {
               {project.state === 'draft' ? <button className="primary" disabled={busy || dirty || !!project.blockers.length || project.acceptedRevision?.id === project.latestRevision.id} onClick={() => void mutate(`/projects/${project.id}/submit`, { revisionId: project.latestRevision.id, expectedToken: project.token }, 'Version submitted for owner review.')}>Submit version {project.latestRevision.version}</button> : project.state === 'submitted' ? owner ? <button className="primary" disabled={busy || dirty || !!project.blockers.length} onClick={() => void mutate(`/projects/${project.id}/approve`, { revisionId: project.latestRevision.id, expectedToken: project.token }, `Version ${project.latestRevision.version} approved. Its handoff is available below.`)}>Approve version {project.latestRevision.version}</button> : <p>Switch to the agency owner to review this version.</p> : owner ? <form onSubmit={e => { e.preventDefault(); void mutate(`/projects/${project.id}/reopen`, { reason, expectedToken: project.token }, 'Brief reopened. Save a new revision before submitting again.'); }}><label htmlFor="reopen-reason">Reason for reopening</label><textarea id="reopen-reason" required maxLength={2000} rows={2} value={reason} disabled={busy} onChange={e => setReason(e.target.value)} /><button disabled={busy || !reason.trim()} type="submit">Reopen brief</button></form> : <p>The owner can reopen this brief if the scope changes.</p>}
               {project.state === 'draft' && project.acceptedRevision?.id === project.latestRevision.id ? <p>Save a new revision before submitting this reopened brief.</p> : null}
             </section>
-            <BriefEditor project={project} errors={error?.status === 422 ? error.details : []} draft={draft} setDraft={setDraft} locked={project.state === 'approved'} busy={busy || loading} dirty={dirty} save={save} upload={file => void upload(file)} />
+            <BriefEditor project={project} errors={error?.status === 422 ? error.details : []} draft={draft} setDraft={brief => setEditor(e => e ? { ...e, draft: brief } : e)} locked={project.state === 'approved'} busy={busy || loading} dirty={dirty} save={save} upload={file => void upload(file)} />
             <RequestsPanel key={project.id} project={project} owner={owner} busy={busy || loading} mutate={mutate} onDirty={(key, value) => setAuxDirty(old => ({ ...old, [key]: value }))} />
             <Handoff project={project} />
             <section id="history"><h2>Version history</h2><p className="muted">Saved versions keep their original content. Approval always names a version.</p>{[...project.revisions].reverse().map(revision => <details className="revision" key={revision.id}><summary>Version {revision.version} · {names[revision.actor] ?? revision.actor}{project.approvals.some(a => a.revisionId === revision.id) ? ' · Approved' : ''}</summary><BriefFacts revision={revision} prefix={`version-${revision.version}`} /></details>)}</section>

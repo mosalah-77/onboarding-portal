@@ -1,3 +1,15 @@
+import type { BriefInput } from './brief.ts';
+import type { ProjectView } from './workflow.ts';
+
+export type EditorState = { draft: BriefInput; baseline: BriefInput; revisionId: string; version: number; token: number };
+export function reconcileEditor(current: EditorState | null, project: Pick<ProjectView, 'latestRevision' | 'token'>, mode: 'sync' | 'replace' | 'preserve' = 'sync'): EditorState {
+  const revision = project.latestRevision;
+  const saved = { draft: revision.brief, baseline: revision.brief, revisionId: revision.id, version: revision.version, token: project.token };
+  if (!current || mode === 'replace' || (mode === 'sync' && JSON.stringify(current.draft) === JSON.stringify(current.baseline))) return saved;
+  if (mode === 'preserve') return { ...saved, draft: current.draft };
+  return current.revisionId === revision.id ? { ...current, token: project.token } : current;
+}
+
 export class ApiError extends Error {
   status: number; details: { field: string; message: string }[];
   constructor(status: number, message: string, details: unknown = []) {

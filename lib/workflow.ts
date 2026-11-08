@@ -86,7 +86,11 @@ export async function mutate(db: D1Database, a: ActorContext, p: ProjectView, ex
     if (replay) return replay;
     throw error;
   }
-  if (!result[0].meta.changes) throw new PortalError(409, 'This brief or persona changed. Reload before trying again.');
+  if (!result[0].meta.changes) {
+    const replay = await existingOperation(db, a, p.id, key, input);
+    if (replay) return replay;
+    throw new PortalError(409, 'This brief or persona changed. Reload before trying again.');
+  }
   return { operation, project: await getProject(db, a, p.id) };
 }
 export async function saveRevision(db: D1Database, a: ActorContext, projectId: string, expected: unknown, key: unknown, input: unknown) {
