@@ -1,4 +1,4 @@
-import { PortalError, readiness, textValue, validateBrief, type BriefInput } from './brief.ts';
+import { PortalError, readiness, textValue, validateBrief, checklist, type BriefInput } from './brief.ts';
 import { digest, id, type ActorContext } from './session.ts';
 import type { projects, versions, requests, assets, events, receipts, comments, approvals } from '../db/schema';
 
@@ -19,6 +19,7 @@ export type ProjectView = {
   blockers: { key: string; field: string; message: string }[];
   activity: { id: string; actor: string; action: string; details: Record<string, unknown>; createdAt: number }[];
   approvals: { id: string; revisionId: string; actor: string; createdAt: number }[];
+  handoff: (BriefInput & { revisionId: string; version: number; tasks: ReturnType<typeof checklist> }) | null;
 };
 export async function projectRow(db: D1Database, a: ActorContext, projectId: string): Promise<ProjectRow> {
   const row = await db.prepare(`SELECT p.* FROM projects p JOIN memberships m ON m.workspace_id=p.workspace_id
@@ -38,12 +39,14 @@ export async function getProject(db: D1Database, a: ActorContext, projectId: str
   ]);
   const revisions = vs.results.map(r => ({ id: r.id, version: r.version, brief: JSON.parse(r.body) as BriefInput, actor: r.actor, createdAt: r.created_at }));
   const latest = revisions.find(r => r.id === p.latest_revision_id);
+  const accepted = revisions.find(r => r.id === p.accepted_revision_id) ?? null;
   if (!latest) throw new PortalError(503, 'The saved brief could not be loaded. Please retry.');
   const blockers = readiness(latest.brief, new Set(fs.results.filter(f => f.status === 'ready').map(f => f.id))) as ProjectView['blockers'];
   for (const q of qs.results) if (!q.rule_key && q.required && q.status === 'open') blockers.push({ key: q.id, field: 'requests', message: q.title });
   return {
     id: p.id, name: p.name, state: p.state, token: p.token, latestRevision: latest, submittedRevisionId: p.submitted_revision_id,
-    acceptedRevision: revisions.find(r => r.id === p.accepted_revision_id) ?? null, revisions, blockers,
+    acceptedRevision: accepted, revisions, blockers,
+    handoff: accepted ? { ...accepted.brief, deadline: accepted.brief.deadline ?? 'Not agreed', revisionId: accepted.id, version: accepted.version, tasks: checklist(accepted.brief) } : null,
     assets: fs.results.map(f => ({ id: f.id, name: f.name, size: f.size, contentType: f.content_type, status: f.status })),
     requests: qs.results.map(q => ({ id: q.id, ruleKey: q.rule_key, title: q.title, explanation: q.explanation, required: !!q.required, status: q.status,
       comments: cs.results.filter(c => c.request_id === q.id).map(c => ({ id: c.id, text: c.body, actor: c.actor, createdAt: c.created_at })) })),
@@ -117,6 +120,7 @@ export async function submitBrief(db: D1Database, a: ActorContext, projectId: st
   const replay = await existingOperation(db, a, projectId, key, input); if (replay) return replay;
   const p = await getProject(db, a, projectId);
   if (p.state !== 'draft' || p.latestRevision.id !== revisionId) throw new PortalError(409, 'Submit the current draft revision.');
+  if (p.acceptedRevision?.id === revisionId) throw new PortalError(409, 'Save a new revision before submitting this reopened brief.');
   if (p.blockers.length) throw new PortalError(422, 'Complete the required inputs before submitting.', p.blockers);
   return mutate(db, a, p, expected, key, input, 'brief_submitted', { id: id(), revisionId: p.latestRevision.id }, { revisionId, version: p.latestRevision.version }, (guard, op) => [
     db.prepare(`UPDATE projects SET state='submitted',submitted_revision_id=? WHERE id=? AND ${guard}`).bind(revisionId, p.id, op),
@@ -161,5 +165,26 @@ export async function resolveRequest(db: D1Database, a: ActorContext, requestId:
   return mutate(db, a, p, expected, key, data, 'request_resolved', { id: id(), requestId, commentId }, { requestId, title: q.title }, (guard, op) => [
     db.prepare(`UPDATE requests SET status='resolved' WHERE id=? AND ${guard}`).bind(requestId, op),
     db.prepare(`INSERT INTO comments (id,request_id,body,actor,created_at) SELECT ?,?,?,?,? WHERE ${guard}`).bind(commentId, requestId, explanation, a.personaId, Date.now(), op),
+  ]);
+}
+export async function approveBrief(db: D1Database, a: ActorContext, projectId: string, revisionId: unknown, expected: unknown, key: unknown) {
+  const p = await getProject(db, a, projectId); requireOwner(a);
+  const data = { action: 'approve', revisionId, expected };
+  const replay = await existingOperation(db, a, projectId, key, data); if (replay) return replay;
+  if (p.state !== 'submitted' || p.submittedRevisionId !== revisionId || p.latestRevision.id !== revisionId) throw new PortalError(409, 'Approve the current submitted version.');
+  if (p.blockers.length) throw new PortalError(422, 'Resolve the required inputs before approving.', p.blockers);
+  const approvalId = id();
+  return mutate(db, a, p, expected, key, data, 'brief_approved', { id: id(), approvalId, revisionId: p.latestRevision.id }, { revisionId, version: p.latestRevision.version }, (guard, op) => [
+    db.prepare(`INSERT INTO approvals (id,project_id,revision_id,actor,created_at) SELECT ?,?,?,?,? WHERE ${guard}`).bind(approvalId, p.id, revisionId, a.personaId, Date.now(), op),
+    db.prepare(`UPDATE projects SET state='approved',accepted_revision_id=? WHERE id=? AND ${guard}`).bind(revisionId, p.id, op),
+  ]);
+}
+export async function reopenBrief(db: D1Database, a: ActorContext, projectId: string, input: unknown, expected: unknown, key: unknown) {
+  const p = await getProject(db, a, projectId); requireOwner(a);
+  const reason = textValue(input, 'Reason for reopening', 2000, true), data = { action: 'reopen', reason, expected };
+  const replay = await existingOperation(db, a, projectId, key, data); if (replay) return replay;
+  if (p.state !== 'approved') throw new PortalError(409, 'This brief is already open for revision.');
+  return mutate(db, a, p, expected, key, data, 'brief_reopened', { id: id() }, { reason, revisionId: p.acceptedRevision?.id }, (guard, op) => [
+    db.prepare(`UPDATE projects SET state='draft',submitted_revision_id=NULL WHERE id=? AND ${guard}`).bind(p.id, op),
   ]);
 }

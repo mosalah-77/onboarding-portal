@@ -1,6 +1,6 @@
 import { PortalError } from './brief.ts';
 import { checkCsrf, requireActor, sessionView, startDemo, type Persona } from './session.ts';
-import { getProject, saveRevision, submitBrief, createRequest, commentOnRequest, resolveRequest } from './workflow.ts';
+import { getProject, saveRevision, submitBrief, createRequest, commentOnRequest, resolveRequest, approveBrief, reopenBrief } from './workflow.ts';
 import { uploadAsset, downloadAsset } from './assets.ts';
 export type PortalEnv = { DB: D1Database; BUCKET: R2Bucket; DEMO_ADMIN_TOKEN?: string };
 
@@ -49,6 +49,8 @@ export async function handlePortalRequest(request: Request, env: PortalEnv): Pro
       if (path[2] === 'revisions') result = await saveRevision(env.DB, actor, path[1], b.expectedToken, b.key, b.brief);
       else if (path[2] === 'submit') result = await submitBrief(env.DB, actor, path[1], b.revisionId, b.expectedToken, b.key);
       else if (path[2] === 'requests') result = await createRequest(env.DB, actor, path[1], b, b.expectedToken, b.key);
+      else if (path[2] === 'approve') result = await approveBrief(env.DB, actor, path[1], b.revisionId, b.expectedToken, b.key);
+      else if (path[2] === 'reopen') result = await reopenBrief(env.DB, actor, path[1], b.reason, b.expectedToken, b.key);
       else throw new PortalError(404, 'This action is unavailable.');
     } else if (request.method === 'POST' && path.length === 3 && path[0] === 'requests') {
       const b = await jsonBody(request);

@@ -12,3 +12,4 @@ Author: GPT/Codex
 - Mohamed requested a living explanation diagram and supplementary code graph. Keep both current as workflow tasks finish; use local Graphify AST extraction and distinguish planned behaviour from verified behaviour.
 - The five-file project cap includes pending reservations. Retrying the same upload reuses its slot; failed uploads cannot bypass the cap.
 - Provide a generated PNG for an explicit sample upload through the normal route, keeping file failure separate from demo-session creation. The API test uploads a private sample independently into each client project.
+- Reopening keeps the accepted version. Save a new revision before resubmitting, even if its content is unchanged, so each approval has a distinct version.

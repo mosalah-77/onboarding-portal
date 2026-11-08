@@ -1,8 +1,8 @@
 # How a brief moves through the portal
 
-Author: GPT/Codex. Updated 8 November 2026, through implementation Task 3.
+Author: GPT/Codex. Updated 8 November 2026, through implementation Task 4.
 
-This is Mohamed's project guide. Start with one action and follow its value into storage. The diagrams describe observable code and design decisions. Solid arrows show implemented backend behaviour; dashed arrows marked “planned” show unfinished work. The browser screens, approval and deployment are still being built.
+This is Mohamed's project guide. Start with one action and follow its value into storage. The diagrams describe observable code and design decisions. Solid arrows show implemented backend behaviour; dashed arrows marked “planned” show unfinished work. The browser screens and deployment are still being built.
 
 ## Follow one change
 
@@ -37,10 +37,10 @@ flowchart LR
   C --> D[Read missing inputs and request comments]
   D --> C
   C --> E[Submit exact ready version]
-  E -. planned .-> F[Owner approves that version]
-  F -. planned .-> G[Accepted summary and checklist]
-  F -. planned .-> H[Owner reopens with a reason]
-  H -. planned .-> C
+  E --> F[Owner approves that version]
+  F --> G[Accepted summary and checklist]
+  F --> H[Owner reopens with a reason]
+  H --> C
   U[Private asset upload] --> C
 ```
 
@@ -56,7 +56,7 @@ Persona switching is a demo facility. It demonstrates the three roles within you
 | Missing inputs and conversation | `requests` and `comments` | Automatic rule keys keep one request per missing field; comments survive resolution and reopening. |
 | Safe retry | `receipts` | The same operation key and input return the previous operation instead of creating it again. |
 | Audit history | `events` | Each successful workflow change records who acted and what changed in the same transaction. |
-| Approval | `approvals` and accepted-version pointer, planned | Approval will refer to a specific immutable version. |
+| Approval | `approvals` and accepted-version pointer | Approval refers to a specific immutable version. |
 | Uploaded bytes | Private R2 objects; metadata in `assets` | File access passes through the same membership boundary. |
 
 D1 stores structured records. R2 stores file bytes. React will display the server's result. The browser is never the authority for permissions, readiness or approval.
@@ -105,3 +105,19 @@ flowchart TD
 The pending row counts against capacity. A repeated successful upload returns the same file ID. Changing bytes while reusing its key returns 409. The file itself is immutable; a different file needs a new upload. A filename and signature check does not scan for malware. Use synthetic files only.
 
 Read `lib/assets.ts`, `tests/assets.test.mjs` and the real R2 test in `tests/api.test.mjs` together to follow this path.
+
+## Why reopening does not change the old agreement
+
+```mermaid
+flowchart LR
+  V2[Submitted version 2] --> A[Approval points to version 2]
+  A --> H[Handoff reads version 2 only]
+  A --> R[Owner reopens with a recorded reason]
+  R --> V3[Save a new draft: version 3]
+  V3 --> S[Submit version 3 for review]
+  A --> K[Version 2 and its approval stay in history]
+```
+
+The current draft and the accepted version are separate pointers. A new draft does not move the accepted pointer. Only a successful owner approval does. The transaction checks the project token before writing any approval, receipt or event, so a concurrent save or required request cannot slip into an already-checked approval.
+
+The checklist is derived from the accepted facts: each page produces a task linked to that page entry. A blank deadline stays “Not agreed”. A requested date is still a request, even in the handoff. Read `approveBrief`, `reopenBrief` and `checklist` alongside `tests/approval.test.mjs`.
