@@ -110,16 +110,16 @@ Files: starter/config/schema, `lib/brief.ts`, `lib/session.ts`, revision/read po
 
 Interfaces: produce `BriefInput`, `readiness`, `ActorContext`, `ProjectView`, and `saveRevision(db, actor, projectId, expectedToken, key, brief): Promise<ProjectView>`. Later tasks consume these exact types and functions.
 
-- [ ] After confirmation, initialise the fresh starter using Sites' `project-setup.mjs`; start the single supported dependency install. Register the new private, unpublished Site once and persist its returned ID. Retain its credential only in session memory.
-- [ ] Move the approved spec/plan into `docs/superpowers/`, create the logs, and record `Author: GPT/Codex`. Create `PRODUCT.md` from confirmed facts using Impeccable's product schema. Preserve starter licence files.
-- [ ] Write failing rule tests: `assert.deepEqual(readiness(validWithBlankOptionals, new Set()), [])`; blank audience yields only `audience.required`; duplicate trimmed/case-insensitive page names fail validation; an invalid calendar date fails; a valid past requested date is preserved.
-- [ ] Ask Mohamed to predict the blank-optional-field result before running it. Record his actual answer, or leave the learning item pending if he has not answered.
-- [ ] Run `node --experimental-strip-types --test tests/brief.test.mjs`; confirm failure is missing behaviour, not a syntax/setup problem.
-- [ ] Implement brief parsing and readiness. Add the scoped schema and generate/inspect migrations with `npm run db:generate`; seed data stays outside migrations. Use only immutable revision inserts.
-- [ ] Add real-route tests in `tests/api.test.mjs`: two runs have disjoint IDs; Client A cannot GET B's project; two saves with one expected token have statuses `[200, 409]`; retrying a completed save returns the same revision; mismatched data with the same key returns 409; the 21st active run is rejected, including a race for the final slot.
-- [ ] Implement session creation, persona selection, membership, CSRF for established sessions and conditional saved revisions. Initial demo creation requires a matching Origin and a custom same-origin request header; do not create an exception for later writes.
-- [ ] Add `scripts/test-api.mjs`: start the built Worker on loopback with isolated disposable D1/R2 state, apply migrations, run Node's API tests, stop the server and remove only that test state. It must reject non-loopback test targets. Give it `node scripts/test-api.mjs` as the entry point.
-- [ ] Run unit tests, `npx tsc --noEmit`, the Sites `build-site.mjs` helper and `node scripts/test-api.mjs`. Record the actual results, then commit this working backend slice.
+- [x] After confirmation, initialise the fresh starter using Sites' `project-setup.mjs`; start the single supported dependency install. Register the new private, unpublished Site once and persist its returned ID. Retain its credential only in session memory.
+- [x] Move the approved spec/plan into `docs/superpowers/`, create the logs, and record `Author: GPT/Codex`. Create `PRODUCT.md` from confirmed facts using Impeccable's product schema. Preserve starter licence files.
+- [x] Write failing rule tests: `assert.deepEqual(readiness(validWithBlankOptionals, new Set()), [])`; blank audience yields only `audience.required`; duplicate trimmed/case-insensitive page names fail validation; an invalid calendar date fails; a valid past requested date is preserved.
+- [x] Ask Mohamed to predict the blank-optional-field result before running it. Record his actual answer, or leave the learning item pending if he has not answered.
+- [x] Run `node --experimental-strip-types --test tests/brief.test.mjs`; confirm failure is missing behaviour, not a syntax/setup problem.
+- [x] Implement brief parsing and readiness. Add the scoped schema and generate/inspect migrations with `npm run db:generate`; seed data stays outside migrations. Use only immutable revision inserts.
+- [x] Add real-route tests in `tests/api.test.mjs`: two runs have disjoint IDs; Client A cannot GET B's project; two saves with one expected token have statuses `[200, 409]`; retrying a completed save returns the same revision; mismatched data with the same key returns 409; the 21st active run is rejected, including a race for the final slot.
+- [x] Implement session creation, persona selection, membership, CSRF for established sessions and conditional saved revisions. Initial demo creation requires a matching Origin and a custom same-origin request header; do not create an exception for later writes.
+- [x] Add `scripts/test-api.mjs`: start the built Worker on loopback with isolated disposable D1/R2 state, apply migrations, run Node's API tests, stop the server and remove only that test state. It must reject non-loopback test targets. Give it `node scripts/test-api.mjs` as the entry point.
+- [x] Run unit tests, `npx tsc --noEmit`, the Sites `build-site.mjs` helper and `node scripts/test-api.mjs`. Record the actual results, then commit this working backend slice.
 
 ## Task 2: requests, comments and submission
 
