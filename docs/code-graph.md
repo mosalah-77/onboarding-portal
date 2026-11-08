@@ -7,9 +7,8 @@ The learner guide is [how-it-works.md](how-it-works.md). This supplementary grap
 Run from the project root:
 
 ```sh
-graphify extract . --code-only --max-workers 2
+npm run graph
 graphify query "saveRevision mutate existingOperation" --graph graphify-out/graph.json --budget 1200
-graphify export html
 ```
 
 Read `graphify-out/graph.json` for the machine-readable graph and `graphify-out/GRAPH_REPORT.md` for its generated report. HTML is a local interactive aid. The `.graphifyignore` file excludes dependencies, build output, generated graphs and unused starter components. The graph's scope is application code, schema, scripts and tests.

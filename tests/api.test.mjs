@@ -148,6 +148,56 @@ test('real backend: tenant boundaries, saves and retries', async t => {
     assert.equal(attached.data.project.blockers.length, 0);
     assert.equal((await upload(projectId, crypto.randomUUID(), new Uint8Array(2097153))).status, 413);
   });
+  await t.test('only the owner approves an exact submitted revision; reopening preserves it', async () => {
+    project = (await a.call(`/projects/${projectId}`)).data;
+    let input = { revisionId: project.latestRevision.id, expectedToken: project.token, key: crypto.randomUUID() };
+    assert.equal((await a.call(`/projects/${projectId}/approve`, input)).status, 403);
+    await a.call('/persona', { persona: 'owner' });
+    assert.equal((await a.call(`/projects/${projectId}/approve`, input)).status, 409);
+    project = (await a.call(`/projects/${projectId}/submit`, input)).data.project;
+    input = { revisionId: project.latestRevision.id, expectedToken: project.token, key: crypto.randomUUID() };
+    assert.equal((await a.call(`/projects/${projectId}/approve`, { ...input, revisionId: project.revisions[0].id })).status, 409);
+    const approved = await a.call(`/projects/${projectId}/approve`, input);
+    assert.equal(approved.status, 200);
+    assert.equal((await a.call(`/projects/${projectId}/approve`, input)).data.operation.id, approved.data.operation.id);
+    project = approved.data.project;
+    assert.equal(project.approvals.length, 1);
+    const accepted = project.acceptedRevision;
+    assert.deepEqual(project.handoff.assetIds, accepted.brief.assetIds);
+    assert.equal((await a.call(`/projects/${projectId}/revisions`, { brief: valid, expectedToken: project.token, key: crypto.randomUUID() })).status, 409);
+    assert.equal((await a.call(`/projects/${projectId}/reopen`, { reason: '', expectedToken: project.token, key: crypto.randomUUID() })).status, 422);
+    project = (await a.call(`/projects/${projectId}/reopen`, { reason: 'Review a changed audience.', expectedToken: project.token, key: crypto.randomUUID() })).data.project;
+    assert.deepEqual(project.acceptedRevision, accepted);
+  });
+  await t.test('save versus approval commits only one eligible transition', async () => {
+    project = (await a.call(`/projects/${projectId}`)).data;
+    project = (await a.call(`/projects/${projectId}/revisions`, { brief: valid, expectedToken: project.token, key: crypto.randomUUID() })).data.project;
+    project = (await a.call(`/projects/${projectId}/submit`, { revisionId: project.latestRevision.id, expectedToken: project.token, key: crypto.randomUUID() })).data.project;
+    const revision = project.latestRevision.id, before = project.approvals.length;
+    const results = await Promise.all([
+      a.call(`/projects/${projectId}/approve`, { revisionId: revision, expectedToken: project.token, key: crypto.randomUUID() }),
+      a.call(`/projects/${projectId}/revisions`, { brief: { ...valid, goal: 'A revised goal' }, expectedToken: project.token, key: crypto.randomUUID() }),
+    ]);
+    assert.deepEqual(results.map(r => r.status).sort(), [200, 409]);
+    project = (await a.call(`/projects/${projectId}`)).data;
+    assert.equal(project.approvals.length, before + (results[0].status === 200 ? 1 : 0));
+    if (project.state === 'approved') project = (await a.call(`/projects/${projectId}/reopen`, { reason: 'Test the next review.', expectedToken: project.token, key: crypto.randomUUID() })).data.project;
+  });
+  await t.test('required request versus approval cannot leave an approved incomplete brief', async () => {
+    project = (await a.call(`/projects/${projectId}/revisions`, { brief: valid, expectedToken: project.token, key: crypto.randomUUID() })).data.project;
+    project = (await a.call(`/projects/${projectId}/submit`, { revisionId: project.latestRevision.id, expectedToken: project.token, key: crypto.randomUUID() })).data.project;
+    const before = project.approvals.length;
+    const results = await Promise.all([
+      a.call(`/projects/${projectId}/approve`, { revisionId: project.latestRevision.id, expectedToken: project.token, key: crypto.randomUUID() }),
+      a.call(`/projects/${projectId}/requests`, { title: 'Confirm ownership', explanation: 'Confirm use of the synthetic assets.', required: true, expectedToken: project.token, key: crypto.randomUUID() }),
+    ]);
+    assert.equal(results.filter(r => r.status === 200).length, 1);
+    assert.ok(results.some(r => [409, 422].includes(r.status)));
+    project = (await a.call(`/projects/${projectId}`)).data;
+    assert.equal(project.approvals.length, before + (results[0].status === 200 ? 1 : 0));
+    if (project.state === 'approved') assert.equal(project.blockers.length, 0);
+    else assert.equal((await a.call(`/projects/${projectId}/approve`, { revisionId: project.latestRevision.id, expectedToken: project.token, key: crypto.randomUUID() })).status, 422);
+  });
   await t.test('the final demo capacity slot cannot be reserved twice', async () => {
     for (let i = 0; i < 17; i++) assert.equal((await demo()).started.status, 200);
     const last = await Promise.all([demo(), demo()]);

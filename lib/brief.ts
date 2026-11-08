@@ -43,3 +43,12 @@ export function readiness(b: BriefInput, readyAssetIds: Set<string>): Blocker[] 
   if (b.assetPlan === 'supplied' && !b.assetIds.some(id => readyAssetIds.has(id))) blockers.push({ key: 'assets.required', field: 'assetIds', message: 'Attach at least one successfully uploaded asset.' });
   return blockers;
 }
+export function checklist(accepted: BriefInput) {
+  return [
+    ...accepted.pages.map((page, index) => ({ id: `page-${index}`, text: `Prepare the ${page} page`, source: `pages.${index}` })),
+    { id: 'assets', text: accepted.assetPlan === 'create' ? 'Create the project assets' : 'Review the attached project assets', source: 'assetPlan' },
+    { id: 'audience', text: 'Check the page content against the intended audience', source: 'audience' },
+    ...(accepted.constraints ? [{ id: 'constraints', text: 'Review the stated constraints before implementation', source: 'constraints' }] : []),
+    ...(accepted.deadline ? [{ id: 'deadline', text: `Review the requested date: ${accepted.deadline}`, source: 'deadline' }] : []),
+  ];
+}

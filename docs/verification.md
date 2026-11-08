@@ -23,3 +23,10 @@ Author: GPT/Codex
 - Full suite: 12 unit/fault tests and 11 real Worker API tests passed. Type checking and Sites production build passed.
 - Checks cover incorrect file labels/bytes, control characters, streamed size limits, storage and SQL failure recovery, pending quota reservations, competing quota claims, private downloads, cross-client/cross-run denial and attachment scope.
 - Mohamed predicted that an exact Client B file URL would still deny Client A. The real API returned 404, as expected.
+
+## Task 4, 8 November 2026
+
+- Approval tests first failed because the exports/routes did not exist.
+- Full suite: 14 unit/fault tests and 14 real Worker API tests passed. Type checking and Sites production build passed.
+- Verified owner-only approval, exact submitted revision, duplicate approval retry, reopen reason, preserved accepted facts, save/approval and request/approval races, and zero-row transaction rollback without dependent records.
+- The graph refresh command passed its nonempty graph, relationship endpoint and core-source checks; it writes source hashes with each snapshot.

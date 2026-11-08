@@ -153,12 +153,12 @@ Files: approval/history schema, workflow/brief/http modules, rule/API tests and 
 
 Interfaces: `approveBrief(db, actor, projectId, revisionId, expectedToken, key): Promise<ProjectView>`, `reopenBrief(db, actor, projectId, reason, expectedToken, key): Promise<ProjectView>` and Task 1's `checklist(accepted)`.
 
-- [ ] Write failing tests: incomplete or stale revisions cannot be approved; a client approval fails; saving an approved project fails until owner reopening; blank reopen reason fails; reopening preserves the accepted revision and records its reason.
-- [ ] Add races: two saves from the same token; save versus approval; required request creation versus approval. Assert exactly one eligible transition commits, with no partial approval/activity/receipt. Test that a zero-row conditional write cannot leave dependent records.
-- [ ] Add handoff assertions: it uses the accepted revision's pages/assets/deadline even after a newer draft exists; a page checklist item refers to the accepted `pages` fact; a blank deadline remains “Not agreed”.
-- [ ] Ask Mohamed for his race prediction, then run the API/unit suites and confirm the expected failures.
-- [ ] Implement approval/reopen transactions and the derived handoff. Do not update historical revisions or approvals. Required request changes must invalidate the project concurrency token.
-- [ ] Re-run suites, type check and build; record evidence and commit.
+- [x] Write failing tests: incomplete or stale revisions cannot be approved; a client approval fails; saving an approved project fails until owner reopening; blank reopen reason fails; reopening preserves the accepted revision and records its reason.
+- [x] Add races: two saves from the same token; save versus approval; required request creation versus approval. Assert exactly one eligible transition commits, with no partial approval/activity/receipt. Test that a zero-row conditional write cannot leave dependent records.
+- [x] Add handoff assertions: it uses the accepted revision's pages/assets/deadline even after a newer draft exists; a page checklist item refers to the accepted `pages` fact; a blank deadline remains “Not agreed”.
+- [x] Ask Mohamed for his race prediction, then run the API/unit suites and confirm the expected failures.
+- [x] Implement approval/reopen transactions and the derived handoff. Do not update historical revisions or approvals. Required request changes must invalidate the project concurrency token.
+- [x] Re-run suites, type check and build; record evidence and commit.
 
 ## Task 5: usable client and agency screens
 
