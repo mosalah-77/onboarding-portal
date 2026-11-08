@@ -40,7 +40,7 @@ Author: GPT/Codex
 - A duplicate page name produced a server 422 and an inline field error associated with its input. The suggested handoff checklist includes responsive/accessibility review in both the page and downloaded text.
 - Desktop, 390px and 350px layouts, intermediate reflow, keyboard focus, dialog defaults and DOM reading order were checked. Actual Chrome zoom at 200% reported a 674px viewport with no horizontal overflow; the capture tool's malformed zoom image was excluded. This is not a full screen-reader or cross-browser audit.
 - The independent Impeccable reviewer scored all four requested fixes resolved and returned a scoped ship verdict. See `design-review.md`. The automated Impeccable detector could not run because its launcher lacked execution permission; manual and independent review supplied the design checks.
-- A temporary loopback proxy held the first Client A project response for 20 seconds. Project/persona/reset controls were disabled during loading. After navigation through the brand link and selection of Client B, the old response was released to a closed downstream connection; Client B’s heading, selected project and unsaved goal remained intact. This verifies navigation cancellation and draft preservation, not every internal generation-guard branch. The temporary proxy and tab were closed. Hosted verification remains pending.
+- A temporary loopback proxy held the first Client A project response for 20 seconds. Project/persona/reset controls were disabled during loading. After navigation through the brand link and selection of Client B, the old response was released to a closed downstream connection; Client B’s heading, selected project and unsaved goal remained intact. This verifies navigation cancellation and draft preservation, not every internal generation-guard branch. The temporary proxy and tab were closed. Hosted verification was subsequently completed below.
 
 - Following the button-state correction, typecheck, production build and 25 unit/fault/client checks passed again. The API runner initially hit the sandbox's loopback-bind restriction; the permitted loopback rerun passed all 15 checks. No application test failed.
 
@@ -53,3 +53,17 @@ Author: GPT/Codex
 - The independent design documenter produced and parsed DESIGN.md and `.impeccable/design.json`, checked the 15 palette values against CSS and validated component preview structure. The later stale-edit notice reuses existing notice/button styles; no token changed.
 - Secret-pattern scans of tracked source and historical file objects found no matching credentials. The private operator token is ignored by Git and configured as a server-only Sites secret. Referenced third-party licence files are present.
 - Deferred minor: directly supplied operation keys with surrounding whitespace do not replay consistently. The UI emits canonical UUID keys (and digest keys for files), so its retry path is unaffected. There is no public integration API commitment in this version.
+
+## Hosted release, 8 November 2026
+
+- Public URL: https://elmorshedy-onboarding-demo.m-elmorshedy635.chatgpt.site
+- Sites deployment of reviewed application commit `6d3fe865cb4785e36b87d8fc4db66a87089180b6` succeeded with runtime secret revision 1; this new Site was then made public as requested.
+- Missing required audience blocks submission with 422.
+- Private R2 upload/download works; cross-client project/file and cross-run project requests return 404.
+- Overlapping identical saves and comments return one successful operation; optional blanks remain valid.
+- Client approval denied; owner approves exact version and receives checklist; reopening preserves accepted scope.
+- Reset isolates the replacement run; operator cleanup deletes expired test bytes and preserves another active visitor.
+- The deployed browser completed missing input → saved version 2 → submission → owner approval → accepted checklist. Desktop and 390px mobile were inspected; mobile document width equalled its 390px viewport. No current hosted error appeared in the captured console log; older localhost HMR errors were excluded by timestamp and origin.
+- The first API verification attempt failed because its temporary cookie jar overwrote the application cookie with Cloudflare's `__cf_bm` cookie. Preserving both cookies fixed the harness; the complete hosted check then passed. Browser cookies needed no change.
+- No public capacity-exhaustion test was run. The full capacity/contention tests use disposable local storage.
+- The public repository is `mosalah-77/onboarding-portal`. Publication retains the reviewed source trees and commit-sized changes, uses Mohamed's account metadata without an AI co-author, and preserves the AI-use notes and licences. The original local AI-authored history remains on the implementation branch.

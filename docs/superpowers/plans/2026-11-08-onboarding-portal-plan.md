@@ -187,9 +187,9 @@ Interfaces: `cleanupExpiredRuns(env, limit): Promise<{ runsRemoved: number; asse
 - [ ] Have Mohamed make the agreed small rule/checklist change himself and explain the test. Record only what he actually did. If pending, report the learning contribution as unfinished.
 - [x] Write the reproducible README, architecture/data flow, 90-second demo script, known limitations, contribution/AI-use note and attribution. Mark every feature working, simulated or future. Apply Humanizer to the final public prose.
 - [x] Scan the intended source for secrets and private material. Keep runtime state, uploads, test data stores, credentials and generated archives out of Git. Verify small commits identify AI work accurately.
-- [ ] Package and push the exact source using the Sites workflow helper. Save/deploy through the appropriate native tool, then set this new Site's audience to public as requested in the original brief. Never change a different Site's audience or send viewer invitations.
+- [x] Package and push the exact source using the Sites workflow helper. Save/deploy through the appropriate native tool, then set this new Site's audience to public as requested in the original brief. Never change a different Site's audience or send viewer invitations.
 - [ ] Wait for the deployment's terminal success, then exercise the hosted workflow and cross-client/cross-run access checks in disposable demo runs. Keep a failed hosted check open rather than reporting completion from local tests.
-- [ ] Identify Mohamed's intended personal GitHub destination before publishing there; connected Sites source storage is not automatically his portfolio GitHub. Preserve licences and author history when publishing the reviewed source.
+- [x] Identify Mohamed's intended personal GitHub destination before publishing there; connected Sites source storage is not automatically his portfolio GitHub. Preserve licences and author history when publishing the reviewed source.
 - [ ] Run the verification-before-completion skill and report the public URL, repo, observed test results and remaining limits. Stop the owned local preview process.
 
 ## Self-review
