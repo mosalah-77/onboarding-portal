@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { validateBrief, readiness } from '../lib/brief.ts';
+import { validateBrief, readiness, checklist } from '../lib/brief.ts';
 
 const ready = { goal: 'Explain our synthetic services', audience: 'Local residents', pages: ['Home', 'Services'], constraints: '', deadline: null, assetPlan: 'create', assetIds: [] };
 test('blank optional values do not block a complete brief', () => {
@@ -27,4 +27,11 @@ test('malformed shapes do not reach storage', () => {
   for (const patch of [{ goal: 5 }, { pages: 'Home' }, { assetIds: ['a', 'a'] }, { assetPlan: 'invented' }, { constraints: null }]) {
     assert.throws(() => validateBrief({ ...ready, ...patch }), { status: 422 });
   }
+});
+test('the accepted checklist includes a responsive and accessibility review tied to its pages', () => {
+  assert.deepEqual(checklist(ready).find(t => t.id === 'accessibility'), { id: 'accessibility', text: 'Review responsive layouts and accessibility for the accepted pages', source: 'pages' });
+});
+test('validation identifies the field a client must correct', () => {
+  assert.throws(() => validateBrief({ ...ready, pages: ['Home', 'home'] }), e => e.status === 422 && e.details?.[0]?.field === 'pages');
+  assert.throws(() => validateBrief({ ...ready, deadline: '2026-02-30' }), e => e.status === 422 && e.details?.[0]?.field === 'deadline');
 });

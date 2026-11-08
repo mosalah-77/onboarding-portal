@@ -50,3 +50,6 @@ yarn-error.log*
 # Locally generated code-navigation graph and caches
 /graphify-out/
 /.graphify-cache/
+
+# Local rendered review evidence
+/.impeccable/review/
