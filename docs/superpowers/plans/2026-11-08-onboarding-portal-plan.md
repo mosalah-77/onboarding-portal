@@ -166,14 +166,14 @@ Files: page/layout/styles, the four components, `PRODUCT.md`, `DESIGN.md`, `.imp
 
 Interfaces: consume the real API and `ProjectView`; all accepted-scope UI consumes the accepted revision. A shared request function preserves operation keys across retries and decodes the existing structured errors.
 
-- [ ] Read the applicable Impeccable new-work/Operate guidance and craft floor before UI edits. Reuse the confirmed product brief and any approved design direction. Use its documented fallback if the launcher remains unavailable; do not change system permissions to run it.
-- [ ] Build a task-oriented editor: project/revision/status header, labelled brief fields, blocker summary, requests/comments and activity. The agency queue shows both permitted projects and unresolved required requests. Show the selected demo persona persistently.
-- [ ] Make buttons name the consequence: “Save draft”, “Submit version 2”, “Approve version 2” and “Reopen brief”. Handle load/empty/error/pending/success states with visible status text and keyboard focus.
-- [ ] Preserve unsaved form values after conflicts and network failures. Require an explicit discard decision before changing project/persona with unsaved changes. Cancel or ignore stale responses after navigation; verify a delayed old response cannot replace the current view.
-- [ ] Add the accepted handoff/checklist and revision history with accessible fact links. Treat any newer draft as awaiting review. Keep deadline copy a request, never an agreed delivery promise.
-- [ ] Run Humanizer in embedded mode over UI text, metadata, seed copy and documentation. Preserve every rule, number and evidence claim; write only text supported by the current implementation.
-- [ ] Start the verified local preview, open it in the supported browser and inspect desktop/390 px layouts, 200% zoom, keyboard traversal, inline errors, focus after transitions and reduced motion. Fix observed issues in a batch and record evidence.
-- [ ] Complete Impeccable's applicable rendered review and token documentation, with an independent reviewer where the skill requires one. Re-run the behaviour checks affected by any corrections, then commit.
+- [x] Read the applicable Impeccable new-work/Operate guidance and craft floor before UI edits. Reuse the confirmed product brief and any approved design direction. Use its documented fallback if the launcher remains unavailable; do not change system permissions to run it.
+- [x] Build a task-oriented editor: project/revision/status header, labelled brief fields, blocker summary, requests/comments and activity. The agency queue shows both permitted projects and unresolved required requests. Show the selected demo persona persistently.
+- [x] Make buttons name the consequence: “Save draft”, “Submit version 2”, “Approve version 2” and “Reopen brief”. Handle load/empty/error/pending/success states with visible status text and keyboard focus.
+- [x] Preserve unsaved form values after conflicts and network failures. Require an explicit discard decision before changing project/persona with unsaved changes. Cancel or ignore stale responses after navigation; verify a delayed old response cannot replace the current view.
+- [x] Add the accepted handoff/checklist and revision history with accessible fact links. Treat any newer draft as awaiting review. Keep deadline copy a request, never an agreed delivery promise.
+- [x] Run Humanizer in embedded mode over UI text, metadata, seed copy and documentation. Preserve every rule, number and evidence claim; write only text supported by the current implementation.
+- [x] Start the verified local preview, open it in the supported browser and inspect desktop/390 px layouts, 200% zoom, keyboard traversal, inline errors, focus after transitions and reduced motion. Fix observed issues in a batch and record evidence.
+- [x] Complete Impeccable's applicable rendered review and token documentation, with an independent reviewer where the skill requires one. Re-run the behaviour checks affected by any corrections, then commit.
 
 ## Task 6: cleanup, public release and portfolio evidence
 
@@ -181,12 +181,12 @@ Files: cleanup/session/HTTP modules, operator script, tests, README, attribution
 
 Interfaces: `cleanupExpiredRuns(env, limit): Promise<{ runsRemoved: number; assetsRemoved: number }>` accepts a bounded batch limit; only an operator-authenticated route or trusted local test may invoke it. No browser bundle receives `DEMO_ADMIN_TOKEN`.
 
-- [ ] Write failing tests for expired sessions, invalid operator tokens, partially failed cleanup, reset of only the current run, full capacity and concurrent cleanup/retry. Keep objects/rows accounted for until confirmed deleted.
-- [ ] Implement bounded, repeatable operator cleanup and a script using an environment-provided token. Use constant-time token comparison where supported. Document the operator trigger; do not enrol an external scheduling service.
-- [ ] Run all unit/API/fault suites, type check and a production build. Review the changed server/SQL code with the relevant installed security review skill. Resolve material findings and rerun affected checks.
+- [x] Write failing tests for expired sessions, invalid operator tokens, partially failed cleanup, reset of only the current run, full capacity and concurrent cleanup/retry. Keep objects/rows accounted for until confirmed deleted.
+- [x] Implement bounded, repeatable operator cleanup and a script using an environment-provided token. Use constant-time token comparison where supported. Document the operator trigger; do not enrol an external scheduling service.
+- [x] Run all unit/API/fault suites, type check and a production build. Review the changed server/SQL code with the relevant installed security review skill. Resolve material findings and rerun affected checks.
 - [ ] Have Mohamed make the agreed small rule/checklist change himself and explain the test. Record only what he actually did. If pending, report the learning contribution as unfinished.
-- [ ] Write the reproducible README, architecture/data flow, 90-second demo script, known limitations, contribution/AI-use note and attribution. Mark every feature working, simulated or future. Apply Humanizer to the final public prose.
-- [ ] Scan the intended source for secrets and private material. Keep runtime state, uploads, test data stores, credentials and generated archives out of Git. Verify small commits identify AI work accurately.
+- [x] Write the reproducible README, architecture/data flow, 90-second demo script, known limitations, contribution/AI-use note and attribution. Mark every feature working, simulated or future. Apply Humanizer to the final public prose.
+- [x] Scan the intended source for secrets and private material. Keep runtime state, uploads, test data stores, credentials and generated archives out of Git. Verify small commits identify AI work accurately.
 - [ ] Package and push the exact source using the Sites workflow helper. Save/deploy through the appropriate native tool, then set this new Site's audience to public as requested in the original brief. Never change a different Site's audience or send viewer invitations.
 - [ ] Wait for the deployment's terminal success, then exercise the hosted workflow and cross-client/cross-run access checks in disposable demo runs. Keep a failed hosted check open rather than reporting completion from local tests.
 - [ ] Identify Mohamed's intended personal GitHub destination before publishing there; connected Sites source storage is not automatically his portfolio GitHub. Preserve licences and author history when publishing the reviewed source.

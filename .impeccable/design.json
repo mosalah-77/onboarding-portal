@@ -1,0 +1,406 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-08T11:00:23.862398Z",
+  "title": "Design System: Client Brief",
+  "extensions": {
+    "colorMeta": {
+      "green": {
+        "role": "primary",
+        "displayName": "Action green",
+        "tonalRamp": [
+          "oklch(15% 0.0277 166.3)",
+          "oklch(27% 0.0458 166.3)",
+          "oklch(38% 0.0568 166.3)",
+          "oklch(50% 0.0611 166.3)",
+          "oklch(62% 0.0568 166.3)",
+          "oklch(74% 0.0445 166.3)",
+          "oklch(85% 0.0277 166.3)",
+          "oklch(95% 0.0096 166.3)"
+        ]
+      },
+      "green-dark": {
+        "role": "primary",
+        "displayName": "Rail green",
+        "tonalRamp": [
+          "oklch(15% 0.0226 166.0)",
+          "oklch(27% 0.0373 166.0)",
+          "oklch(38% 0.0462 166.0)",
+          "oklch(50% 0.0497 166.0)",
+          "oklch(62% 0.0462 166.0)",
+          "oklch(74% 0.0362 166.0)",
+          "oklch(85% 0.0226 166.0)",
+          "oklch(95% 0.0078 166.0)"
+        ]
+      },
+      "ground": {
+        "role": "neutral",
+        "displayName": "Warm cream",
+        "tonalRamp": [
+          "oklch(15% 0.0032 88.6)",
+          "oklch(27% 0.0052 88.6)",
+          "oklch(38% 0.0065 88.6)",
+          "oklch(50% 0.0070 88.6)",
+          "oklch(62% 0.0065 88.6)",
+          "oklch(74% 0.0051 88.6)",
+          "oklch(85% 0.0032 88.6)",
+          "oklch(95% 0.0011 88.6)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "White editing surface",
+        "tonalRamp": [
+          "oklch(15% 0.0000 0.0)",
+          "oklch(27% 0.0000 0.0)",
+          "oklch(38% 0.0000 0.0)",
+          "oklch(50% 0.0000 0.0)",
+          "oklch(62% 0.0000 0.0)",
+          "oklch(74% 0.0000 0.0)",
+          "oklch(85% 0.0000 0.0)",
+          "oklch(95% 0.0000 0.0)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Green ink",
+        "tonalRamp": [
+          "oklch(15% 0.0095 170.8)",
+          "oklch(27% 0.0158 170.8)",
+          "oklch(38% 0.0196 170.8)",
+          "oklch(50% 0.0210 170.8)",
+          "oklch(62% 0.0196 170.8)",
+          "oklch(74% 0.0153 170.8)",
+          "oklch(85% 0.0095 170.8)",
+          "oklch(95% 0.0033 170.8)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted ink",
+        "tonalRamp": [
+          "oklch(15% 0.0084 166.1)",
+          "oklch(27% 0.0139 166.1)",
+          "oklch(38% 0.0173 166.1)",
+          "oklch(50% 0.0186 166.1)",
+          "oklch(62% 0.0173 166.1)",
+          "oklch(74% 0.0135 166.1)",
+          "oklch(85% 0.0084 166.1)",
+          "oklch(95% 0.0029 166.1)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Fine rule",
+        "tonalRamp": [
+          "oklch(15% 0.0050 149.8)",
+          "oklch(27% 0.0083 149.8)",
+          "oklch(38% 0.0103 149.8)",
+          "oklch(50% 0.0111 149.8)",
+          "oklch(62% 0.0103 149.8)",
+          "oklch(74% 0.0081 149.8)",
+          "oklch(85% 0.0050 149.8)",
+          "oklch(95% 0.0017 149.8)"
+        ]
+      },
+      "shell": {
+        "role": "neutral",
+        "displayName": "Accepted-scope green",
+        "tonalRamp": [
+          "oklch(15% 0.0049 136.6)",
+          "oklch(27% 0.0080 136.6)",
+          "oklch(38% 0.0100 136.6)",
+          "oklch(50% 0.0107 136.6)",
+          "oklch(62% 0.0100 136.6)",
+          "oklch(74% 0.0078 136.6)",
+          "oklch(85% 0.0049 136.6)",
+          "oklch(95% 0.0017 136.6)"
+        ]
+      },
+      "success": {
+        "role": "semantic",
+        "displayName": "Approval fill",
+        "tonalRamp": [
+          "oklch(15% 0.0083 155.8)",
+          "oklch(27% 0.0137 155.8)",
+          "oklch(38% 0.0169 155.8)",
+          "oklch(50% 0.0182 155.8)",
+          "oklch(62% 0.0169 155.8)",
+          "oklch(74% 0.0133 155.8)",
+          "oklch(85% 0.0083 155.8)",
+          "oklch(95% 0.0029 155.8)"
+        ]
+      },
+      "success-ink": {
+        "role": "semantic",
+        "displayName": "Approval ink",
+        "tonalRamp": [
+          "oklch(15% 0.0313 157.5)",
+          "oklch(27% 0.0517 157.5)",
+          "oklch(38% 0.0640 157.5)",
+          "oklch(50% 0.0689 157.5)",
+          "oklch(62% 0.0640 157.5)",
+          "oklch(74% 0.0502 157.5)",
+          "oklch(85% 0.0313 157.5)",
+          "oklch(95% 0.0108 157.5)"
+        ]
+      },
+      "warning": {
+        "role": "semantic",
+        "displayName": "Waiting fill",
+        "tonalRamp": [
+          "oklch(15% 0.0160 85.4)",
+          "oklch(27% 0.0265 85.4)",
+          "oklch(38% 0.0328 85.4)",
+          "oklch(50% 0.0353 85.4)",
+          "oklch(62% 0.0328 85.4)",
+          "oklch(74% 0.0257 85.4)",
+          "oklch(85% 0.0160 85.4)",
+          "oklch(95% 0.0055 85.4)"
+        ]
+      },
+      "warning-ink": {
+        "role": "semantic",
+        "displayName": "Waiting ink",
+        "tonalRamp": [
+          "oklch(15% 0.0403 68.7)",
+          "oklch(27% 0.0665 68.7)",
+          "oklch(38% 0.0825 68.7)",
+          "oklch(50% 0.0887 68.7)",
+          "oklch(62% 0.0825 68.7)",
+          "oklch(74% 0.0647 68.7)",
+          "oklch(85% 0.0403 68.7)",
+          "oklch(95% 0.0139 68.7)"
+        ]
+      },
+      "error": {
+        "role": "semantic",
+        "displayName": "Error red",
+        "tonalRamp": [
+          "oklch(15% 0.0647 28.2)",
+          "oklch(27% 0.1070 28.2)",
+          "oklch(38% 0.1326 28.2)",
+          "oklch(50% 0.1426 28.2)",
+          "oklch(62% 0.1326 28.2)",
+          "oklch(74% 0.1040 28.2)",
+          "oklch(85% 0.0647 28.2)",
+          "oklch(95% 0.0223 28.2)"
+        ]
+      },
+      "error-bg": {
+        "role": "semantic",
+        "displayName": "Error fill",
+        "tonalRamp": [
+          "oklch(15% 0.0076 31.1)",
+          "oklch(27% 0.0126 31.1)",
+          "oklch(38% 0.0156 31.1)",
+          "oklch(50% 0.0168 31.1)",
+          "oklch(62% 0.0156 31.1)",
+          "oklch(74% 0.0122 31.1)",
+          "oklch(85% 0.0076 31.1)",
+          "oklch(95% 0.0026 31.1)"
+        ]
+      },
+      "focus": {
+        "role": "semantic",
+        "displayName": "Keyboard focus blue",
+        "tonalRamp": [
+          "oklch(15% 0.0684 256.5)",
+          "oklch(27% 0.1131 256.5)",
+          "oklch(38% 0.1402 256.5)",
+          "oklch(50% 0.1508 256.5)",
+          "oklch(62% 0.1402 256.5)",
+          "oklch(74% 0.1099 256.5)",
+          "oklch(85% 0.0684 256.5)",
+          "oklch(95% 0.0236 256.5)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Welcome display",
+        "purpose": "The welcome headline; it reduces to 3.2rem at 650px."
+      },
+      "headline": {
+        "displayName": "Project headline",
+        "purpose": "Project titles; they reduce to 2.1rem at 650px. The guide has its own 3rem to 2.2rem override."
+      },
+      "readiness": {
+        "displayName": "Readiness heading",
+        "purpose": "Named saved-version readiness state."
+      },
+      "handoff": {
+        "displayName": "Handoff heading",
+        "purpose": "Accepted-scope heading, including its empty state."
+      },
+      "title": {
+        "displayName": "Section title",
+        "purpose": "Sans serif section headings in the editor, requests and guide."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Editable content and explanatory paragraphs."
+      },
+      "label": {
+        "displayName": "Field label",
+        "purpose": "Sentence-case form labels."
+      },
+      "status": {
+        "displayName": "Status label",
+        "purpose": "Compact written state and version labels."
+      },
+      "step": {
+        "displayName": "Workflow number",
+        "purpose": "Lining, tabular serif numbers; reduce to 1.8rem at 650px."
+      }
+    },
+    "shadows": [
+      {
+        "name": "confirmation-dialog",
+        "value": "0 16px 48px #102b2433",
+        "purpose": "Only the native confirmation dialog is elevated; its backdrop is #142e2366."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "wide-workspace-min",
+        "value": "1550px"
+      },
+      {
+        "name": "compact-columns-max",
+        "value": "1200px"
+      },
+      {
+        "name": "stack-workspace-max",
+        "value": "1000px"
+      },
+      {
+        "name": "mobile-max",
+        "value": "650px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary action",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Save, submit or approve a named version. Hover and pressed states keep white text on dark green.",
+      "html": "<button class=\"ds-button-primary\" type=\"button\">Save draft</button>",
+      "css": ".ds-button-primary{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;font-size:1rem;font-weight:600;line-height:1.35;min-height:44px;padding:.6rem .9rem;border:1px solid #9aa99f;border-radius:7px;cursor:pointer;background:var(--surface,#fff);color:var(--ink,#202e29)}.ds-button-primary:hover:enabled{background:#edf2ec;border-color:var(--green,#245442)}.ds-button-primary:active:enabled{background:#e1e9df}.ds-button-primary{background:var(--green,#245442);color:var(--surface,#fff);border-color:var(--green,#245442)}.ds-button-primary:hover:enabled,.ds-button-primary:active:enabled{background:var(--green-dark,#173c2e);color:var(--surface,#fff)}.ds-button-primary:focus-visible{outline:3px solid var(--focus,#2467bd);outline-offset:3px}.ds-button-primary:disabled{cursor:not-allowed;opacity:.58}"
+    },
+    {
+      "name": "Secondary action",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Supporting action with a white surface, ink text and a visible border.",
+      "html": "<button class=\"ds-button-secondary\" type=\"button\">Download handoff</button>",
+      "css": ".ds-button-secondary{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;font-size:1rem;font-weight:600;line-height:1.35;min-height:44px;padding:.6rem .9rem;border:1px solid #9aa99f;border-radius:7px;cursor:pointer;background:var(--surface,#fff);color:var(--ink,#202e29)}.ds-button-secondary:hover:enabled{background:#edf2ec;border-color:var(--green,#245442)}.ds-button-secondary:active:enabled{background:#e1e9df}.ds-button-secondary:focus-visible{outline:3px solid var(--focus,#2467bd);outline-offset:3px}.ds-button-secondary:disabled{cursor:not-allowed;opacity:.58}"
+    },
+    {
+      "name": "Destructive confirmation",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "The confirmation dialog action retains white text on error red on hover and press.",
+      "html": "<button class=\"ds-button-danger\" type=\"button\">Discard input and continue</button>",
+      "css": ".ds-button-danger{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;font-size:1rem;font-weight:600;line-height:1.35;min-height:44px;padding:.6rem .9rem;border:1px solid #9aa99f;border-radius:7px;cursor:pointer;background:var(--surface,#fff);color:var(--ink,#202e29)}.ds-button-danger:hover:enabled{background:#edf2ec;border-color:var(--green,#245442)}.ds-button-danger:active:enabled{background:#e1e9df}.ds-button-danger{background:var(--error,#9a3028);color:var(--surface,#fff);border-color:var(--error,#9a3028)}.ds-button-danger:hover:enabled,.ds-button-danger:active:enabled{background:var(--error,#9a3028);color:var(--surface,#fff)}.ds-button-danger:focus-visible{outline:3px solid var(--focus,#2467bd);outline-offset:3px}.ds-button-danger:disabled{cursor:not-allowed;opacity:.58}"
+    },
+    {
+      "name": "Field with linked blocker",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "The audience textarea pairs an invalid border with linked help and a written correction.",
+      "html": "<div class=\"ds-field\"><label class=\"ds-field-label\" for=\"ds-audience\">Intended audience <span class=\"ds-field-note\">Required to submit</span></label><textarea class=\"ds-field-input\" id=\"ds-audience\" rows=\"3\" maxlength=\"2000\" aria-invalid=\"true\" aria-describedby=\"ds-audience-help ds-audience-error\"></textarea><p class=\"ds-field-error\" id=\"ds-audience-error\">Add the audience before submitting.</p><p class=\"ds-field-help\" id=\"ds-audience-help\">Describe who will use the website and what they need.</p></div>",
+      "css": ".ds-field{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;color:var(--ink,#202e29);font-size:1rem;line-height:1.55}.ds-field-label{display:block;font-size:.9rem;font-weight:600;margin:1.1rem 0 .4rem}.ds-field-note{font-size:.78rem;font-weight:400;color:var(--muted,#57645e);margin-left:.4rem}.ds-field-input{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;font-size:1rem;width:100%;min-height:4rem;resize:vertical;line-height:1.5;border:1px solid #94a398;border-radius:6px;background:var(--surface,#fff);color:var(--ink,#202e29);padding:.6rem .7rem;caret-color:var(--green,#245442)}.ds-field-input[aria-invalid=true]{border-color:var(--error,#9a3028)}.ds-field-input:focus-visible{outline:3px solid var(--focus,#2467bd);outline-offset:3px}.ds-field-input:disabled{background:#eef0eb;color:var(--muted,#57645e);opacity:1}.ds-field-error{color:var(--error,#9a3028);font-size:.825rem;margin:.4rem 0}.ds-field-help{color:var(--muted,#57645e);font-size:.825rem;margin:.4rem 0 1rem}@media(max-width:650px){.ds-field-note{display:block;margin:.2rem 0 0}}"
+    },
+    {
+      "name": "Project navigation",
+      "kind": "nav",
+      "refersTo": "navigation",
+      "description": "Dark green navigation uses a white selected project and light focus outlines. Section links wrap on mobile.",
+      "html": "<aside class=\"ds-rail\"><nav class=\"ds-project-nav\" aria-label=\"Projects\"><button class=\"ds-project ds-selected\" type=\"button\" aria-current=\"page\">Client A · Website brief<small class=\"ds-project-note\">Draft · 1 required request</small></button><button class=\"ds-project\" type=\"button\">Client B · Website brief<small class=\"ds-project-note\">Draft · 1 required request</small></button></nav><nav class=\"ds-section-nav\" aria-label=\"In this project\"><a class=\"ds-section-link\" href=\"#brief-title\">Brief</a><a class=\"ds-section-link\" href=\"#requests\">Requests</a><a class=\"ds-section-link\" href=\"#handoff\">Accepted handoff</a><a class=\"ds-section-link\" href=\"#history\">Version history</a></nav></aside>",
+      "css": ".ds-rail{background:var(--green-dark,#173c2e);color:var(--ground,#f4f2ed);padding:1.8rem 1.25rem;font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;line-height:1.55}.ds-project-nav{display:grid;gap:.5rem}.ds-project{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;text-align:left;background:transparent;border:1px solid transparent;border-radius:7px;color:var(--ground,#f4f2ed);font-size:.85rem;font-weight:550;line-height:1.35;padding:.7rem;min-height:44px;cursor:pointer}.ds-project.ds-selected{background:var(--surface,#fff);border-color:var(--surface,#fff);color:var(--green-dark,#173c2e)}.ds-project:hover:enabled{background:#edf2ec;border-color:var(--green,#245442);color:var(--green-dark,#173c2e)}.ds-project:active:enabled{background:#e1e9df}.ds-project:disabled{cursor:not-allowed;opacity:.58}.ds-project-note{display:block;font-size:.73rem;font-weight:400;margin-top:.3rem}.ds-section-nav{display:grid;gap:.1rem;margin-top:1.6rem}.ds-section-link{color:#d4e4d6;font-size:.85rem;padding:.45rem .7rem;text-decoration:none}.ds-section-link:hover{background:var(--green,#245442);color:var(--surface,#fff);border-radius:5px}.ds-project:focus-visible,.ds-section-link:focus-visible{outline:3px solid var(--ground,#f4f2ed);outline-offset:3px}@media(max-width:650px){.ds-rail{padding:1rem}.ds-project-nav{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-top:.8rem}.ds-section-nav{display:flex;flex-wrap:wrap;gap:0;margin-top:.8rem}.ds-section-link{padding:.3rem .5rem;font-size:.78rem}}"
+    },
+    {
+      "name": "Workflow status",
+      "kind": "chip",
+      "refersTo": "status-waiting",
+      "description": "Waiting and approved labels always name their state. Approved labels also identify accepted versions.",
+      "html": "<div class=\"ds-status-samples\"><span class=\"ds-status ds-waiting\">Required</span> <span class=\"ds-status ds-approved\">Approved</span></div>",
+      "css": ".ds-status-samples{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif}.ds-status{display:inline-block;padding:.23rem .55rem;border-radius:5px;font-size:.75rem;font-weight:650;line-height:1.5;white-space:nowrap}.ds-waiting{background:var(--warning,#fbefd6);color:var(--warning-ink,#754b13)}.ds-approved{background:var(--success,#e4f1e8);color:var(--success-ink,#24543a)}"
+    },
+    {
+      "name": "Brief editor surface",
+      "kind": "card",
+      "refersTo": "editor",
+      "description": "White editing surface with a ruled heading and saved-version context; padding reduces with available width.",
+      "html": "<section class=\"ds-editor\"><div class=\"ds-editor-heading\"><h2 class=\"ds-editor-title\">Website brief</h2><span class=\"ds-editor-version\">Saved version 1</span></div><p class=\"ds-editor-copy\">Save an incomplete draft at any time. Complete the required inputs before submitting.</p></section>",
+      "css": ".ds-editor{background:var(--surface,#fff);color:var(--ink,#202e29);border:1px solid var(--line,#d3dad4);border-radius:var(--radius,12px);padding:2rem;font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;line-height:1.55}.ds-editor-heading{display:flex;justify-content:space-between;align-items:center;gap:.75rem;flex-wrap:wrap;padding-bottom:1rem;border-bottom:1px solid var(--line,#d3dad4)}.ds-editor-title{margin:0;font-size:1.2rem;line-height:1.35;font-weight:650}.ds-editor-version{font-size:.8rem;color:var(--muted,#57645e)}.ds-editor-copy{font-size:.9rem;color:var(--muted,#57645e);margin:.6rem 0 1.6rem;max-width:72ch}@media(max-width:1200px){.ds-editor{padding:1.2rem}}@media(max-width:650px){.ds-editor{padding:1.1rem}}"
+    },
+    {
+      "name": "Readiness summary",
+      "kind": "card",
+      "refersTo": "readiness",
+      "description": "The saved-version summary names the missing input and links to its field. A ready modifier changes the fill and heading color.",
+      "html": "<section class=\"ds-readiness\"><h2 class=\"ds-readiness-title\">Inputs needed</h2><p class=\"ds-readiness-copy\">Based on saved version 1.</p><ul class=\"ds-readiness-list\"><li><a class=\"ds-readiness-link\" href=\"#audience\">Add the audience before submitting.</a></li></ul><button class=\"ds-readiness-action\" type=\"button\" disabled>Submit version 1</button></section>",
+      "css": ".ds-readiness{padding:1.3rem;border-radius:var(--radius,12px);border:1px solid #dac9a7;background:var(--warning,#fbefd6);color:var(--ink,#202e29);font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;font-size:.85rem;line-height:1.55}.ds-readiness-title{margin:0;font-family:var(--display,\"Newsreader\",Georgia,serif);font-size:1.9rem;font-weight:550;line-height:1.1;color:var(--warning-ink,#754b13)}.ds-readiness.ds-ready{background:var(--success,#e4f1e8);border-color:#b9d2bf}.ds-ready .ds-readiness-title{color:var(--success-ink,#24543a)}.ds-readiness-copy{margin:.6rem 0 0}.ds-readiness-list{padding-left:1.4rem}.ds-readiness-link{color:inherit;text-underline-offset:.22em}.ds-readiness-link:hover{text-decoration-thickness:2px}.ds-readiness-action{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;font-size:.85rem;font-weight:600;line-height:1.35;min-height:44px;padding:.6rem .9rem;border:1px solid var(--green,#245442);border-radius:7px;cursor:pointer;background:var(--green,#245442);color:var(--surface,#fff);width:100%;margin-top:.8rem}.ds-readiness-action:hover:enabled,.ds-readiness-action:active:enabled{background:var(--green-dark,#173c2e)}.ds-readiness-action:disabled{cursor:not-allowed;opacity:.58}.ds-readiness-action:focus-visible,.ds-readiness-link:focus-visible{outline:3px solid var(--focus,#2467bd);outline-offset:3px}@media(max-width:1000px){.ds-readiness-action{width:auto}}"
+    },
+    {
+      "name": "Accepted handoff",
+      "kind": "card",
+      "refersTo": "handoff",
+      "description": "Pale green accepted-scope surface. This shortened preview keeps the version label, source fact and suggested-checklist qualification.",
+      "html": "<section class=\"ds-handoff\"><div class=\"ds-handoff-heading\"><h2 class=\"ds-handoff-title\">Accepted handoff</h2><span class=\"ds-handoff-version\">Version 2</span></div><p class=\"ds-handoff-copy\">This is the version the owner approved. A requested date still needs a delivery agreement.</p><dl class=\"ds-facts\"><div class=\"ds-fact\" id=\"ds-accepted-pages\"><dt class=\"ds-fact-label\">Pages</dt><dd class=\"ds-fact-value\"><ul class=\"ds-fact-list\"><li>Home</li><li>Services</li><li>Contact</li></ul></dd></div></dl><h3 class=\"ds-checklist-title\">Suggested delivery checklist</h3><p class=\"ds-checklist-help\">Review these tasks before planning delivery.</p><ol class=\"ds-checklist\"><li class=\"ds-checklist-item\">Review responsive layouts and accessibility for the accepted pages. <a class=\"ds-source-link\" href=\"#ds-accepted-pages\">Source fact</a></li></ol><button class=\"ds-download\" type=\"button\">Download handoff</button></section>",
+      "css": ".ds-handoff{background:var(--shell,#e7ece5);color:var(--ink,#202e29);border-radius:var(--radius,12px);padding:1.8rem;font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;line-height:1.55}.ds-handoff-heading{display:flex;justify-content:space-between;align-items:center;gap:.75rem;flex-wrap:wrap}.ds-handoff-title{margin:0;font-family:var(--display,\"Newsreader\",Georgia,serif);font-size:1.8rem;font-weight:550;line-height:1.35}.ds-handoff-version{display:inline-block;padding:.23rem .55rem;border-radius:5px;font-size:.75rem;font-weight:650;line-height:1.5;white-space:nowrap;background:var(--success,#e4f1e8);color:var(--success-ink,#24543a)}.ds-handoff-copy{font-size:.9rem;margin:.6rem 0 0;max-width:72ch}.ds-facts{font-size:.9rem;line-height:1.5}.ds-fact{display:grid;grid-template-columns:125px minmax(0,1fr);gap:1rem;border-bottom:1px solid var(--line,#d3dad4);padding:.8rem 0}.ds-fact-label{color:var(--muted,#57645e);font-size:.8rem}.ds-fact-value{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}.ds-fact-list{margin:0;padding-left:1.15rem}.ds-checklist-title{font-size:1rem;font-weight:650;line-height:1.4;margin:0}.ds-checklist-help{color:var(--muted,#57645e);font-size:.9rem;margin:.6rem 0 0}.ds-checklist{font-size:.9rem;padding-left:1.4rem}.ds-checklist-item{padding:.25rem 0}.ds-source-link{color:var(--green,#245442);font-size:.75rem;white-space:nowrap;margin-left:.4rem;text-underline-offset:.22em}.ds-source-link:hover{text-decoration-thickness:2px}.ds-download{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;font-size:1rem;min-height:44px;padding:.6rem .9rem;border:1px solid #9aa99f;border-radius:7px;font-weight:600;line-height:1.35;cursor:pointer;background:var(--surface,#fff);color:var(--ink,#202e29)}.ds-download:hover:enabled{background:#edf2ec;border-color:var(--green,#245442)}.ds-download:active:enabled{background:#e1e9df}.ds-download:disabled{cursor:not-allowed;opacity:.58}.ds-download:focus-visible,.ds-source-link:focus-visible{outline:3px solid var(--focus,#2467bd);outline-offset:3px}@media(max-width:650px){.ds-handoff{padding:1.2rem}.ds-fact{grid-template-columns:1fr;gap:.25rem}}"
+    },
+    {
+      "name": "Brief workflow",
+      "kind": "custom",
+      "refersTo": "workflow-steps",
+      "description": "The actual three-stage workflow uses serif numbers, a current-stage rule and persistent stage names at narrow widths.",
+      "html": "<ol class=\"ds-workflow\" aria-label=\"Brief workflow\"><li class=\"ds-workflow-item ds-current\" aria-current=\"step\"><span class=\"ds-step-number\" aria-hidden=\"true\">01</span><span><strong class=\"ds-step-title\">Brief</strong><small class=\"ds-step-copy\">Gather the facts</small></span></li><li class=\"ds-workflow-item\"><span class=\"ds-step-number\" aria-hidden=\"true\">02</span><span><strong class=\"ds-step-title\">Review</strong><small class=\"ds-step-copy\">Agree one version</small></span></li><li class=\"ds-workflow-item\"><span class=\"ds-step-number\" aria-hidden=\"true\">03</span><span><strong class=\"ds-step-title\">Handoff</strong><small class=\"ds-step-copy\">Start with clear scope</small></span></li></ol>",
+      "css": ".ds-workflow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));list-style:none;padding:0;margin:0 0 2rem;gap:1.5rem;font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;line-height:1.55}.ds-workflow-item{display:flex;align-items:center;gap:.8rem;padding:.25rem 0 1rem;margin:0;border-bottom:1px solid var(--line,#d3dad4);color:var(--muted,#57645e)}.ds-workflow-item.ds-current{color:var(--green-dark,#173c2e);border-bottom-color:var(--green-dark,#173c2e)}.ds-workflow-item.ds-complete{color:var(--green,#245442)}.ds-step-number{font-family:var(--display,\"Newsreader\",Georgia,serif);font-size:2.5rem;font-weight:400;line-height:1;font-variant-numeric:lining-nums tabular-nums}.ds-step-title{display:block;font-size:.9rem;font-weight:650}.ds-step-copy{display:block;font-size:.75rem;margin-top:.2rem}@media(max-width:650px){.ds-workflow{gap:.75rem;margin-bottom:1.5rem}.ds-workflow-item{display:block;padding-bottom:.7rem}.ds-step-number{display:block;font-size:1.8rem;margin-bottom:.25rem}.ds-step-copy{display:none}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The working brief",
+    "overview": "Warm cream pages and a dark green navigation rail frame a practical workspace. White fields give longer answers room to breathe. Newsreader adds an editorial voice to the project name, readiness and accepted handoff; system sans carries labels, requests and activity. Fine rules and restrained state fills keep the screen easy to scan.\n\nThe same palette and type pairing carry into the reading guide. Its narrower measure and plain diagrams suit longer explanations. This AI-authored reference records the implemented system in `app/globals.css` and the portal components, with the approved direction in `docs/surface.md`. The sidecar's generated tonal strips are preview aids; the frontmatter holds the shipped color values.",
+    "keyCharacteristics": [
+      "Cream ground, dark green framing and white editing surfaces.",
+      "Editorial headings paired with compact, sentence-case controls.",
+      "Readiness, versions and accepted facts remain visibly distinct.",
+      "Flat surfaces with borders; one elevated confirmation dialog."
+    ],
+    "rules": [
+      {
+        "name": "The Named State Rule",
+        "body": "A colored status always names the state. A blocker names the missing input and links to its field.",
+        "section": "colors"
+      },
+      {
+        "name": "The Editorial Heading Rule",
+        "body": "Use Newsreader for identity, the principal heading and the named workflow summaries. Keep editable content and ordinary section labels in system sans.",
+        "section": "typography"
+      },
+      {
+        "name": "The Dialog Depth Rule",
+        "body": "Reserve elevation for the confirmation dialog. Keep the editor, readiness and handoff surfaces flat.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do keep the warm ground, white editor and dark green navigation together.",
+      "Do preserve Newsreader headings and the system sans used by fields and longer requests.",
+      "Do pair state colors with written labels, linked blockers and visible version numbers.",
+      "Do keep readiness before the editor in the source order used by stacked layouts.",
+      "Do retain visible keyboard focus, linked field errors and the existing control sizes.",
+      "Do keep synthetic-data labels and AI authorship disclosures visible where they appear."
+    ],
+    "donts": [
+      "Don't apply the dark rail's background color to the long-form editing surface.",
+      "Don't replace state explanations with color alone.",
+      "Don't turn the suggested checklist or requested deadline into a delivery promise.",
+      "Don't add shadows to the flat work panels.",
+      "Don't hide workflow stage names when their smaller captions are removed."
+    ]
+  }
+}

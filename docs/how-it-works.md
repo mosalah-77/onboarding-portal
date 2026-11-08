@@ -138,7 +138,7 @@ flowchart TD
   A --> I[Warn before leaving unsaved inputs]
 ```
 
-`components/portal.tsx` owns the draft, baseline and pending action. `lib/client.ts` sends the request and returns structured errors. A retry uses the same operation key and input. The component's load generation also rejects an outdated response; a deliberately delayed-response browser scenario is not yet verified. Unsaved text is not durable across closing the browser.
+`components/portal.tsx` owns the editor state and pending action. `reconcileEditor` in `lib/client.ts` keeps the draft, baseline, revision identity and concurrency token together. A response containing a newer revision refreshes a clean editor; genuinely unsaved edits stay visible with their earlier version identified, and approval remains disabled until they are reconciled. `lib/client.ts` sends the request and returns structured errors. A retry uses the same operation key and input. The component's load generation also rejects an outdated response; a 20-second delayed GET check confirmed that navigating away cancels the old view and preserves the new project’s unsaved input. Navigation controls are disabled while a load is pending. This does not separately unit-test every generation-guard branch. Unsaved text is not durable across closing the browser.
 
 ## Expiry, reset and cleanup
 

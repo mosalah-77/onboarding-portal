@@ -3,8 +3,10 @@
 Author: GPT/Codex. Updated 8 November 2026.
 
 - Open: Mohamed's own documented code variation and explanation.
-- Open: final whole-branch review, hosted verification and source publication.
-- Open: deliberately delayed browser-response scenario; source guards and disabled navigation have been inspected, but the delayed scenario has not run.
+- Open: hosted verification and source publication.
+- Resolved: both Important final-review findings; regression tests first failed, then passed with the full 45-check suite. See verification.md.
+- Deferred minor: retry keys supplied directly to the API with surrounding whitespace do not replay consistently. Browser-generated keys are unaffected.
+- Verified: a delayed GET released after leaving its page did not replace the new project or its unsaved goal. Navigation controls were disabled during the held load; the generation guard itself is also inspected in source.
 - Known limit: an abruptly interrupted upload can leave a durable write claim requiring operator investigation. Capacity stays reserved.
 - Known limit: no per-IP throttling or automated cleanup; stored runs are capped at 20.
 - Impeccable launcher and detector could not execute; manual fallback and independent rendered review were used.
