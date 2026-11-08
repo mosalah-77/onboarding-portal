@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { png } from './storage-helpers.mjs';
 
 const origin = process.env.TEST_ORIGIN || 'http://127.0.0.1:5179';
 if (!['127.0.0.1', 'localhost'].includes(new URL(origin).hostname)) throw new Error('Integration tests require a disposable loopback server.');
@@ -10,11 +11,11 @@ async function demo() {
     const response = await fetch(`${origin}/api/portal${path}`, {
       method: body === undefined ? 'GET' : 'POST',
       headers: { Origin: origin, 'X-Portal-Request': '1', 'Content-Type': 'application/json', ...(cookie ? { Cookie: cookie, 'X-CSRF-Token': csrf } : {}), ...options.headers },
-      body: body === undefined ? undefined : JSON.stringify(body),
+      body: options.bytes ?? (body === undefined ? undefined : JSON.stringify(body)),
     });
     const setCookie = response.headers.get('set-cookie');
     if (setCookie) cookie = setCookie.split(';')[0];
-    const data = await response.json().catch(() => null);
+    const data = options.binary && response.ok ? new Uint8Array(await response.arrayBuffer()) : await response.json().catch(() => null);
     if (data?.csrf) csrf = data.csrf;
     return { status: response.status, data, headers: response.headers };
   }};
@@ -122,6 +123,30 @@ test('real backend: tenant boundaries, saves and retries', async t => {
     assert.equal(second.data.operation.id, first.data.operation.id);
     assert.equal(second.data.project.activity.filter(e => e.action === 'brief_submitted').length, 1);
     assert.equal(second.data.project.requests.filter(r => !r.ruleKey).length, 2);
+  });
+  await t.test('real R2 uploads are private, retryable and attachable only within their project', async () => {
+    const key = crypto.randomUUID();
+    const upload = (project, op = key, bytes = png) => a.call(`/projects/${project}/assets`, {}, { bytes, headers: { 'Content-Type': 'image/png', 'X-File-Name': 'sample.png', 'X-Operation-Key': op } });
+    const first = await upload(projectId);
+    assert.equal(first.status, 200);
+    assert.equal((await upload(projectId)).data.id, first.data.id);
+    assert.equal((await upload(projectId, key, new Uint8Array([...png, 1]))).status, 409);
+    const fileA = first.data.id;
+    const downloaded = await a.call(`/assets/${fileA}`, undefined, { binary: true });
+    assert.deepEqual(downloaded.data, png);
+    assert.match(downloaded.headers.get('content-disposition'), /^attachment;/);
+    await a.call('/persona', { persona: 'client-b' });
+    const fileB = (await upload(projectB, crypto.randomUUID())).data.id;
+    assert.equal((await a.call(`/assets/${fileA}`)).status, 404);
+    await a.call('/persona', { persona: 'client-a' });
+    assert.equal((await a.call(`/assets/${fileB}`)).status, 404);
+    assert.equal((await other.call(`/assets/${fileA}`)).status, 404);
+    project = (await a.call(`/projects/${projectId}`)).data;
+    assert.equal((await a.call(`/projects/${projectId}/revisions`, { brief: { ...valid, assetPlan: 'supplied', assetIds: [fileB] }, expectedToken: project.token, key: crypto.randomUUID() })).status, 422);
+    const attached = await a.call(`/projects/${projectId}/revisions`, { brief: { ...valid, assetPlan: 'supplied', assetIds: [fileA] }, expectedToken: project.token, key: crypto.randomUUID() });
+    assert.equal(attached.status, 200);
+    assert.equal(attached.data.project.blockers.length, 0);
+    assert.equal((await upload(projectId, crypto.randomUUID(), new Uint8Array(2097153))).status, 413);
   });
   await t.test('the final demo capacity slot cannot be reserved twice', async () => {
     for (let i = 0; i < 17; i++) assert.equal((await demo()).started.status, 200);

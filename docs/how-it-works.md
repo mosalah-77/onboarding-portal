@@ -1,8 +1,8 @@
 # How a brief moves through the portal
 
-Author: GPT/Codex. Updated 8 November 2026, through implementation Task 2.
+Author: GPT/Codex. Updated 8 November 2026, through implementation Task 3.
 
-This is Mohamed's project guide. Start with one action and follow its value into storage. The diagrams describe observable code and design decisions. Solid arrows show implemented backend behaviour; dashed arrows marked “planned” show unfinished work. The browser screens, file workflow, approval and deployment are still being built.
+This is Mohamed's project guide. Start with one action and follow its value into storage. The diagrams describe observable code and design decisions. Solid arrows show implemented backend behaviour; dashed arrows marked “planned” show unfinished work. The browser screens, approval and deployment are still being built.
 
 ## Follow one change
 
@@ -41,7 +41,7 @@ flowchart LR
   F -. planned .-> G[Accepted summary and checklist]
   F -. planned .-> H[Owner reopens with a reason]
   H -. planned .-> C
-  U[Private asset upload] -. planned .-> C
+  U[Private asset upload] --> C
 ```
 
 Persona switching is a demo facility. It demonstrates the three roles within your synthetic run; it is not real customer authentication. Another browser's run has different workspaces and projects. Client A's membership grants access only to A's workspace, even if A guesses B's project URL.
@@ -57,9 +57,9 @@ Persona switching is a demo facility. It demonstrates the three roles within you
 | Safe retry | `receipts` | The same operation key and input return the previous operation instead of creating it again. |
 | Audit history | `events` | Each successful workflow change records who acted and what changed in the same transaction. |
 | Approval | `approvals` and accepted-version pointer, planned | Approval will refer to a specific immutable version. |
-| Uploaded bytes | Private R2 objects, planned; metadata in `assets` | File access will pass through the same membership boundary. |
+| Uploaded bytes | Private R2 objects; metadata in `assets` | File access passes through the same membership boundary. |
 
-D1 stores structured records. R2 will store file bytes. React will display the server's result. The browser is never the authority for permissions, readiness or approval.
+D1 stores structured records. R2 stores file bytes. React will display the server's result. The browser is never the authority for permissions, readiness or approval.
 
 ## Find the code and its proof
 
@@ -84,3 +84,24 @@ This is a practice exercise, not a request to choose product requirements. It is
 ## Keeping this guide useful
 
 When an implementation task changes the flow, update the matching diagram and evidence row in the same commit. Replace a planned arrow only after the behaviour has passed its check. [The code graph guide](code-graph.md) explains the supplementary graph used during maintenance.
+
+## Follow a file upload
+
+```mermaid
+flowchart TD
+  A[File bytes + name + type + retry key] --> B[Check membership, streamed size and file signature]
+  B --> C[Reserve a pending assets row and quota in SQL]
+  C --> D[Write private R2 object only if its key is absent]
+  D --> E[Mark ready and record activity in one SQL batch]
+  E --> F[Attach the ready asset ID when saving a brief]
+  D -->|Storage fails| G[Keep pending row; saved brief stays unchanged]
+  E -->|SQL fails| H[Keep object and pending row]
+  G --> I[Retry with the same bytes and operation key]
+  H --> I
+  I --> D
+  F --> J[Download route checks membership before reading R2]
+```
+
+The pending row counts against capacity. A repeated successful upload returns the same file ID. Changing bytes while reusing its key returns 409. The file itself is immutable; a different file needs a new upload. A filename and signature check does not scan for malware. Use synthetic files only.
+
+Read `lib/assets.ts`, `tests/assets.test.mjs` and the real R2 test in `tests/api.test.mjs` together to follow this path.
