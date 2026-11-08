@@ -67,3 +67,11 @@ Author: GPT/Codex
 - The first API verification attempt failed because its temporary cookie jar overwrote the application cookie with Cloudflare's `__cf_bm` cookie. Preserving both cookies fixed the harness; the complete hosted check then passed. Browser cookies needed no change.
 - No public capacity-exhaustion test was run. The full capacity/contention tests use disposable local storage.
 - The public repository is `mosalah-77/onboarding-portal`. Publication retains the reviewed source trees and commit-sized changes, uses Mohamed's account metadata without an AI co-author, and preserves the AI-use notes and licences. The original local AI-authored history remains on the implementation branch.
+
+## Guided deadline reminder, 8 November 2026
+
+- Mohamed added a test that first failed because the blank deadline produced no task. After his edit to `checklist`, the reminder test passed. His second test confirms that an entered date keeps exactly one requested-date task.
+- Mohamed ran all 32 unit/fault/client checks and `npm run typecheck`; both passed. He confirmed the local browser shows “Not agreed” beside the scheduling reminder and that the downloaded handoff contains the reminder. These manual observations were reported by Mohamed.
+- The change does not alter readiness, database schema, stored brief facts, permissions or asset handling. The two new cases exercise the checklist rule; the existing approval test covers handoff facts after reopening.
+- GPT/Codex reran the 32 unit/fault/client checks and type check after formatting the edit; both passed. The Sites production build also passed. The 15 Worker API checks last passed with the prior release; they were not rerun for this checklist-only change.
+- Sites version history records the production deployment. Roll back to Sites version 2 if the new handoff fails after deployment. No data rollback is required.
