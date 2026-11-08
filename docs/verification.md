@@ -9,3 +9,10 @@ Author: GPT/Codex
 - `npm run typecheck`: passed. Sites production build: passed.
 - The API runner creates disposable local D1/R2 state and removes it after the run.
 - No UI or hosted verification yet.
+
+## Task 2, 8 November 2026
+
+- New tests first failed on unresolved automatic requests and missing request routes.
+- `npm test`: 6 rule tests and 10 real Worker API tests passed. Added request/comment retries, stable automatic request IDs, required and optional requests, owner permissions and exact-revision submission.
+- Type checking and Sites production build passed.
+- No UI or hosted verification yet.

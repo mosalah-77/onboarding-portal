@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.next/
+.wrangler/
+.sites-runtime/
+.superpowers/
+.git/
+graphify-out/
+components/ui/
+docs/
+public/
+*.lock
+package-lock.json
+*.tsbuildinfo

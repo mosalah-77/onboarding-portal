@@ -1,6 +1,6 @@
 import { PortalError } from './brief.ts';
 import { checkCsrf, requireActor, sessionView, startDemo, type Persona } from './session.ts';
-import { getProject, saveRevision } from './workflow.ts';
+import { getProject, saveRevision, submitBrief, createRequest, commentOnRequest, resolveRequest } from './workflow.ts';
 export type PortalEnv = { DB: D1Database; BUCKET: R2Bucket; DEMO_ADMIN_TOKEN?: string };
 
 export async function jsonBody(request: Request): Promise<Record<string, unknown>> {
@@ -36,8 +36,17 @@ export async function handlePortalRequest(request: Request, env: PortalEnv): Pro
       await env.DB.prepare('UPDATE sessions SET persona=? WHERE id=? AND run_id=?').bind(body.persona, actor.sessionId, actor.runId).run();
       result = await sessionView(env.DB, { ...actor, personaId: body.persona as Persona, role: body.persona === 'owner' ? 'owner' : 'client' });
     } else if (request.method === 'GET' && path.length === 2 && path[0] === 'projects') result = await getProject(env.DB, actor, path[1]);
-    else if (request.method === 'POST' && path.length === 3 && path[0] === 'projects' && path[2] === 'revisions') {
-      const b = await jsonBody(request); result = await saveRevision(env.DB, actor, path[1], b.expectedToken, b.key, b.brief);
+    else if (request.method === 'POST' && path.length === 3 && path[0] === 'projects') {
+      const b = await jsonBody(request);
+      if (path[2] === 'revisions') result = await saveRevision(env.DB, actor, path[1], b.expectedToken, b.key, b.brief);
+      else if (path[2] === 'submit') result = await submitBrief(env.DB, actor, path[1], b.revisionId, b.expectedToken, b.key);
+      else if (path[2] === 'requests') result = await createRequest(env.DB, actor, path[1], b, b.expectedToken, b.key);
+      else throw new PortalError(404, 'This action is unavailable.');
+    } else if (request.method === 'POST' && path.length === 3 && path[0] === 'requests') {
+      const b = await jsonBody(request);
+      if (path[2] === 'comments') result = await commentOnRequest(env.DB, actor, path[1], b.text, b.key);
+      else if (path[2] === 'resolve') result = await resolveRequest(env.DB, actor, path[1], b.explanation, b.expectedToken, b.key);
+      else throw new PortalError(404, 'This action is unavailable.');
     } else throw new PortalError(404, 'This item is unavailable.');
     return Response.json(result, { headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
   } catch (error) {

@@ -66,6 +66,63 @@ test('real backend: tenant boundaries, saves and retries', async t => {
     assert.equal((await a.call(`/projects/${projectId}/revisions`, { brief: valid, expectedToken: project.token, key: crypto.randomUUID() }, { headers: { 'X-CSRF-Token': '' } })).status, 403);
     assert.equal((await a.call(`/projects/${projectId}/revisions`, { brief: { ...valid, deadline: 'not a date' }, expectedToken: project.token, key: crypto.randomUUID() })).status, 422);
   });
+  await t.test('automatic requests resolve and reopen without losing comments', async () => {
+    project = (await a.call(`/projects/${projectId}`)).data;
+    const original = project.requests.find(r => r.ruleKey === 'audience.required');
+    assert.equal(original.status, 'resolved');
+    const comment = { text: 'The synthetic audience needs a clearer description.', key: crypto.randomUUID() };
+    const first = await a.call(`/requests/${original.id}/comments`, comment);
+    const retry = await a.call(`/requests/${original.id}/comments`, comment);
+    assert.equal(first.status, 200);
+    assert.equal(retry.data.operation.commentId, first.data.operation.commentId);
+    for (let i = 0; i < 2; i++) {
+      project = (await a.call(`/projects/${projectId}`)).data;
+      assert.equal((await a.call(`/projects/${projectId}/revisions`, { brief: { ...valid, audience: '' }, expectedToken: project.token, key: crypto.randomUUID() })).status, 200);
+    }
+    project = (await a.call(`/projects/${projectId}`)).data;
+    assert.equal(project.requests.filter(r => r.ruleKey === 'audience.required').length, 1);
+    assert.equal(project.requests[0].id, original.id);
+    assert.equal(project.requests[0].status, 'open');
+    assert.equal(project.requests[0].comments.length, 1);
+    assert.equal((await a.call(`/projects/${projectId}/submit`, { revisionId: project.latestRevision.id, expectedToken: project.token, key: crypto.randomUUID() })).status, 422);
+    assert.equal((await a.call(`/requests/${original.id}/comments`, { text: ' ', key: crypto.randomUUID() })).status, 422);
+    assert.equal((await a.call(`/requests/${original.id}/comments`, { text: 'x'.repeat(2001), key: crypto.randomUUID() })).status, 422);
+    assert.equal((await other.call(`/requests/${original.id}/comments`, comment)).status, 404);
+  });
+  await t.test('required requests need owner resolution; optional requests do not block', async () => {
+    const requestInput = { title: 'Confirm the page scope', explanation: 'Review the synthetic service page list.', required: true, key: crypto.randomUUID() };
+    project = (await a.call(`/projects/${projectId}`)).data;
+    assert.equal((await a.call(`/projects/${projectId}/requests`, { ...requestInput, expectedToken: project.token })).status, 403);
+    await a.call('/persona', { persona: 'owner' });
+    const created = await a.call(`/projects/${projectId}/requests`, { ...requestInput, expectedToken: project.token });
+    assert.equal(created.status, 200);
+    const retried = await a.call(`/projects/${projectId}/requests`, { ...requestInput, expectedToken: project.token });
+    assert.equal(created.data.operation.requestId, retried.data.operation.requestId);
+    const requestId = created.data.operation.requestId;
+    project = created.data.project;
+    await a.call(`/projects/${projectId}/requests`, { title: 'Optional inspiration', explanation: 'Share a reference if useful.', required: false, expectedToken: project.token, key: crypto.randomUUID() });
+    await a.call('/persona', { persona: 'client-a' });
+    project = (await a.call(`/projects/${projectId}`)).data;
+    const saved = await a.call(`/projects/${projectId}/revisions`, { brief: valid, expectedToken: project.token, key: crypto.randomUUID() });
+    project = saved.data.project;
+    assert.equal((await a.call(`/projects/${projectId}/submit`, { revisionId: project.latestRevision.id, expectedToken: project.token, key: crypto.randomUUID() })).status, 422);
+    assert.equal((await a.call(`/requests/${requestId}/resolve`, { explanation: 'Confirmed', expectedToken: project.token, key: crypto.randomUUID() })).status, 403);
+    await a.call('/persona', { persona: 'owner' });
+    assert.equal((await a.call(`/requests/${requestId}/resolve`, { explanation: '', expectedToken: project.token, key: crypto.randomUUID() })).status, 422);
+    const resolved = await a.call(`/requests/${requestId}/resolve`, { explanation: 'The entered pages cover the agreed synthetic scope.', expectedToken: project.token, key: crypto.randomUUID() });
+    assert.equal(resolved.status, 200);
+    project = resolved.data.project;
+    assert.equal(project.blockers.length, 0);
+    assert.equal(project.requests.find(r => r.id === requestId).comments.length, 1);
+    await a.call('/persona', { persona: 'client-a' });
+    const submission = { revisionId: project.latestRevision.id, expectedToken: project.token, key: crypto.randomUUID() };
+    const first = await a.call(`/projects/${projectId}/submit`, submission);
+    const second = await a.call(`/projects/${projectId}/submit`, submission);
+    assert.equal(first.status, 200);
+    assert.equal(second.data.operation.id, first.data.operation.id);
+    assert.equal(second.data.project.activity.filter(e => e.action === 'brief_submitted').length, 1);
+    assert.equal(second.data.project.requests.filter(r => !r.ruleKey).length, 2);
+  });
   await t.test('the final demo capacity slot cannot be reserved twice', async () => {
     for (let i = 0; i < 17; i++) assert.equal((await demo()).started.status, 200);
     const last = await Promise.all([demo(), demo()]);

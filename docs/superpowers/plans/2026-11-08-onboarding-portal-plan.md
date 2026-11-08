@@ -127,11 +127,11 @@ Files: request/comment schema if not already included, workflow/http modules, `t
 
 Interfaces: consume Task 1; add `submitBrief(db, actor, projectId, revisionId, expectedToken, key)`, `createRequest(db, actor, projectId, input, expectedToken, key)`, `commentOnRequest(db, actor, requestId, text, key)` and `resolveRequest(db, actor, requestId, explanation, expectedToken, key)`. Project mutations return `ProjectView`; comments return their persisted ID and text.
 
-- [ ] Write failing API tests: saving the same missing audience twice leaves one automatic request; filling it resolves that request; clearing it reopens the same ID and preserves its comments. Repeated submit/comment/manual-request calls produce one operation and one activity event each.
-- [ ] Add tests that required manual requests block submission, optional requests do not, and a client cannot create or resolve owner-controlled requests. Reject blank comments and resolutions; cap comment/explanation text at 2,000 characters and request titles at 160.
-- [ ] Run `node scripts/test-api.mjs` and verify the new behaviour fails as expected.
-- [ ] Implement stable automatic rule keys, request-specific comments, owner resolution and exact-revision submission. Use a common scoped receipt for idempotent mutations. A mutation's state changes, receipt and activity must commit together.
-- [ ] Re-run API tests and type checking, update logs and commit. Explain the request's input, storage row and retry result at the second learning checkpoint.
+- [x] Write failing API tests: saving the same missing audience twice leaves one automatic request; filling it resolves that request; clearing it reopens the same ID and preserves its comments. Repeated submit/comment/manual-request calls produce one operation and one activity event each.
+- [x] Add tests that required manual requests block submission, optional requests do not, and a client cannot create or resolve owner-controlled requests. Reject blank comments and resolutions; cap comment/explanation text at 2,000 characters and request titles at 160.
+- [x] Run `node scripts/test-api.mjs` and verify the new behaviour fails as expected.
+- [x] Implement stable automatic rule keys, request-specific comments, owner resolution and exact-revision submission. Use a common scoped receipt for idempotent mutations. A mutation's state changes, receipt and activity must commit together.
+- [x] Re-run API tests and type checking, update logs and commit. Explain the request's input, storage row and retry result at the second learning checkpoint.
 
 ## Task 3: private files and upload recovery
 

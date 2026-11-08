@@ -98,5 +98,68 @@ export async function saveRevision(db: D1Database, a: ActorContext, projectId: s
   return mutate(db, a, p, expected, key, data, 'brief_saved', { id: id(), revisionId }, { revisionId, version, fields }, (guard, operationId) => [
     db.prepare(`INSERT INTO versions (id,project_id,version,body,actor,created_at) SELECT ?,?,?,?,?,? WHERE ${guard}`).bind(revisionId, p.id, version, JSON.stringify(brief), a.personaId, Date.now(), operationId),
     db.prepare(`UPDATE projects SET latest_revision_id=?,submitted_revision_id=NULL,state='draft' WHERE id=? AND ${guard}`).bind(revisionId, p.id, operationId),
+    ...syncRuleRequests(db, p.id, brief, new Set(p.assets.filter(f => f.status === 'ready').map(f => f.id)), guard, operationId),
+  ]);
+}
+function syncRuleRequests(db: D1Database, projectId: string, brief: BriefInput, ready: Set<string>, guard: string, operationId: string) {
+  const labels = { goal: 'Business goal', audience: 'Intended audience', pages: 'Required pages', constraints: 'Constraints', assetPlan: 'Asset plan', deadline: 'Requested deadline', assetIds: 'Project assets' };
+  return [db.prepare(`UPDATE requests SET status='resolved' WHERE project_id=? AND rule_key IS NOT NULL AND ${guard}`).bind(projectId, operationId),
+    ...readiness(brief, ready).map(b => db.prepare(`INSERT INTO requests (id,project_id,rule_key,title,explanation,required,status,actor,created_at)
+      SELECT ?,?,?,?,?,1,'open','system',? WHERE ${guard}
+      ON CONFLICT(project_id,rule_key) DO UPDATE SET status='open',explanation=excluded.explanation`).bind(id(), projectId, b.key, labels[b.field], b.message, Date.now(), operationId)),
+  ];
+}
+export function requireOwner(a: ActorContext) {
+  if (a.role !== 'owner') throw new PortalError(403, 'Only the demo agency owner can do that.');
+}
+export async function submitBrief(db: D1Database, a: ActorContext, projectId: string, revisionId: unknown, expected: unknown, key: unknown) {
+  const input = { action: 'submit', revisionId, expected };
+  const replay = await existingOperation(db, a, projectId, key, input); if (replay) return replay;
+  const p = await getProject(db, a, projectId);
+  if (p.state !== 'draft' || p.latestRevision.id !== revisionId) throw new PortalError(409, 'Submit the current draft revision.');
+  if (p.blockers.length) throw new PortalError(422, 'Complete the required inputs before submitting.', p.blockers);
+  return mutate(db, a, p, expected, key, input, 'brief_submitted', { id: id(), revisionId: p.latestRevision.id }, { revisionId, version: p.latestRevision.version }, (guard, op) => [
+    db.prepare(`UPDATE projects SET state='submitted',submitted_revision_id=? WHERE id=? AND ${guard}`).bind(revisionId, p.id, op),
+  ]);
+}
+export async function createRequest(db: D1Database, a: ActorContext, projectId: string, input: Record<string, unknown>, expected: unknown, key: unknown) {
+  const p = await getProject(db, a, projectId); requireOwner(a);
+  const title = textValue(input.title, 'Request title', 160, true), explanation = textValue(input.explanation, 'Request explanation', 2000, true);
+  if (typeof input.required !== 'boolean') throw new PortalError(422, 'Choose whether this request is required.');
+  const data = { action: 'request', title, explanation, required: input.required, expected };
+  const replay = await existingOperation(db, a, projectId, key, data); if (replay) return replay;
+  if (p.state === 'approved') throw new PortalError(409, 'Reopen the approved brief before adding a request.');
+  if (p.requests.filter(r => !r.ruleKey).length >= 50) throw new PortalError(429, 'This demo project has reached its request limit.');
+  const requestId = id();
+  return mutate(db, a, p, expected, key, data, 'request_created', { id: id(), requestId }, { requestId, title, required: input.required }, (guard, op) => [
+    db.prepare(`INSERT INTO requests (id,project_id,title,explanation,required,status,actor,created_at) SELECT ?,?,?,?,?,'open',?,? WHERE ${guard}`).bind(requestId, projectId, title, explanation, input.required ? 1 : 0, a.personaId, Date.now(), op),
+  ]);
+}
+async function getRequest(db: D1Database, a: ActorContext, requestId: string): Promise<RequestRow> {
+  const row = await db.prepare(`SELECT q.* FROM requests q JOIN projects p ON p.id=q.project_id JOIN memberships m ON m.workspace_id=p.workspace_id
+    WHERE q.id=? AND m.run_id=? AND m.persona=?`).bind(requestId, a.runId, a.personaId).first<RequestRow>();
+  if (!row) throw new PortalError(404, 'This request is unavailable.');
+  return row;
+}
+export async function commentOnRequest(db: D1Database, a: ActorContext, requestId: string, input: unknown, key: unknown) {
+  const q = await getRequest(db, a, requestId), text = textValue(input, 'Comment', 2000, true);
+  const data = { action: 'comment', requestId, text };
+  const replay = await existingOperation(db, a, q.project_id, key, data); if (replay) return replay;
+  const p = await getProject(db, a, q.project_id), commentId = id();
+  return mutate(db, a, p, p.token, key, data, 'comment_added', { id: id(), commentId }, { requestId, title: q.title }, (guard, op) => [
+    db.prepare(`INSERT INTO comments (id,request_id,body,actor,created_at) SELECT ?,?,?,?,? WHERE ${guard}`).bind(commentId, requestId, text, a.personaId, Date.now(), op),
+  ]);
+}
+export async function resolveRequest(db: D1Database, a: ActorContext, requestId: string, input: unknown, expected: unknown, key: unknown) {
+  const q = await getRequest(db, a, requestId); requireOwner(a);
+  const explanation = textValue(input, 'Resolution explanation', 2000, true);
+  const data = { action: 'resolve', requestId, explanation, expected };
+  const replay = await existingOperation(db, a, q.project_id, key, data); if (replay) return replay;
+  if (q.rule_key) throw new PortalError(422, 'Correct the brief field to resolve an automatic request.');
+  if (q.status === 'resolved') throw new PortalError(409, 'This request is already resolved.');
+  const p = await getProject(db, a, q.project_id), commentId = id();
+  return mutate(db, a, p, expected, key, data, 'request_resolved', { id: id(), requestId, commentId }, { requestId, title: q.title }, (guard, op) => [
+    db.prepare(`UPDATE requests SET status='resolved' WHERE id=? AND ${guard}`).bind(requestId, op),
+    db.prepare(`INSERT INTO comments (id,request_id,body,actor,created_at) SELECT ?,?,?,?,? WHERE ${guard}`).bind(commentId, requestId, explanation, a.personaId, Date.now(), op),
   ]);
 }
