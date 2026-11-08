@@ -52,7 +52,7 @@ npm run build
 npm test
 ```
 
-The current suite contains 25 unit, storage-fault and client checks plus 15 real Worker API checks. The API runner applies all migrations to disposable D1/R2 state. It checks access boundaries, invalid inputs, conflicting saves/approvals, safe retries, upload failure recovery, reset and cleanup. See [observed results and limits](docs/verification.md).
+The current suite contains 30 unit, storage-fault and client checks plus 15 real Worker API checks. The API runner applies all migrations to disposable D1/R2 state. It checks access boundaries, invalid inputs, conflicting saves/approvals, safe retries, upload failure recovery, reset and cleanup. See [observed results and limits](docs/verification.md).
 
 ## Follow the data
 
@@ -72,6 +72,6 @@ Start with [the learner's walkthrough](docs/how-it-works.md), then [the code gra
 
 The public demo stores at most 20 runs, including expired runs until cleanup; it has no per-IP rate limiter. Cleanup is manual. An interrupted upload can leave a durable write claim that requires operator investigation; capacity stays reserved until it is safely repaired. Unsaved form edits live in memory, not durable browser storage. Uploaded files receive size, type and signature checks, not malware scanning.
 
-Mohamed supplied the scope, chose the stack and visual direction, and made the predictions recorded in [learning](docs/learning.md). GPT/Codex generated most implementation, tests and documentation with Mohamed's direction. Independent AI agents review the design and code. Mohamed's own documented code variation is still pending. GitHub publication uses his account without an AI contributor or co-author entry; that does not mean every line was written unaided.
+Mohamed supplied the scope, chose the stack and visual direction, and made the predictions recorded in [learning](docs/learning.md). GPT/Codex generated most implementation, tests and documentation with Mohamed's direction. Independent AI agents reviewed the design and code. Mohamed's own documented code variation is still pending. GitHub publication uses his account without an AI contributor or co-author entry; that does not mean every line was written unaided.
 
 Third-party notices remain in [ATTRIBUTION.md](ATTRIBUTION.md) and the referenced licence files. No separate licence has yet been selected for the original project code. No Halvern client material or Quin's code was used.
