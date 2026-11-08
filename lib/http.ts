@@ -1,6 +1,7 @@
 import { PortalError } from './brief.ts';
 import { checkCsrf, requireActor, sessionView, startDemo, type Persona } from './session.ts';
 import { getProject, saveRevision, submitBrief, createRequest, commentOnRequest, resolveRequest } from './workflow.ts';
+import { uploadAsset, downloadAsset } from './assets.ts';
 export type PortalEnv = { DB: D1Database; BUCKET: R2Bucket; DEMO_ADMIN_TOKEN?: string };
 
 export async function jsonBody(request: Request): Promise<Record<string, unknown>> {
@@ -28,6 +29,7 @@ export async function handlePortalRequest(request: Request, env: PortalEnv): Pro
     if (request.method === 'POST' && path.join('/') === 'demo') { await jsonBody(request); return await startDemo(env.DB, request); }
     const actor = await requireActor(request, env.DB);
     if (request.method === 'POST') checkCsrf(request, actor);
+    if (request.method === 'GET' && path.length === 2 && path[0] === 'assets') return await downloadAsset(env, actor, path[1]);
     let result: unknown;
     if (request.method === 'GET' && path.join('/') === 'session') result = await sessionView(env.DB, actor);
     else if (request.method === 'POST' && path.join('/') === 'persona') {
@@ -35,6 +37,12 @@ export async function handlePortalRequest(request: Request, env: PortalEnv): Pro
       if (!['client-a', 'client-b', 'owner'].includes(body.persona as string)) throw new PortalError(422, 'Choose one of this demo’s personas.');
       await env.DB.prepare('UPDATE sessions SET persona=? WHERE id=? AND run_id=?').bind(body.persona, actor.sessionId, actor.runId).run();
       result = await sessionView(env.DB, { ...actor, personaId: body.persona as Persona, role: body.persona === 'owner' ? 'owner' : 'client' });
+    } else if (request.method === 'POST' && path.length === 3 && path[0] === 'projects' && path[2] === 'assets') {
+      if (!request.body) throw new PortalError(422, 'Choose a file to upload.');
+      let filename: string;
+      try { filename = decodeURIComponent(request.headers.get('x-file-name') ?? ''); }
+      catch { throw new PortalError(422, 'The filename could not be read.'); }
+      result = await uploadAsset(env, actor, path[1], request.headers.get('x-operation-key'), filename, request.headers.get('content-type') ?? '', request.body);
     } else if (request.method === 'GET' && path.length === 2 && path[0] === 'projects') result = await getProject(env.DB, actor, path[1]);
     else if (request.method === 'POST' && path.length === 3 && path[0] === 'projects') {
       const b = await jsonBody(request);

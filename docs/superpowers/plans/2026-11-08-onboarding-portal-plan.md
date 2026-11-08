@@ -139,13 +139,13 @@ Files: asset/quota schema, `lib/assets.ts`, asset routes, fixture files, `tests/
 
 Interfaces: `uploadAsset(env, actor, projectId, operationKey, filename, contentType, body): Promise<AssetView>` and `downloadAsset(env, actor, assetId): Promise<Response>`. `AssetView` contains ID/name/size/status, never a public storage key. Type `body` as `ReadableStream<Uint8Array>` and enforce its byte limit while reading.
 
-- [ ] Write failing tests for unsupported bytes/extensions, false MIME labels, 2 MiB plus one byte, a Client A download of B's asset, a second-run download and a missing object behind otherwise-ready metadata.
-- [ ] Add fault tests for storage failure and SQL finalisation failure after storage succeeds; assert the saved brief is unchanged and a retry yields one asset and one reservation. Replay with different bytes under the same key must fail.
-- [ ] Add parallel-quota tests: pending reservations count; only one upload wins the last slot/remaining byte budget. Scope five-file limits to a project and aggregate byte limits to run/global storage.
-- [ ] Run `node --experimental-strip-types --test tests/assets.test.mjs` and the API suite; inspect the expected failures.
-- [ ] Implement reservation, validated bytes, conditional immutable object write and ready finalisation. Keep pending objects discoverable by their operation identity for retry. Retain approved asset bytes unchanged.
-- [ ] Add a harmless generated PNG fixture for each client's own project, with no copied brand asset. Verify private downloads use attachment and nosniff headers and filenames cannot inject headers.
-- [ ] Re-run fault and real API tests, type checking and build. Ask Mohamed to predict the cross-client file request before that learning test; record the result and commit.
+- [x] Write failing tests for unsupported bytes/extensions, false MIME labels, 2 MiB plus one byte, a Client A download of B's asset, a second-run download and a missing object behind otherwise-ready metadata.
+- [x] Add fault tests for storage failure and SQL finalisation failure after storage succeeds; assert the saved brief is unchanged and a retry yields one asset and one reservation. Replay with different bytes under the same key must fail.
+- [x] Add parallel-quota tests: pending reservations count; only one upload wins the last slot/remaining byte budget. Scope five-file limits to a project and aggregate byte limits to run/global storage.
+- [x] Run `node --experimental-strip-types --test tests/assets.test.mjs` and the API suite; inspect the expected failures.
+- [x] Implement reservation, validated bytes, conditional immutable object write and ready finalisation. Keep pending objects discoverable by their operation identity for retry. Retain approved asset bytes unchanged.
+- [x] Add a harmless generated PNG fixture for each client's own project, with no copied brand asset. Verify private downloads use attachment and nosniff headers and filenames cannot inject headers.
+- [x] Re-run fault and real API tests, type checking and build. Ask Mohamed to predict the cross-client file request before that learning test; record the result and commit.
 
 ## Task 4: approve a revision and derive its handoff
 

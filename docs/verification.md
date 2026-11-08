@@ -16,3 +16,10 @@ Author: GPT/Codex
 - `npm test`: 6 rule tests and 10 real Worker API tests passed. Added request/comment retries, stable automatic request IDs, required and optional requests, owner permissions and exact-revision submission.
 - Type checking and Sites production build passed.
 - No UI or hosted verification yet.
+
+## Task 3, 8 November 2026
+
+- File tests first failed on the missing upload module; the real upload route returned 415 instead of success.
+- Full suite: 12 unit/fault tests and 11 real Worker API tests passed. Type checking and Sites production build passed.
+- Checks cover incorrect file labels/bytes, control characters, streamed size limits, storage and SQL failure recovery, pending quota reservations, competing quota claims, private downloads, cross-client/cross-run denial and attachment scope.
+- Mohamed predicted that an exact Client B file URL would still deny Client A. The real API returned 404, as expected.
