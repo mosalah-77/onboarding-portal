@@ -1,6 +1,6 @@
 # How a brief moves through the portal
 
-Author: GPT/Codex. Updated 8 November 2026, through the implemented browser workflow and demo lifecycle.
+Author: GPT/Codex. Updated 8 November 2026, including Mohamed's guided deadline-reminder change.
 
 This is Mohamed's project guide. Start with one action and follow its value into storage. The diagrams describe observable code and design decisions. The browser workflow and backend are implemented. Deployment verification is recorded separately.
 
@@ -66,6 +66,7 @@ D1 stores structured records. R2 stores file bytes. React displays the server's 
 | Question | Read this code | Check this evidence |
 | --- | --- | --- |
 | What makes a brief ready? | [`lib/brief.ts`](../lib/brief.ts), `readiness` | [`tests/brief.test.mjs`](../tests/brief.test.mjs): optional blanks, missing audience, duplicate pages, invalid date |
+| What happens when no deadline is entered? | `checklist` in [`lib/brief.ts`](../lib/brief.ts) | Brief tests: blank date adds a scheduling reminder; an entered date keeps exactly one requested-date task |
 | Who is making the request? | [`lib/session.ts`](../lib/session.ts), `requireActor` | [`tests/api.test.mjs`](../tests/api.test.mjs): another visitor cannot read the project |
 | Why can't A open B's brief? | [`lib/workflow.ts`](../lib/workflow.ts), `projectRow` | API test: Client A cannot access Client B |
 | Why doesn't a retry create two versions? | `existingOperation` and `mutate` in workflow | API test: lost-response retry returns the same revision |
@@ -79,7 +80,7 @@ The checked behaviour is recorded in [verification](verification.md). A passing 
 
 Before changing the audience rule, locate `readiness`. Explain which input it receives, what it returns, and why it does not write to SQL itself. Then read the test for the missing audience and predict the result before running `npm run test:unit`.
 
-This is a practice exercise, not a request to choose product requirements. It is fine to follow the example and ask for an explanation first. Your own small code variation is still pending; [the learning record](learning.md) records only work you actually did.
+This is a practice exercise, not a request to choose product requirements. It is fine to follow the example and ask for an explanation first. Mohamed completed the guided deadline-reminder variation described below; [the learning record](learning.md) distinguishes his edits and checks from AI assistance.
 
 ## Keeping this guide useful
 
@@ -121,7 +122,26 @@ flowchart LR
 
 The current draft and the accepted version are separate pointers. A new draft does not move the accepted pointer. Only a successful owner approval does. The transaction checks the project token before writing any approval, receipt or event, so a concurrent save or required request cannot slip into an already-checked approval.
 
-The checklist is derived from the accepted facts: each page produces a task linked to that page entry. A blank deadline stays “Not agreed”. A requested date is still a request, even in the handoff. Read `approveBrief`, `reopenBrief` and `checklist` alongside `tests/approval.test.mjs`.
+The checklist is derived from the accepted facts: each page produces a task linked to that page entry. A blank deadline stays “Not agreed” and adds a task to agree a delivery date before scheduling work. A requested date is still a request, even in the handoff. Read `approveBrief`, `reopenBrief` and `checklist` alongside `tests/approval.test.mjs`.
+
+## How the deadline becomes a checklist task
+
+```mermaid
+flowchart TD
+  A[Read the accepted brief version] --> B{Does it contain a deadline?}
+  B -->|Yes| C[Add a task to review the requested date]
+  B -->|No| D[Add a task to agree a date before scheduling]
+  C --> E[Return the derived handoff tasks]
+  D --> E
+  E --> F[Display the checklist]
+  E --> G[Include tasks in the downloaded handoff]
+```
+
+`checklist(accepted)` receives the accepted brief and returns an array of task objects. Each has an ID, visible text and a source field for its fact link. This function writes nothing to storage. A blank deadline remains `null` in the saved brief, displays as “Not agreed”, and does not block submission or approval. The generated reminder never chooses a date.
+
+`lib/workflow.ts` calls the function when reading a project; `components/handoff.tsx` uses the returned tasks for both the screen and the text download. These are derived suggestions, so changing this rule also updates the checklist shown for an existing accepted brief. The saved facts and approval remain unchanged.
+
+`tests/brief.test.mjs` imports `checklist` from `lib/brief.ts`. The JavaScript test describes the expected output; the TypeScript file implements it. Mohamed first ran a failing blank-date test, edited the empty branch of the condition, and reran it successfully. A second test checks that an entered date still produces exactly one deadline task.
 
 ## Follow a failed save in the browser
 

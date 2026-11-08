@@ -63,6 +63,8 @@ export function checklist(accepted: BriefInput) {
     { id: 'audience', text: 'Check the page content against the intended audience', source: 'audience' },
     { id: 'accessibility', text: 'Review responsive layouts and accessibility for the accepted pages', source: 'pages' },
     ...(accepted.constraints ? [{ id: 'constraints', text: 'Review the stated constraints before implementation', source: 'constraints' }] : []),
-    ...(accepted.deadline ? [{ id: 'deadline', text: `Review the requested date: ${accepted.deadline}`, source: 'deadline' }] : []),
+    ...(accepted.deadline
+      ? [{ id: 'deadline', text: `Review the requested date: ${accepted.deadline}`, source: 'deadline' }]
+      : [{ id: 'deadline', text: 'Agree a delivery date before scheduling work.', source: 'deadline' }]),
   ];
 }

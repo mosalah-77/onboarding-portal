@@ -35,3 +35,27 @@ test('validation identifies the field a client must correct', () => {
   assert.throws(() => validateBrief({ ...ready, pages: ['Home', 'home'] }), e => e.status === 422 && e.details?.[0]?.field === 'pages');
   assert.throws(() => validateBrief({ ...ready, deadline: '2026-02-30' }), e => e.status === 422 && e.details?.[0]?.field === 'deadline');
 });
+
+test('a brief without a deadline gets a scheduling reminder', () => {
+  const tasks = checklist(ready);
+  const deadlineTask = tasks.find(task => task.id === 'deadline');
+
+  assert.deepEqual(deadlineTask, {
+    id: 'deadline',
+    text: 'Agree a delivery date before scheduling work.',
+    source: 'deadline',
+  });
+});
+
+test('a brief with a deadline keeps its requested-date task', () => {
+  const datedBrief = { ...ready, deadline: '2026-12-01' };
+
+  const deadlineTasks = checklist(datedBrief)
+    .filter(task => task.id === 'deadline');
+
+  assert.deepEqual(deadlineTasks, [{
+    id: 'deadline',
+    text: 'Review the requested date: 2026-12-01',
+    source: 'deadline',
+  }]);
+});
