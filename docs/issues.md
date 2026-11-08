@@ -3,7 +3,7 @@
 Author: GPT/Codex. Updated 8 November 2026.
 
 - Open: Mohamed's own documented code variation and explanation.
-- Open: hosted verification and source publication.
+- Release: the public deployment and hosted workflow/access checks passed. Source publication uses the existing GitHub SSH identity; see the repository and verification record.
 - Resolved: both Important final-review findings; regression tests first failed, then passed with the full 45-check suite. See verification.md.
 - Deferred minor: retry keys supplied directly to the API with surrounding whitespace do not replay consistently. Browser-generated keys are unaffected.
 - Verified: a delayed GET released after leaving its page did not replace the new project or its unsaved goal. Navigation controls were disabled during the held load; the generation guard itself is also inspected in source.

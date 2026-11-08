@@ -2,7 +2,9 @@
 
 An independent portfolio prototype by Mohamed Elmorshedy, built with AI assistance. Two fictional clients and an agency owner turn an incomplete website brief into an approved version and a useful handoff. This is not commissioned work or evidence of paying clients, adoption or time saved.
 
-Publication is in progress. The deployment result and hosted checks will be recorded in [verification](docs/verification.md).
+[Open the public demo](https://elmorshedy-onboarding-demo.m-elmorshedy635.chatgpt.site) · [Read the source](https://github.com/mosalah-77/onboarding-portal) · [How it works](https://elmorshedy-onboarding-demo.m-elmorshedy635.chatgpt.site/how-it-works)
+
+The hosted workflow and access-boundary checks passed on 8 November 2026; see [verification](docs/verification.md).
 
 ## Try the workflow
 
