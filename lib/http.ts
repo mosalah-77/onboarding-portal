@@ -24,6 +24,19 @@ export async function jsonBody(request: Request): Promise<Record<string, unknown
     return body;
   } catch { throw new PortalError(422, 'The request could not be read. Check the values and retry.'); }
 }
+// A request can be rejected (401, 403) before its body is read. Read and drop what is left, without buffering it,
+// so the connection is clean for the next request; local Wrangler otherwise fails that next request now and then.
+async function discardBody(request: Request) {
+  if (!request.body || request.body.locked) return;
+  const reader = request.body.getReader(); let size = 0;
+  try {
+    while (true) {
+      const { value, done } = await reader.read(); if (done) return;
+      size += value.byteLength;
+      if (size > 3 * 1024 * 1024) { await reader.cancel(); return; } // larger than any upload this API accepts
+    }
+  } catch { /* the client went away; nothing left to drain */ }
+}
 export async function handlePortalRequest(request: Request, env: PortalEnv): Promise<Response> {
   try {
     const path = new URL(request.url).pathname.slice('/api/portal'.length).split('/').filter(Boolean);
@@ -71,6 +84,7 @@ export async function handlePortalRequest(request: Request, env: PortalEnv): Pro
     } else throw new PortalError(404, 'This item is unavailable.');
     return Response.json(result, { headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
   } catch (error) {
+    await discardBody(request);
     if (error instanceof PortalError) return Response.json({ error: error.message, details: error.details }, { status: error.status, headers: { 'Cache-Control': 'no-store' } });
     console.error('Portal operation failed', error instanceof Error ? error.message : 'unknown error');
     return Response.json({ error: 'The change could not be completed. Your input is still here; retry shortly.' }, { status: 503, headers: { 'Cache-Control': 'no-store' } });
