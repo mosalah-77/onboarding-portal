@@ -65,6 +65,7 @@ export async function existingOperation(db: D1Database, a: ActorContext, project
 }
 export async function mutate(db: D1Database, a: ActorContext, p: ProjectView, expected: unknown, key: unknown, input: unknown,
   action: string, operation: Operation, details: Record<string, unknown>, steps: (guard: string, operationId: string) => D1PreparedStatement[]) {
+  key = textValue(key, 'Retry key', 100, true); // store the same trimmed key that existingOperation looks up
   const prior = await existingOperation(db, a, p.id, key, input);
   if (prior) return prior;
   if (!Number.isInteger(expected) || expected !== p.token) throw new PortalError(409, 'This brief changed. Your edits are still here; load the latest version before saving.');

@@ -54,10 +54,10 @@ test('real backend: tenant boundaries, saves and retries', async t => {
     assert.equal(project.revisions.length, 3);
   });
   await t.test('lost-response retries return the same saved revision', async () => {
-    const input = { brief: valid, expectedToken: project.token, key: crypto.randomUUID() };
+    const input = { brief: valid, expectedToken: project.token, key: ` ${crypto.randomUUID()} ` };
     const first = await a.call(`/projects/${projectId}/revisions`, input);
     const retry = await a.call(`/projects/${projectId}/revisions`, input);
-    assert.equal(retry.status, 200);
+    assert.equal(retry.status, 200, 'a key with stray whitespace still replays');
     assert.equal(first.data.operation.revisionId, retry.data.operation.revisionId);
     assert.equal(retry.data.project.revisions.length, 4);
     assert.equal((await a.call(`/projects/${projectId}/revisions`, { ...input, brief: { ...valid, goal: 'Different' } })).status, 409);
