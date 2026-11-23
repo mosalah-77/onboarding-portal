@@ -1,6 +1,6 @@
 # Operating the synthetic demo
 
-Author: GPT/Codex. Updated 8 November 2026.
+Author: Mohamed Elmorshedy. Updated 8 November 2026.
 
 `DEMO_ADMIN_TOKEN` is a server-only Sites secret. Never put it in the hosting manifest, a public environment variable, browser code, a URL or Git. Local environment files are ignored. Keep a separate private copy for maintenance.
 

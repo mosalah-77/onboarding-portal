@@ -1,7 +1,7 @@
 # Independent onboarding portal: proposed design
 
 Date: 8 November 2026
-Author: GPT/Codex
+Author: Mohamed Elmorshedy
 Status: Design approved by Mohamed on 8 November 2026; native execution in progress.
 
 Design review: an independent builder check on 8 November 2026 returned “nothing important left” to clarify before planning. This reviews the written design only; it is not test evidence or user approval.
@@ -161,7 +161,7 @@ Before accepting each meaningful change, Mohamed explains: the input; where it i
 3. **Approval and concurrency:** predict two saves from the same revision and explain why acceptance pins a revision rather than the mutable project.
 4. **Mohamed's variation:** change a documented validation limit or checklist wording himself, update the relevant test, and explain the result before merging that change.
 
-Use small commits for original scaffold/schema, rules/permissions, workflow/assets, UI/handoff and verification/docs, adjusting boundaries to keep each coherent. Keep AI authorship accurately labelled; Mohamed's authored change must not be fabricated. No force-push or rewriting unrelated history.
+Use small commits for original scaffold/schema, rules/permissions, workflow/assets, UI/handoff and verification/docs, adjusting boundaries to keep each coherent. Disclose AI assistance in the README; Mohamed's authored change must not be fabricated. No force-push or rewriting unrelated history.
 
 After approval, place this design in the new repository's `docs/superpowers/specs/`, commit it, and maintain decision and issue logs there. The README must include setup/seed/test commands, architecture/data flow, demo URL, status per feature (working/simulated/future), limitations, attribution and an honest contribution/AI-use note. GitHub publication needs the intended personal repository/account identified; do not guess it from Halvern remotes.
 

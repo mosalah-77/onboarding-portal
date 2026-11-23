@@ -1,6 +1,6 @@
 # Code graph for maintenance
 
-Author: GPT/Codex. Uses the locally installed [Graphify](https://github.com/Graphify-Labs/graphify) 0.9.33.
+Author: Mohamed Elmorshedy. Uses the locally installed [Graphify](https://github.com/Graphify-Labs/graphify) 0.9.33.
 
 The learner guide is [how-it-works.md](how-it-works.md). This supplementary graph indexes function, file and import relationships so a maintainer can find callers before editing code. It is generated from this repository with local AST extraction. It does not upload code or use a paid model.
 

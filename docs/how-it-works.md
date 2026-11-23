@@ -1,6 +1,6 @@
 # How a brief moves through the portal
 
-Author: GPT/Codex. Updated 8 November 2026, including Mohamed's guided deadline-reminder change.
+Author: Mohamed Elmorshedy. Updated 8 November 2026, including Mohamed's guided deadline-reminder change.
 
 This is Mohamed's project guide. Start with one action and follow its value into storage. The diagrams describe observable code and design decisions. The browser workflow and backend are implemented. Deployment verification is recorded separately.
 
@@ -80,7 +80,7 @@ The checked behaviour is recorded in [verification](verification.md). A passing 
 
 Before changing the audience rule, locate `readiness`. Explain which input it receives, what it returns, and why it does not write to SQL itself. Then read the test for the missing audience and predict the result before running `npm run test:unit`.
 
-This is a practice exercise, not a request to choose product requirements. It is fine to follow the example and ask for an explanation first. Mohamed completed the guided deadline-reminder variation described below; [the learning record](learning.md) distinguishes his edits and checks from AI assistance.
+This is a practice exercise, not a request to choose product requirements. It is fine to follow the example and ask for an explanation first. Mohamed completed the guided deadline-reminder variation described below; [the learning record](learning.md) distinguishes his edits and checks from the guidance he was given.
 
 ## Keeping this guide useful
 

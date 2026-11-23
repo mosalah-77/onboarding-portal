@@ -8,7 +8,7 @@ web
 
 ## Stack
 
-Mohamed selected Sites, React/TypeScript, D1 and private R2 storage.
+Sites hosting, React/TypeScript, D1 and private R2 storage.
 
 ## Users
 

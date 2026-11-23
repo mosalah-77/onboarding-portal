@@ -6,7 +6,7 @@ Mode: Operate. Target: `app/page.tsx`, `components/portal.tsx`, `app/globals.css
 
 THESIS: Keep the brief and its readiness visible together. A visitor can find the missing audience, save it and submit the resulting version from the same screen.
 
-OWN-WORLD: The approved direction uses a pale warm work surface, dark green shell and ink text. Self-hosted Newsreader gives headings an editorial voice; system sans serves form labels and longer requests. Mohamed approved the font addition after asking for more personality. Restrained amber, red and green distinguish waiting, failure and approval. Agency and client use the same controls.
+OWN-WORLD: The approved direction uses a pale warm work surface, dark green shell and ink text. Self-hosted Newsreader gives headings an editorial voice; system sans serves form labels and longer requests. The serif was added to give the interface more personality. Restrained amber, red and green distinguish waiting, failure and approval. Agency and client use the same controls.
 
 STORY: A visitor starts an explicitly synthetic run, supplies missing facts, switches to the owner and approves an exact version. The accepted handoff remains visible after reopening.
 

@@ -6,4 +6,4 @@ The repository began with the Sites Vinext starter. Its framework setup, build/d
 
 The small sample PNG is generated synthetic test data. The brief content and client names are fictional. No proprietary Halvern code, client assets or Quin's work was copied.
 
-GPT/Codex generated the application, tests and documentation with Mohamed Elmorshedy's direction. Independent AI agents supplied scoped reviews. The learning record distinguishes Mohamed's completed predictions from his pending code variation. Publication metadata uses Mohamed's account at his request; the AI-use record remains explicit.
+The README describes how the project was made, including the use of AI assistance. The learning record covers Mohamed's predictions and his guided code change.

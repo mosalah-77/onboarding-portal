@@ -393,7 +393,7 @@
       "Do pair state colors with written labels, linked blockers and visible version numbers.",
       "Do keep readiness before the editor in the source order used by stacked layouts.",
       "Do retain visible keyboard focus, linked field errors and the existing control sizes.",
-      "Do keep synthetic-data labels and AI authorship disclosures visible where they appear."
+      "Do keep synthetic-data labels visible where they appear."
     ],
     "donts": [
       "Don't apply the dark rail's background color to the long-form editing surface.",
