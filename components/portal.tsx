@@ -5,6 +5,7 @@ import type { AssetView, ProjectView } from '@/lib/workflow';
 import { BriefEditor } from './brief-editor';
 import { RequestsPanel } from './requests-panel';
 import { BriefFacts, Handoff } from './handoff';
+import { ThemeToggle } from './theme-toggle';
 
 type Session = { persona: string; personaName: string; role: string; csrf: string; expiresAt: number; projects: { id: string; name: string; state: string; blockers: number }[] };
 type Job = { path: string; body: Record<string, unknown>; message: string; kind?: 'save' | 'upload'; file?: File; onSuccess?: () => void };
@@ -157,7 +158,7 @@ export function Portal() {
   const owner = session?.role === 'owner';
   return <>
     <a className="skip-link" href="#main">Skip to workspace</a>
-    <header className="topbar"><span className="brand">Client Brief</span><span className="demo-label">Portfolio demo · Synthetic data</span><a href="/how-it-works" target="_blank" rel="noreferrer">How it works</a></header>
+    <header className="topbar"><span className="brand">Client Brief</span><span className="demo-label">Portfolio demo · Synthetic data</span><a href="/how-it-works" target="_blank" rel="noreferrer">How it works</a><ThemeToggle /></header>
     <div className="app-shell">
       {session ? <aside className="sidebar" aria-label="Demo navigation">
         <h2 id="persona-label">Viewing as</h2><div className="persona-switch" role="group" aria-labelledby="persona-label">{personas.map(p => <button key={p} aria-pressed={session.persona === p} disabled={pending || loading} onClick={() => { if (p !== session.persona) navigate(() => void switchPersona(p)); }}>{names[p]}</button>)}</div>
@@ -199,6 +200,6 @@ export function Portal() {
       </main>
     </div>
     <dialog ref={dialog} onCancel={() => setConfirm(null)} aria-labelledby="discard-title"><h2 id="discard-title">{confirm?.title ?? 'Discard unsaved input?'}</h2><p>{confirm?.text}</p><div className="button-row"><button autoFocus onClick={() => setConfirm(null)}>{confirm?.title ? 'Cancel' : 'Keep editing'}</button><button className="danger" onClick={() => { const action = confirm?.action; setConfirm(null); action?.(); }}>{confirm?.confirm ?? 'Discard and continue'}</button></div></dialog>
-    <footer className="site-footer">Independent portfolio work by Mohamed Elmorshedy, built with AI assistance. No client, adoption or time-saving claims.</footer>
+    <footer className="site-footer">Independent portfolio work by Mohamed Elmorshedy. No client, adoption or time-saving claims.</footer>
   </>;
 }
