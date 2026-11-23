@@ -4,14 +4,14 @@ An independent portfolio prototype by Mohamed Elmorshedy, built with AI assistan
 
 [Open the public demo](https://elmorshedy-onboarding-demo.m-elmorshedy635.chatgpt.site) · [Browse the core logic](https://github.com/mosalah-77/onboarding-portal/tree/main/lib) · [How it works](https://elmorshedy-onboarding-demo.m-elmorshedy635.chatgpt.site/how-it-works)
 
-The hosted workflow and access-boundary checks passed on 8 November 2026; see [verification](docs/verification.md).
+The hosted workflow and access-boundary checks passed on 8 November 2026; see [verification](docs/verification.md). The interface changes of 23 November 2026 were checked locally in Chromium and WebKit and are not deployed yet.
 
 ## Try the workflow
 
-1. Start a demo as Client A. The audience is missing, so submission is blocked.
+1. Start a demo as Client A. The **Next step** card says one thing is left: the audience is missing, so submission is blocked.
 2. Enter an audience and save. Constraints and deadline can stay blank.
-3. Submit the saved version, switch to Agency owner and approve that exact version.
-4. Read the accepted facts and suggested delivery checklist. Reopen with a reason to make a new revision; the previous approval stays in history.
+3. Submit the saved version. Choose **Continue as agency owner** on the card (or use **Viewing as** in the side rail) and approve that exact version.
+4. Read the approved facts and suggested delivery checklist. Reopen with a reason to make a new revision; the previous approval stays in history.
 5. As the owner, copy Client B's project URL. Switch to Client A and open it: the server denies access.
 
 Persona switching simulates roles within one visitor's isolated run. It is not production customer authentication. Use synthetic text and files only. Runs expire after 24 hours.
@@ -23,7 +23,8 @@ Persona switching simulates roles within one visitor's isolated run. It is not p
 - A scheduling reminder when the accepted brief has no deadline. The date remains optional; an entered date produces a task to review it.
 - Private R2 uploads with membership checks on every download, bounded storage and recoverable retries.
 - Server-side permission, concurrency, validation and idempotency checks. The browser keeps unsaved inputs after failed saves and warns before navigation.
-- Responsive layouts, keyboard focus, linked field errors and an in-app explanation at `/how-it-works`.
+- A next-step card that names what is left and who acts, a three-way role switcher, and a brief form grouped under plain headings.
+- Responsive layouts, keyboard focus, linked field errors and an in-app explanation at `/how-it-works`. Motion is short and CSS-only, and is switched off for visitors who ask for reduced motion.
 - Operator-triggered expired-run cleanup. It deletes stored files before releasing their SQL quota.
 
 There are no real invitations, email sending, invoices, contracts, payments or runtime AI calls. The checklist is a deterministic suggestion for human review.
@@ -75,6 +76,6 @@ Start with [the learner's walkthrough](docs/how-it-works.md), then [the code gra
 
 The public demo stores at most 20 runs, including expired runs until cleanup; it has no per-IP rate limiter. Cleanup is manual. An interrupted upload can leave a durable write claim that requires operator investigation; capacity stays reserved until it is safely repaired. Unsaved form edits live in memory, not durable browser storage. Uploaded files receive size, type and signature checks, not malware scanning.
 
-Mohamed supplied the scope, chose the stack and visual direction, and made the predictions recorded in [learning](docs/learning.md). GPT/Codex generated most implementation, tests and documentation with Mohamed's direction. Independent AI agents reviewed the design and code. Mohamed completed a guided code variation: he added the deadline reminder and its two tests, ran the checks, and confirmed the local screen and downloaded handoff. GPT/Codex supplied the exercise and code examples, explained the syntax, and prepared the release. GitHub publication uses his account without an AI contributor or co-author entry; that does not mean every line was written unaided.
+Mohamed supplied the scope, chose the stack and visual direction, and made the predictions recorded in [learning](docs/learning.md). GPT/Codex generated most implementation, tests and documentation with Mohamed's direction. Independent AI agents reviewed the design and code. Mohamed completed a guided code variation: he added the deadline reminder and its two tests, ran the checks, and confirmed the local screen and downloaded handoff. GPT/Codex supplied the exercise and code examples, explained the syntax, and prepared the release. On 23 November 2026, Claude (Anthropic) reworked the interface wording, layout and motion, fixed retry-key trimming and an intermittent local test failure, and cleared the lint errors, at Mohamed's direction; see [decisions](docs/decisions.md). GitHub publication uses his account without an AI contributor or co-author entry; that does not mean every line was written unaided.
 
 Third-party notices remain in [ATTRIBUTION.md](ATTRIBUTION.md) and the referenced licence files. No separate licence has yet been selected for the original project code. No Halvern client material or Quin's code was used.

@@ -28,4 +28,20 @@ Author: GPT/Codex
 - Design token documentation was completed after the code-review range. Hosted behaviour and publication metadata will be verified during release. Cost: local tests alone do not prove a deployed configuration.
 - Mohamed completed the guided deadline-reminder exercise and local verification. The learning record distinguishes his edits and checks from the code examples and explanations supplied by GPT/Codex; it makes no claim of unaided implementation.
 - Broad dependency vulnerability auditing and full screen-reader/cross-browser testing were not part of this review. Cost: compatibility and dependency issues outside the exercised paths may remain.
-- Deferred minor: surrounding whitespace in manually supplied retry keys is not consistently handled. The shipped browser produces UUIDs; external API clients are not supported. Normalize or reject such keys before offering an integration contract.
+- Resolved on 23 November 2026: retry keys are trimmed once before they are stored, so a key sent with surrounding whitespace replays like any other. It was deferred earlier because the browser only produces UUIDs.
+
+## Interface pass, 23 November 2026
+
+Author: Claude (Anthropic), at Mohamed's direction.
+
+- Mohamed asked for a clearer, calmer interface with small animations. The palette, Newsreader headings and dark rail from the approved direction stay.
+- The readiness panel is now a **Next step** card. Its heading says what is left and who acts; when a client has submitted, it offers a button that switches to the agency owner. Cost: the heading is longer, so its type is smaller (1.6rem).
+- Persona selection is a three-button switcher in place of a select. All three roles are visible without opening a menu.
+- "Accepted handoff" is now "Approved handoff", so the status label and the handoff use one word. "Asset plan" reads "Images and files" and "Required pages" reads "Pages the site needs". Stored values (`create`, `supplied`) and the API are unchanged; only labels moved. Automatic request titles created from now on use the new labels.
+- An approved brief hides its Save button and upload field. The server already refused both; the controls only invited a failed action.
+- The identity bar and rail are sticky. Motion is CSS-only (no new dependency), uses opacity and transform, and is removed under `prefers-reduced-motion`. Panels remain flat; the dialog is still the only raised surface.
+- The side rail shows the run's real expiry time from `expiresAt`, which the session response already carried.
+- In windows shorter than 600px, which includes a laptop zoomed to 200%, the bar and rail stop being sticky so they do not crowd the content.
+- Dropdowns drop the native appearance and draw their own arrow, because WebKit otherwise renders them shorter than the other fields.
+- A rejected request has its unread body read and dropped, up to 3 MiB and without buffering, before the error reply. Larger bodies are cancelled.
+- Mohamed ruled on 23 November 2026 that every commit is authored by him alone: no AI author, co-author or attribution line in commit messages. AI assistance is disclosed in the README.
