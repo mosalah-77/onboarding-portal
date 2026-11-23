@@ -110,7 +110,7 @@ export async function saveRevision(db: D1Database, a: ActorContext, projectId: s
   ]);
 }
 function syncRuleRequests(db: D1Database, projectId: string, brief: BriefInput, ready: Set<string>, guard: string, operationId: string) {
-  const labels = { goal: 'Business goal', audience: 'Intended audience', pages: 'Required pages', constraints: 'Constraints', assetPlan: 'Asset plan', deadline: 'Requested deadline', assetIds: 'Project assets' };
+  const labels = { goal: 'Business goal', audience: 'Intended audience', pages: 'Pages the site needs', constraints: 'Constraints', assetPlan: 'Images and files', deadline: 'Requested deadline', assetIds: 'Project files' };
   return [db.prepare(`UPDATE requests SET status='resolved' WHERE project_id=? AND rule_key IS NOT NULL AND ${guard}`).bind(projectId, operationId),
     ...readiness(brief, ready).map(b => db.prepare(`INSERT INTO requests (id,project_id,rule_key,title,explanation,required,status,actor,created_at)
       SELECT ?,?,?,?,?,1,'open','system',? WHERE ${guard}

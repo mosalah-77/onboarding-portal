@@ -23,14 +23,14 @@ export function RequestsPanel({ project, owner, busy, mutate, onDirty }: { proje
   const [title, setTitle] = useState(''), [explanation, setExplanation] = useState(''), [required, setRequired] = useState(true);
   return <section aria-labelledby="requests-title" id="requests">
     <h2 id="requests-title">Information requests</h2>
-    <p className="muted">Field requests resolve when you save the missing input. The owner resolves their own requests with an explanation.</p>
-    {project.requests.length ? project.requests.map(request => <RequestItem key={request.id} request={request} owner={owner} busy={busy} token={project.token} mutate={mutate} onDirty={onDirty} />) : <p className="empty-copy">No information requests. The brief is ready for its next review.</p>}
-    {owner && project.state !== 'approved' ? <details className="request"><summary>Request more information</summary><form onSubmit={async e => {
+    <p className="muted">{owner ? 'Ask the client for anything that is missing. Requests you add stay open until you resolve them with an explanation.' : 'What the agency still needs from you. A missing required field shows up here and clears when you save it.'}</p>
+    {project.requests.length ? project.requests.map(request => <RequestItem key={request.id} request={request} owner={owner} busy={busy} token={project.token} mutate={mutate} onDirty={onDirty} />) : <p className="empty-copy">Nothing outstanding.</p>}
+    {owner && project.state !== 'approved' ? <details className="request"><summary>Ask the client for something</summary><form onSubmit={async e => {
       e.preventDefault(); await mutate(`/projects/${project.id}/requests`, { title, explanation, required, expectedToken: project.token }, 'Information request added.', () => { setTitle(''); setExplanation(''); onDirty('new-request', false); });
     }}><fieldset disabled={busy}>
-      <label htmlFor="request-title">Request title</label><input id="request-title" required maxLength={160} value={title} onChange={e => { setTitle(e.target.value); onDirty('new-request', !!e.target.value || !!explanation); }} />
-      <label htmlFor="request-explanation">What is missing?</label><textarea id="request-explanation" required maxLength={2000} rows={3} value={explanation} onChange={e => { setExplanation(e.target.value); onDirty('new-request', !!e.target.value || !!title); }} />
-      <label className="check-label"><input type="checkbox" checked={required} onChange={e => setRequired(e.target.checked)} />Required before approval</label>
+      <label htmlFor="request-title">What do you need?</label><input id="request-title" required maxLength={160} value={title} onChange={e => { setTitle(e.target.value); onDirty('new-request', !!e.target.value || !!explanation); }} />
+      <label htmlFor="request-explanation">Why it matters, or what a good answer looks like</label><textarea id="request-explanation" required maxLength={2000} rows={3} value={explanation} onChange={e => { setExplanation(e.target.value); onDirty('new-request', !!e.target.value || !!title); }} />
+      <label className="check-label"><input type="checkbox" checked={required} onChange={e => setRequired(e.target.checked)} />Must be resolved before approval</label>
       <button type="submit">Add request</button>
     </fieldset></form></details> : null}
   </section>;
