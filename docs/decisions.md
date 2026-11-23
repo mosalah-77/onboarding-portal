@@ -45,3 +45,11 @@ Author: Mohamed Elmorshedy
 - Light mode was too bright. The page and panels moved from cream and pure white to a warm stone and an off-white, and state fills were toned down to match.
 - Dark mode is a second set of values for the same color tokens, switched by `data-theme` on the root element. It adds no dependency: one small client component for the button and a one-line inline script that applies the saved or system theme before first paint. `next-themes` is in the starter's dependencies but is not used.
 - The navigation rail keeps its dark green in both modes so the product looks like itself either way.
+
+## Hosting move, 23 November 2026
+
+- The demo moved from Sites to Cloudflare Workers on the free plan, at a `workers.dev` address. Sites already built a Cloudflare Worker, so the application code did not change. Cost: no custom domain, and the free plan's daily request and database limits apply.
+- File bytes moved from R2 to an `objects` table in D1. R2 needs a payment card on the account even for free use, and this demo should not need one. The upload code talks to a small `FileStore` type with the four calls it already used, so `lib/assets.ts` and `lib/cleanup.ts` kept their logic and their tests.
+- The file cap dropped from 2 MiB to 1.9 MB because D1 limits a row to 2 MB. The per-run and global reservations are unchanged.
+- The starter's hosting manifest, sign-in helper, connector code and its Vite plugin were removed. `vite.config.ts` now holds the Worker name and the D1 binding. A database ID is an identifier, not a credential; the operator token stays a Worker secret.
+- The starter's install and runtime scripts under `scripts/` stay because the build and test commands use them.

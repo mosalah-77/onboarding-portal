@@ -8,7 +8,7 @@ web
 
 ## Stack
 
-Sites hosting, React/TypeScript, D1 and private R2 storage.
+Cloudflare Workers, React/TypeScript and D1 for records and private file bytes.
 
 ## Users
 

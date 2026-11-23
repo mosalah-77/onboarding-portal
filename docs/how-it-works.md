@@ -57,9 +57,9 @@ Persona switching is a demo facility. It demonstrates the three roles within you
 | Safe retry | `receipts` | The same operation key and input return the previous operation instead of creating it again. |
 | Audit history | `events` | Each successful workflow change records who acted and what changed in the same transaction. |
 | Approval | `approvals` and accepted-version pointer | Approval refers to a specific immutable version. |
-| Uploaded bytes | Private R2 objects; metadata in `assets` | File access passes through the same membership boundary. |
+| Uploaded bytes | `objects` rows in D1; metadata in `assets` | File access passes through the same membership boundary. |
 
-D1 stores structured records. R2 stores file bytes. React displays the server's result. The browser is never the authority for permissions, readiness or approval.
+D1 stores structured records and, in a separate `objects` table, file bytes. React displays the server's result. The browser is never the authority for permissions, readiness or approval.
 
 ## Find the code and its proof
 
@@ -93,7 +93,7 @@ flowchart TD
   A[File bytes + name + type + retry key] --> B[Check membership, streamed size and file signature]
   B --> C[Reserve a pending assets row and quota in SQL]
   C --> W[Record a durable upload write claim]
-  W --> D[Write private R2 object only if its key is absent]
+  W --> D[Insert the file row only if its key is absent]
   D --> E[Mark ready and record activity in one SQL batch]
   E --> F[Attach the ready asset ID when saving a brief]
   D -->|Storage fails| G[Keep pending row; saved brief stays unchanged]
@@ -101,12 +101,12 @@ flowchart TD
   G --> I[Retry with the same bytes and operation key]
   H --> I
   I --> D
-  F --> J[Download route checks membership before reading R2]
+  F --> J[Download route checks membership before reading the file row]
 ```
 
 The pending row counts against capacity. A repeated successful upload returns the same file ID. Changing bytes while reusing its key returns 409. The file itself is immutable; a different file needs a new upload. A filename and signature check does not scan for malware. Use synthetic files only.
 
-Read `lib/assets.ts`, `tests/assets.test.mjs` and the real R2 test in `tests/api.test.mjs` together to follow this path.
+Read `lib/assets.ts`, `tests/assets.test.mjs` and the upload test in `tests/api.test.mjs` together to follow this path.
 
 ## Why reopening does not change the old agreement
 

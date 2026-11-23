@@ -109,3 +109,14 @@ Author: Mohamed Elmorshedy
 - axe-core found no WCAG A/AA failures in either mode on the welcome screen, draft workspace, ready-to-submit state, approved workspace, confirmation dialog or guide, in all three profiles.
 - `app/globals.css` holds no literal color outside the two token blocks.
 - Not checked: the error summary and the loading placeholder in dark mode were not captured, and no person has compared the palettes on a real phone screen.
+
+## Cloudflare hosting, 23 November 2026
+
+- Public URL: https://client-brief.mosalah-77.workers.dev
+- After moving file bytes to D1 and removing the starter's hosting code: `npm run typecheck`, `npm run lint`, the production build, 32 unit/fault/client checks and 15 Worker API checks passed. The API suite now uploads and downloads a file of exactly 1,900,000 bytes and expects 413 for one byte more.
+- The three migrations were applied to the remote D1 database and the Worker was deployed with `npm run deploy`.
+- Against the public URL: two separate visitors each started a demo, and one visitor's request for the other's project returned 404. A 1,900,000-byte PNG uploaded and came back byte for byte; 1,900,001 bytes returned 413. The second visitor's request for the first visitor's file returned 404. A wrong CSRF token returned 403. Cleanup without the operator token returned 401; an earlier run on the same day with the token returned 200.
+- In Chromium against the public URL, the flow from welcome to approved handoff completed in light and in dark mode with no page errors. The guide page served the updated storage text.
+- The test runs and their files were deleted from the remote database afterwards; it held no runs when this was written.
+- Not checked: behaviour at the free plan's daily request and storage limits, and the hosted site in WebKit or on a real phone.
+- The earlier entries on this page that mention Sites describe the previous host.

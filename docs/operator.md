@@ -1,8 +1,8 @@
 # Operating the synthetic demo
 
-Author: Mohamed Elmorshedy. Updated 8 November 2026.
+Author: Mohamed Elmorshedy. Updated 23 November 2026.
 
-`DEMO_ADMIN_TOKEN` is a server-only Sites secret. Never put it in the hosting manifest, a public environment variable, browser code, a URL or Git. Local environment files are ignored. Keep a separate private copy for maintenance.
+`DEMO_ADMIN_TOKEN` is a Worker secret, set with `wrangler secret put DEMO_ADMIN_TOKEN`. Never put it in `vite.config.ts`, a public environment variable, browser code, a URL or Git. Local environment files are ignored. Keep a separate private copy for maintenance.
 
 ## Expiry and cleanup
 
@@ -16,7 +16,7 @@ node --env-file=.env.operator scripts/cleanup-demo.mjs https://your-demo-host
 
 It requests up to five expired runs. Repeat until `runsRemoved` is zero. HTTPS is required outside loopback, redirects are refused and the token is not logged. Do not schedule this command until a recurring schedule has been explicitly chosen.
 
-The server deletes all R2 objects for a run before deleting its SQL row and cascading metadata. If storage deletion fails, the SQL rows and their quota remain available for a safe retry. Re-deleting an already removed object is harmless. Active runs are never eligible.
+The server deletes all stored file rows for a run before deleting its SQL row and cascading metadata. If storage deletion fails, the SQL rows and their quota remain available for a safe retry. Re-deleting an already removed object is harmless. Active runs are never eligible.
 
 Every upload attempt holds a durable `asset_writes` claim while writing storage. Cleanup skips runs with claims, so an upload cannot recreate an object after cleanup frees its quota. `runsWaitingForUploads` reports expired runs with outstanding claims.
 
@@ -24,6 +24,6 @@ If a Worker terminates before releasing a claim, it remains reserved. Investigat
 
 ## Capacity and release
 
-There are at most 20 stored runs, 500 workflow mutations per project, 50 manual requests per project, five asset slots per project, 2 MiB per asset, 20 MiB reserved per run and 200 MiB reserved globally. Pending uploads count toward storage caps. These are demo bounds, not production service guarantees.
+There are at most 20 stored runs, 500 workflow mutations per project, 50 manual requests per project, five asset slots per project, 1.9 MB per asset, 20 MiB reserved per run and 200 MiB reserved globally. Pending uploads count toward storage caps. These are demo bounds, not production service guarantees.
 
-Deployment uses the Sites source and archive workflow. Apply environment changes by deploying a saved version. Keep the exact source commit and built archive together. The second migration only adds write-claim storage; production migration application is owned by Sites. A rollback must retain compatible database tables and runtime bindings. Re-deploy the previous saved version when appropriate; do not erase data or reverse migrations as a routine rollback.
+The demo is the Worker `client-brief` with the D1 database of the same name, on the Cloudflare free plan. `npm run build` then `npm run deploy` publishes the current source. Apply a new migration to the remote database with `wrangler d1 execute DB --remote --config dist/server/wrangler.json --file <migration>` before deploying code that needs it. The second migration adds write-claim storage and the third adds the `objects` table for file bytes. D1 limits a row to 2 MB, which is why a file is capped at 1.9 MB. A rollback must retain compatible database tables. Use `wrangler rollback` to return to the previous Worker version; do not erase data or reverse migrations as a routine rollback.
