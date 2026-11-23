@@ -1,11 +1,11 @@
 # Issues
 
-Author: GPT/Codex. Updated 8 November 2026.
+Author: Mohamed Elmorshedy. Updated 8 November 2026.
 
 - Resolved: Mohamed completed the guided deadline-reminder variation, its tests and local screen/download checks. See `learning.md` for the contribution record and `how-it-works.md` for its data flow.
 - Release: the public deployment and hosted workflow/access checks passed. Source publication uses the existing GitHub SSH identity; see the repository and verification record.
 - Resolved: both Important final-review findings; regression tests first failed, then passed with the full 45-check suite. See verification.md.
-- Resolved 23 November 2026 (Claude): retry keys supplied with surrounding whitespace now replay. The lost-response API test sends a padded key; it failed before the fix and passes after.
+- Resolved 23 November 2026: retry keys supplied with surrounding whitespace now replay. The lost-response API test sends a padded key; it failed before the fix and passes after.
 - Resolved 23 November 2026: `npm run lint` is clean. The guide's home links use `next/link`; the workspace brand is plain text because it only pointed at the page it sits on.
 - Open: `.impeccable/design.json` was not regenerated after the 23 November interface pass; `DESIGN.md` holds the current values.
 - Verified: a delayed GET released after leaving its page did not replace the new project or its unsaved goal. Navigation controls were disabled during the held load; the generation guard itself is also inspected in source.

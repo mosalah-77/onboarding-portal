@@ -4,4 +4,4 @@ Use `docs/how-it-works.md` to follow the user workflow and `docs/code-graph.md` 
 
 Update the learner diagram, decisions and verification record with each completed workflow task. Mark unfinished behaviour as planned. Learning exercises must be labelled and explained; they do not replace product decisions or block routine implementation.
 
-Keep this an independent synthetic portfolio demo. Do not copy code or assets from sibling client projects. Commits are authored by Mohamed alone: no AI author, co-author or attribution line in a commit message. AI assistance is disclosed in the README.
+Keep this an independent synthetic portfolio demo. Do not copy code or assets from sibling client projects. Commits are authored by Mohamed alone: no AI author, co-author or attribution line in a commit message, and he is the named author of every document. AI assistance is disclosed in the README and nowhere else: not in other docs, code comments or the site.

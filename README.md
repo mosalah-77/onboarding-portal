@@ -25,6 +25,7 @@ Persona switching simulates roles within one visitor's isolated run. It is not p
 - Server-side permission, concurrency, validation and idempotency checks. The browser keeps unsaved inputs after failed saves and warns before navigation.
 - A next-step card that names what is left and who acts, a three-way role switcher, and a brief form grouped under plain headings.
 - Responsive layouts, keyboard focus, linked field errors and an in-app explanation at `/how-it-works`. Motion is short and CSS-only, and is switched off for visitors who ask for reduced motion.
+- A softer light mode and a dark mode. The first visit follows the system setting; a button in the top bar switches and remembers the choice.
 - Operator-triggered expired-run cleanup. It deletes stored files before releasing their SQL quota.
 
 There are no real invitations, email sending, invoices, contracts, payments or runtime AI calls. The checklist is a deterministic suggestion for human review.

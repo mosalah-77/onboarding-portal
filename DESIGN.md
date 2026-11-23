@@ -1,22 +1,30 @@
 ---
 name: Client Brief
-description: AI-authored design system for the synthetic client onboarding portal.
+description: Design system for the synthetic client onboarding portal.
 colors:
   green: "#245442"
   green-dark: "#173c2e"
-  ground: "#f4f2ed"
-  surface: "#fff"
+  ground: "#e9e6dd"
+  surface: "#f7f5ef"
   ink: "#202e29"
-  muted: "#57645e"
-  line: "#d3dad4"
-  shell: "#e7ece5"
-  success: "#e4f1e8"
-  success-ink: "#24543a"
-  warning: "#fbefd6"
-  warning-ink: "#754b13"
-  error: "#9a3028"
-  error-bg: "#fff0ed"
+  muted: "#525f58"
+  line: "#cad1c9"
+  shell: "#dde4da"
+  success: "#d9e9dc"
+  success-ink: "#1f4d37"
+  warning: "#f3e4c2"
+  warning-ink: "#6b430e"
+  error: "#96291f"
+  error-bg: "#f6e2dc"
   focus: "#2467bd"
+  dark-ground: "#111714"
+  dark-surface: "#19211d"
+  dark-ink: "#e4e9e3"
+  dark-muted: "#a2afa6"
+  dark-line: "#2b3731"
+  dark-accent: "#8acbab"
+  dark-action: "#2f7a5c"
+  dark-rail: "#15362a"
 typography:
   display:
     fontFamily: "Newsreader, Georgia, serif"
@@ -154,13 +162,13 @@ components:
 
 Warm cream pages and a dark green navigation rail frame a practical workspace. White fields give longer answers room to breathe. Newsreader adds an editorial voice to the project name, readiness and accepted handoff; system sans carries labels, requests and activity. Fine rules and restrained state fills keep the screen easy to scan.
 
-The same palette and type pairing carry into the reading guide. Its narrower measure and plain diagrams suit longer explanations. This AI-authored reference records the implemented system in `app/globals.css` and the portal components, with the approved direction in `docs/surface.md`. The sidecar's generated tonal strips are preview aids; the frontmatter holds the shipped color values.
+The same palette and type pairing carry into the reading guide. Its narrower measure and plain diagrams suit longer explanations. This reference records the implemented system in `app/globals.css` and the portal components, with the approved direction in `docs/surface.md`. The sidecar's generated tonal strips are preview aids; the frontmatter holds the shipped color values.
 
-Claude (Anthropic) revised this reference on 23 November 2026 after an interface pass that changed corner sizes, the navigation rail, the readiness card and motion. The sidecar was not regenerated.
+This reference was revised on 23 November 2026 after an interface pass that changed corner sizes, the navigation rail, the readiness card and motion. The sidecar was not regenerated.
 
 **Key Characteristics:**
 
-- Cream ground, dark green framing and white editing surfaces.
+- Stone ground, dark green framing and off-white editing surfaces, with a matching dark mode.
 - Editorial headings paired with compact, sentence-case controls.
 - Readiness, versions and accepted facts remain visibly distinct.
 - Flat surfaces with borders; one elevated confirmation dialog.
@@ -177,6 +185,12 @@ The palette combines warm neutrals with a muted green accent and reserved colors
 ### Neutral
 
 `ground` is the page and identity-bar background. `surface` is the white editor and field fill. `shell` separates accepted facts from the draft. `ink` carries primary text, `muted` carries supporting text, and `line` divides sections and repeated rows.
+
+### Light and dark
+
+Light mode is deliberately not white: the page is a warm stone (`ground`) and panels and fields are an off-white (`surface`), which keeps a long form from glaring. Dark mode uses a near-black green for the page, a slightly lighter green-black for panels, pale ink, and a lighter mint (`dark-accent`) for links and the brand. Primary buttons keep white text on a mid green (`dark-action`). Waiting and approved states become dark amber and dark green fills with light text. The navigation rail stays dark green in both modes, with the same light tiles for the current role and project.
+
+Every color in `app/globals.css` is a custom property declared once for light on `:root` and overridden for dark on `:root[data-theme=dark]`; no rule below those two blocks holds a literal color. A sun or moon button at the end of the identity bar switches mode. The first visit follows the system setting, and a choice is remembered in the browser. A short inline script applies the theme before first paint, so the page does not flash the other palette.
 
 ### State and focus
 
@@ -290,12 +304,13 @@ The three-stage strip is an ordered list with a programmatically named current s
 
 ### Do:
 
-- Do keep the warm ground, white editor and dark green navigation together.
+- Do keep the warm ground, off-white editor and dark green navigation together.
+- Do add any new color as a token with both a light and a dark value.
 - Do preserve Newsreader headings and the system sans used by fields and longer requests.
 - Do pair state colors with written labels, linked blockers and visible version numbers.
 - Do keep readiness before the editor in the source order used by stacked layouts.
 - Do retain visible keyboard focus, linked field errors and the existing control sizes.
-- Do keep synthetic-data labels and AI authorship disclosures visible where they appear.
+- Do keep synthetic-data labels visible where they appear.
 
 ### Don't:
 

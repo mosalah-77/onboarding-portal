@@ -2,7 +2,7 @@
 
 > For agentic workers: use `superpowers:executing-plans` for native execution or `superpowers:subagent-driven-development` if Mohamed chooses delegation. Implement and check one task at a time. Checkboxes record completed work, not intentions.
 
-Author: GPT/Codex
+Author: Mohamed Elmorshedy
 Date: 8 November 2026
 Status: Approved by Mohamed on 8 November 2026; native execution in progress.
 
@@ -111,7 +111,7 @@ Files: starter/config/schema, `lib/brief.ts`, `lib/session.ts`, revision/read po
 Interfaces: produce `BriefInput`, `readiness`, `ActorContext`, `ProjectView`, and `saveRevision(db, actor, projectId, expectedToken, key, brief): Promise<ProjectView>`. Later tasks consume these exact types and functions.
 
 - [x] After confirmation, initialise the fresh starter using Sites' `project-setup.mjs`; start the single supported dependency install. Register the new private, unpublished Site once and persist its returned ID. Retain its credential only in session memory.
-- [x] Move the approved spec/plan into `docs/superpowers/`, create the logs, and record `Author: GPT/Codex`. Create `PRODUCT.md` from confirmed facts using Impeccable's product schema. Preserve starter licence files.
+- [x] Move the approved spec/plan into `docs/superpowers/`, create the logs, and record the author. Create `PRODUCT.md` from confirmed facts using Impeccable's product schema. Preserve starter licence files.
 - [x] Write failing rule tests: `assert.deepEqual(readiness(validWithBlankOptionals, new Set()), [])`; blank audience yields only `audience.required`; duplicate trimmed/case-insensitive page names fail validation; an invalid calendar date fails; a valid past requested date is preserved.
 - [x] Ask Mohamed to predict the blank-optional-field result before running it. Record his actual answer, or leave the learning item pending if he has not answered.
 - [x] Run `node --experimental-strip-types --test tests/brief.test.mjs`; confirm failure is missing behaviour, not a syntax/setup problem.
@@ -186,7 +186,7 @@ Interfaces: `cleanupExpiredRuns(env, limit): Promise<{ runsRemoved: number; asse
 - [x] Run all unit/API/fault suites, type check and a production build. Review the changed server/SQL code with the relevant installed security review skill. Resolve material findings and rerun affected checks.
 - [ ] Have Mohamed make the agreed small rule/checklist change himself and explain the test. Record only what he actually did. If pending, report the learning contribution as unfinished.
 - [x] Write the reproducible README, architecture/data flow, 90-second demo script, known limitations, contribution/AI-use note and attribution. Mark every feature working, simulated or future. Apply Humanizer to the final public prose.
-- [x] Scan the intended source for secrets and private material. Keep runtime state, uploads, test data stores, credentials and generated archives out of Git. Verify small commits identify AI work accurately.
+- [x] Scan the intended source for secrets and private material. Keep runtime state, uploads, test data stores, credentials and generated archives out of Git.
 - [x] Package and push the exact source using the Sites workflow helper. Save/deploy through the appropriate native tool, then set this new Site's audience to public as requested in the original brief. Never change a different Site's audience or send viewer invitations.
 - [ ] Wait for the deployment's terminal success, then exercise the hosted workflow and cross-client/cross-run access checks in disposable demo runs. Keep a failed hosted check open rather than reporting completion from local tests.
 - [x] Identify Mohamed's intended personal GitHub destination before publishing there; connected Sites source storage is not automatically his portfolio GitHub. Preserve licences and author history when publishing the reviewed source.
