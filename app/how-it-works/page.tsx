@@ -1,5 +1,7 @@
+import Link from 'next/link';
+
 export default function Guide() {
-  return <><header className="topbar"><a className="brand" href="/">Client Brief</a><span className="demo-label">Portfolio demo · Synthetic data</span><a href="/">Open the workspace</a></header>
+  return <><header className="topbar"><Link className="brand" href="/">Client Brief</Link><span className="demo-label">Portfolio demo · Synthetic data</span><Link href="/">Open the workspace</Link></header>
     <main className="guide"><h1>Follow one brief through the system</h1><p>This guide explains the input, where it is saved, what can fail and how the result is checked. The project uses synthetic data. Roles are simulated; the database, file storage and permission checks are real.</p>
       <nav aria-label="Guide contents"><a href="#save">Saving a brief</a><a href="#files">Files and access</a><a href="#approval">Approval</a><a href="#practice">Try a small change</a></nav>
       <section id="save"><h2>What happens when you save?</h2><p>Suppose Client A enters “Local residents” as the audience. The browser sends the brief, the version token it last saw and a retry key. The server follows these steps in order.</p>
