@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ApiError, requestPortal, reconcileEditor, type EditorState } from '@/lib/client';
 import type { AssetView, ProjectView } from '@/lib/workflow';
+import { MAX_FILE_BYTES } from '@/lib/storage';
 import { BriefEditor } from './brief-editor';
 import { RequestsPanel } from './requests-panel';
 import { BriefFacts, Handoff } from './handoff';
@@ -143,7 +144,7 @@ export function Portal() {
   }
   async function upload(file: File) {
     if (!project) return;
-    if (file.size > 2097152) { setError(new ApiError(413, 'Choose a file no larger than 2 MB.')); return; }
+    if (file.size > MAX_FILE_BYTES) { setError(new ApiError(413, 'Choose a file no larger than 1.9 MB.')); return; }
     const ticket = epoch.current; setPending(true);
     try {
       const bytes = new Uint8Array(await file.arrayBuffer()), meta = new TextEncoder().encode(JSON.stringify([file.name, file.type]));

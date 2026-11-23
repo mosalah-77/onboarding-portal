@@ -3,7 +3,8 @@ import { checkCsrf, requireActor, sessionView, startDemo, type Persona } from '.
 import { getProject, saveRevision, submitBrief, createRequest, commentOnRequest, resolveRequest, approveBrief, reopenBrief } from './workflow.ts';
 import { uploadAsset, downloadAsset } from './assets.ts';
 import { cleanupExpiredRuns, requireOperator } from './cleanup.ts';
-export type PortalEnv = { DB: D1Database; BUCKET: R2Bucket; DEMO_ADMIN_TOKEN?: string };
+import type { FileStore } from './storage.ts';
+export type PortalEnv = { DB: D1Database; BUCKET: FileStore; DEMO_ADMIN_TOKEN?: string };
 
 export async function jsonBody(request: Request): Promise<Record<string, unknown>> {
   if (!request.headers.get('content-type')?.startsWith('application/json')) throw new PortalError(415, 'Send this action as JSON.');

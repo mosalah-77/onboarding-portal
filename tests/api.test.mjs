@@ -124,7 +124,7 @@ test('real backend: tenant boundaries, saves and retries', async t => {
     assert.equal(second.data.project.activity.filter(e => e.action === 'brief_submitted').length, 1);
     assert.equal(second.data.project.requests.filter(r => !r.ruleKey).length, 2);
   });
-  await t.test('real R2 uploads are private, retryable and attachable only within their project', async () => {
+  await t.test('uploads are private, retryable and attachable only within their project', async () => {
     const key = crypto.randomUUID();
     const upload = (project, op = key, bytes = png) => a.call(`/projects/${project}/assets`, {}, { bytes, headers: { 'Content-Type': 'image/png', 'X-File-Name': 'sample.png', 'X-Operation-Key': op } });
     const first = await upload(projectId);
@@ -146,7 +146,14 @@ test('real backend: tenant boundaries, saves and retries', async t => {
     const attached = await a.call(`/projects/${projectId}/revisions`, { brief: { ...valid, assetPlan: 'supplied', assetIds: [fileA] }, expectedToken: project.token, key: crypto.randomUUID() });
     assert.equal(attached.status, 200);
     assert.equal(attached.data.project.blockers.length, 0);
-    assert.equal((await upload(projectId, crypto.randomUUID(), new Uint8Array(2097153))).status, 413);
+    // The largest allowed file must fit in one database row and come back byte for byte.
+    const largest = new Uint8Array(1_900_000); largest.set(png);
+    const big = await upload(projectId, crypto.randomUUID(), largest);
+    assert.equal(big.status, 200, JSON.stringify(big.data));
+    const fetched = await a.call(`/assets/${big.data.id}`, undefined, { binary: true });
+    assert.equal(fetched.data.length, largest.length);
+    assert.deepEqual(fetched.data.subarray(0, png.length), png);
+    assert.equal((await upload(projectId, crypto.randomUUID(), new Uint8Array(1_900_001))).status, 413);
   });
   await t.test('only the owner approves an exact submitted revision; reopening preserves it', async () => {
     project = (await a.call(`/projects/${projectId}`)).data;

@@ -11,7 +11,7 @@ test('invalid file labels, bytes, names and streamed oversize are rejected befor
   for (const [bytes, name, type, expected] of [
     [new TextEncoder().encode('<script>bad</script>'), 'sample.png', 'image/png', 422],
     [png, 'sample.pdf', 'application/pdf', 422], [png, 'sample.svg', 'image/png', 422],
-    [png, 'bad\r\nname.png', 'image/png', 422], [new Uint8Array(2 * 1024 * 1024 + 1), 'big.png', 'image/png', 413],
+    [png, 'bad\r\nname.png', 'image/png', 422], [new Uint8Array(1_900_001), 'big.png', 'image/png', 413],
   ]) await assert.rejects(send(f, crypto.randomUUID(), bytes, name, type), status(expected));
   assert.equal(f.env.DB.sqlite.prepare('SELECT COUNT(*) n FROM assets').get().n, 0);
 });

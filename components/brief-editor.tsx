@@ -46,7 +46,7 @@ export function BriefEditor({ project, draft, setDraft, locked, busy, dirty, sav
         </div>
         <p id="deadline-help" className="field-help">The date is a request. The agency still has to agree a delivery date.</p>
         <div id="assetIds" className="asset-section">
-          <h3 className="group-title">Project files</h3>{message('assetIds')}<p className="field-help">PNG, JPEG or PDF, up to 2 MB each and five files per project. Use made-up demo files only.</p>
+          <h3 className="group-title">Project files</h3>{message('assetIds')}<p className="field-help">PNG, JPEG or PDF, up to 1.9 MB each and five files per project. Use made-up demo files only.</p>
           {project.assets.length ? <ul className="file-list">{project.assets.map(file => <li key={file.id}>
             {file.status === 'ready' ? <><label className="check-label"><input type="checkbox" checked={draft.assetIds.includes(file.id)} onChange={e => setDraft({ ...draft, assetIds: e.target.checked ? [...draft.assetIds, file.id] : draft.assetIds.filter(id => id !== file.id) })} />Attach {file.name}</label><a href={`/api/portal/assets/${file.id}`} download>Download</a></> : <span>{file.name} · Upload did not finish. Choose the same file again to retry.</span>}
             <span className="file-size">{Math.ceil(file.size / 1024)} KB</span>

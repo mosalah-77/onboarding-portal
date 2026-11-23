@@ -15,6 +15,13 @@
       "when": 1794131201083,
       "tag": "0001_acoustic_hannibal_king",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1795451726537,
+      "tag": "0002_yielding_warhawk",
+      "breakpoints": true
     }
   ]
 }

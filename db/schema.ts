@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, uniqueIndex, primaryKey, index } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, blob, uniqueIndex, primaryKey, index } from 'drizzle-orm/sqlite-core';
 
 export const runs = sqliteTable('runs', {
   id: text('id').primaryKey(), created_at: integer('created_at').notNull(), expires_at: integer('expires_at').notNull(),
@@ -53,6 +53,11 @@ export const assets = sqliteTable('assets', {
   name: text('name').notNull(), content_type: text('content_type').notNull(), size: integer('size').notNull(),
   status: text('status').notNull(), actor: text('actor').notNull(), created_at: integer('created_at').notNull(),
 }, t => [uniqueIndex('asset_operation').on(t.project_id, t.operation_key)]);
+
+// File bytes. Rows are removed by key during cleanup, before their run is deleted.
+export const objects = sqliteTable('objects', {
+  key: text('key').primaryKey(), sha256: text('sha256').notNull(), body: blob('body', { mode: 'buffer' }).notNull(),
+});
 
 export const assetWrites = sqliteTable('asset_writes', {
   id: text('id').primaryKey(), run_id: text('run_id').notNull().references(() => runs.id, { onDelete: 'cascade' }),

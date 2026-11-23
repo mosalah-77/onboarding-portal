@@ -2,6 +2,7 @@ import { PortalError, textValue } from './brief.ts';
 import { digest, id, type ActorContext } from './session.ts';
 import { projectRow, type AssetView } from './workflow.ts';
 import type { PortalEnv } from './http.ts';
+import { MAX_FILE_BYTES } from './storage.ts';
 import type { assets } from '../db/schema';
 type AssetRow = typeof assets.$inferSelect;
 const MiB = 1024 * 1024;
@@ -11,7 +12,7 @@ async function readFile(body: ReadableStream<Uint8Array>) {
   while (true) {
     const { value, done } = await reader.read(); if (done) break;
     size += value.byteLength;
-    if (size > 2 * MiB) { await reader.cancel(); throw new PortalError(413, 'Choose a file no larger than 2 MiB.'); }
+    if (size > MAX_FILE_BYTES) { await reader.cancel(); throw new PortalError(413, 'Choose a file no larger than 1.9 MB.'); }
     chunks.push(value);
   }
   const bytes = new Uint8Array(size); let offset = 0;
@@ -59,7 +60,7 @@ export async function uploadAsset(env: PortalEnv, actor: ActorContext, projectId
   if (!claim.meta.changes) throw new PortalError(409, 'The demo changed or expired during this upload. Reload before retrying.');
   // A durable write claim keeps cleanup away until even a failed storage call has settled.
   try {
-  const stored = await env.BUCKET.put(asset.storage_key, bytes, { onlyIf: { etagDoesNotMatch: '*' }, customMetadata: { sha256: hash }, httpMetadata: { contentType } });
+  const stored = await env.BUCKET.put(asset.storage_key, bytes, { onlyIf: { etagDoesNotMatch: '*' }, customMetadata: { sha256: hash } });
   if (!stored && (await env.BUCKET.head(asset.storage_key))?.customMetadata?.sha256 !== hash) throw new PortalError(503, 'The stored upload could not be verified. Please retry.');
   const pending = `EXISTS(SELECT 1 FROM assets a JOIN runs r ON r.id=a.run_id WHERE a.id=? AND a.status='pending' AND r.expires_at>?)`;
   const now = Date.now();
