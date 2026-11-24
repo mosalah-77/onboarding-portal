@@ -19,6 +19,11 @@ export default defineConfig(async () => {
           name: "samepage",
           main: "./worker/index.ts",
           compatibility_flags: ["nodejs_compat"],
+          // Per-visitor request limits, enforced in worker/index.ts.
+          ratelimits: [
+            { name: "API_LIMIT", namespace_id: "1001", simple: { limit: 240, period: 60 } },
+            { name: "DEMO_LIMIT", namespace_id: "1002", simple: { limit: 6, period: 60 } },
+          ],
           d1_databases: [
             {
               binding: "DB",
