@@ -53,3 +53,21 @@ Author: Mohamed Elmorshedy
 - The file cap dropped from 2 MiB to 1.9 MB because D1 limits a row to 2 MB. The per-run and global reservations are unchanged.
 - The starter's hosting manifest, sign-in helper, connector code and its Vite plugin were removed. `vite.config.ts` now holds the Worker name and the D1 binding. A database ID is an identifier, not a credential; the operator token stays a Worker secret.
 - The starter's install and runtime scripts under `scripts/` stay because the build and test commands use them.
+
+## Conversation interface, 24 November 2026
+
+- The form workspace was replaced. It showed the brief, requests, history and activity at once, and a visitor had to work out the order. The new interface is a chat: the studio asks six questions, the client answers one at a time, and a side panel holds the status and the one action that moves the brief on. Cost: the version history and activity lists are no longer on screen, though the thread shows sends, notes, changes and approvals in order.
+- The product is called Samepage in the interface. The people are Jackie Welles (client), Viktor Vektor (studio) and Priya Nair (the second client), and the projects are Calder Street Kitchens and Marsh Lane Vets.
+- Each answer is saved as its own revision through the existing save route. The interface counts a version each time the brief is sent, because "version 7" on a first send would only confuse a client. Approval still names one stored revision by ID. Cost: the number on screen is not the revision number in the database.
+- The thread, version number and status are derived from the saved project in `lib/conversation.ts`. The browser keeps no copy of the conversation, so a reload and the other seat agree. The exception is a skipped optional question, which is remembered for the page only and asked again after a reload until the brief has been sent once.
+- The seat switch offers Client and Studio. The client seat is Jackie and sees one project as a plain label. The project menu exists only for the studio seat. The second client still exists on the server and in the API tests, where it proves that one client cannot read another's project.
+- `POST /projects/:id/reopen` now also accepts a submitted brief. That is "Ask for changes": the brief returns to draft, the reason is stored on a `brief_returned` event and shown in the thread as the studio's note. Reopening an approved brief works as before. A draft cannot be handed back. No migration was needed.
+- After a brief is handed back, the interface asks for a changed answer before it can be sent again, and Save stays disabled on an edit that changes nothing. The server enforces this only for a reopened approval; for a returned brief it is an interface rule.
+- Editing an answer on a sent brief takes it back to draft, which the save route already did. The composer says so instead of locking the answers.
+- Choosing to send files requires one attached file before the answer can be sent, because the server refuses to send a brief without one. A sample image can be attached with one click.
+- The demo starts with an empty brief for Calder Street so a visitor answers every question. Marsh Lane starts as a finished draft the studio can read. Seeded missing-answer requests are now created from the same readiness rule as saved ones.
+- The request and comment routes stay in the API with their tests. The interface no longer uses them, because the studio's note on a returned brief covers the need.
+- `reconcileEditor` and its tests were removed with the form. There is no long-lived editor state to reconcile now.
+- Figtree replaces Newsreader and the system font. One self-hosted variable file, weights 400 to 600. The palette is a family of blues with flat fills, and dark mode is neutral charcoal. See `DESIGN.md`.
+- The starter favicon was replaced with the Samepage mark.
+- `.impeccable/design.json` and `docs/design-review.md` described the old interface and were deleted. `DESIGN.md` is the design record.

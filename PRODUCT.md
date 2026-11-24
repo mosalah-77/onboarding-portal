@@ -12,7 +12,7 @@ Cloudflare Workers, React/TypeScript and D1 for records and private file bytes.
 
 ## Users
 
-A synthetic client supplies a website brief. A synthetic agency owner reviews inputs and approves scope. Visitors switch between demo personas.
+A made-up client answers a studio's questions about a new website. A made-up studio owner reviews the brief and approves one version. A visitor plays both by switching seats.
 
 ## Product Purpose
 
@@ -20,7 +20,7 @@ Teach and demonstrate onboarding from missing information to an accepted, versio
 
 ## Operating Context
 
-Each visitor has an isolated run with two client workspaces. Drafts, requests and exact-version approvals are the main tasks.
+Each visitor has an isolated run with two client workspaces. Answering, sending, asking for changes and approving one version are the main tasks.
 
 ## Capabilities and Constraints
 

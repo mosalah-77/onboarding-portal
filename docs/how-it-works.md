@@ -1,16 +1,16 @@
 # How a brief moves through the portal
 
-Author: Mohamed Elmorshedy. Updated 8 November 2026, including Mohamed's guided deadline-reminder change.
+Author: Mohamed Elmorshedy. Updated 24 November 2026 for the conversation interface. Mohamed's guided deadline-reminder change is from 8 November 2026.
 
 This is Mohamed's project guide. Start with one action and follow its value into storage. The diagrams describe observable code and design decisions. The browser workflow and backend are implemented. Deployment verification is recorded separately.
 
 ## Follow one change
 
-Imagine Client A enters “Local residents” in the audience field. Saving creates another version of the brief. The previous version stays in the database, so a later approval can point to an exact record.
+Imagine Jackie, the client, answers “Who are you trying to reach?” with “Homeowners planning a new kitchen”. Sending the answer saves another revision of the brief. The previous revision stays in the database, so a later approval can point to one record.
 
 ```mermaid
 flowchart TD
-  A[Client enters an audience] --> B[POST project revisions: brief + expected token + retry key]
+  A[Client answers the audience question] --> B[POST project revisions: brief + expected token + retry key]
   B --> C{Session, CSRF and project membership valid?}
   C -->|No| X[401, 403 or 404: no change]
   C -->|Yes| D{Fields have valid types, lengths and dates?}
@@ -19,32 +19,35 @@ flowchart TD
   E -->|Same input| F[Return the original operation and current project]
   E -->|Different input| G[409: key belongs to another change]
   E -->|New key| H{Is the project token still current?}
-  H -->|No| I[409: reload before saving; keep local edits]
+  H -->|No| I[409: the page loads the saved brief; the typed answer stays]
   H -->|Yes| J[(One SQL transaction)]
   J --> K[Insert version, receipt and activity; update current version and token]
   K --> L[Resolve the audience request; preserve its ID and comments]
   L --> M[Return saved project and remaining blockers]
 ```
 
-The server accepts an incomplete draft. Submission is stricter: goal, audience, pages and an asset plan must be present. Choosing supplied assets requires a ready file. Required owner requests must be resolved. Constraints and the requested deadline are optional, so leaving them blank does not block submission.
+The server accepts an incomplete draft. Sending is stricter: goal, audience, pages and a choice for photos and logo must be present. Choosing to supply files requires a ready file. Launch date and “Anything else” are optional, so skipping them does not block sending. The API also supports owner requests that must be resolved first; the interface no longer creates them, because the studio's note on a returned brief does that job.
 
 ## The whole workflow
 
 ```mermaid
 flowchart LR
-  A[Start isolated synthetic demo] --> B[Select Client A, Client B or owner]
-  B --> C[Save versioned draft]
-  C --> D[Read missing inputs and request comments]
-  D --> C
-  C --> E[Submit exact ready version]
-  E --> F[Owner approves that version]
-  F --> G[Accepted summary and checklist]
-  F --> H[Owner reopens with a reason]
+  A[Start isolated demo] --> B[Sit in the client seat]
+  B --> C[Answer a question: saves a revision]
+  C --> C
+  U[Private file upload] --> C
+  C --> E[Send the brief: version 1]
+  E --> F[Studio approves that revision]
+  E --> R[Studio asks for changes with a note]
+  R --> C
+  F --> G[Handoff and first-jobs list]
+  F --> H[Studio reopens with a reason]
   H --> C
-  U[Private asset upload] --> C
 ```
 
-Persona switching is a demo facility. It demonstrates the three roles within your synthetic run; it is not real customer authentication. Another browser's run has different workspaces and projects. Client A's membership grants access only to A's workspace, even if A guesses B's project URL.
+Switching seats is a demo facility. It shows both sides of your own run; it is not real customer authentication. Another browser's run has different workspaces and projects. The client seat is a member of one workspace, so the server returns one project to it and answers 404 for any other project URL. The studio seat is a member of both.
+
+The interface counts a version each time the brief is sent. The server stores every answer as its own revision and approval names one revision by ID, so “version 2” on screen is the second brief the studio received, whichever revision that was. `lib/conversation.ts` derives the thread, the version number and the status card from the saved project and its activity, which is why a reload or the other seat shows the same conversation.
 
 ## Where the information lives
 
@@ -68,7 +71,9 @@ D1 stores structured records and, in a separate `objects` table, file bytes. Rea
 | What makes a brief ready? | [`lib/brief.ts`](../lib/brief.ts), `readiness` | [`tests/brief.test.mjs`](../tests/brief.test.mjs): optional blanks, missing audience, duplicate pages, invalid date |
 | What happens when no deadline is entered? | `checklist` in [`lib/brief.ts`](../lib/brief.ts) | Brief tests: blank date adds a scheduling reminder; an entered date keeps exactly one requested-date task |
 | Who is making the request? | [`lib/session.ts`](../lib/session.ts), `requireActor` | [`tests/api.test.mjs`](../tests/api.test.mjs): another visitor cannot read the project |
-| Why can't A open B's brief? | [`lib/workflow.ts`](../lib/workflow.ts), `projectRow` | API test: Client A cannot access Client B |
+| Why can't one client open another's brief? | [`lib/workflow.ts`](../lib/workflow.ts), `projectRow` | API test: Client A cannot access Client B |
+| How does the thread know what to show? | [`lib/conversation.ts`](../lib/conversation.ts), `progress` and `summary` | [`tests/conversation.test.mjs`](../tests/conversation.test.mjs): one question at a time, skipped questions, a returned brief, the approved version number |
+| How does the studio send a brief back? | `reopenBrief` in workflow | [`tests/approval.test.mjs`](../tests/approval.test.mjs): a submitted brief returns to draft with the note recorded |
 | Why doesn't a retry create two versions? | `existingOperation` and `mutate` in workflow | API test: lost-response retry returns the same revision |
 | What happens when two saves race? | `mutate`: conditional token check inside the transaction | API test: one 200 success and one 409 conflict |
 | How do field requests stay connected to comments? | `syncRuleRequests` in workflow | API test: automatic request resolves and reopens with the same ID and comment |
@@ -108,6 +113,10 @@ The pending row counts against capacity. A repeated successful upload returns th
 
 Read `lib/assets.ts`, `tests/assets.test.mjs` and the upload test in `tests/api.test.mjs` together to follow this path.
 
+## Sending back and reopening
+
+The studio has one way to hand a brief back, and it always needs a reason. On a submitted brief the reason is a request for changes and the event is `brief_returned`. On an approved brief it reopens agreed scope and the event is `brief_reopened`. Both return the project to draft, and the reason appears in the thread as a message from the studio. The client changes an answer and sends the next version.
+
 ## Why reopening does not change the old agreement
 
 ```mermaid
@@ -139,7 +148,7 @@ flowchart TD
 
 `checklist(accepted)` receives the accepted brief and returns an array of task objects. Each has an ID, visible text and a source field for its fact link. This function writes nothing to storage. A blank deadline remains `null` in the saved brief, displays as “Not agreed”, and does not block submission or approval. The generated reminder never chooses a date.
 
-`lib/workflow.ts` calls the function when reading a project; `components/handoff.tsx` uses the returned tasks for both the screen and the text download. These are derived suggestions, so changing this rule also updates the checklist shown for an existing accepted brief. The saved facts and approval remain unchanged.
+`lib/workflow.ts` calls the function when reading a project; `components/brief-panel.tsx` uses the returned tasks for both the screen and the text download. These are derived suggestions, so changing this rule also updates the checklist shown for an existing accepted brief. The saved facts and approval remain unchanged.
 
 `tests/brief.test.mjs` imports `checklist` from `lib/brief.ts`. The JavaScript test describes the expected output; the TypeScript file implements it. Mohamed first ran a failing blank-date test, edited the empty branch of the condition, and reran it successfully. A second test checks that an entered date still produces exactly one deadline task.
 
@@ -147,18 +156,16 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-  A[Edit React draft in browser memory] --> B[Save: freeze input, project token and retry key]
+  A[Type an answer in the composer] --> B[Send: freeze the brief, project token and retry key]
   B --> C{Server response}
-  C -->|Success| D[Show returned saved version and activity]
-  C -->|422| E[Keep edits; associate errors with fields]
-  C -->|409| F[Keep edits; offer loading latest saved version]
-  F --> G[Review differences, then save against current token]
-  C -->|Network or 5xx| H[Keep original operation for Retry]
+  C -->|Success| D[Redraw the thread from the returned project]
+  C -->|422| E[Keep the answer; show the server's message above it]
+  C -->|409| F[Keep the answer; load the saved brief; ask to send again]
+  C -->|Network or 5xx| H[Keep the job; offer Try again with the same retry key]
   H --> B
-  A --> I[Warn before leaving unsaved inputs]
 ```
 
-`components/portal.tsx` owns the editor state and pending action. `reconcileEditor` in `lib/client.ts` keeps the draft, baseline, revision identity and concurrency token together. A response containing a newer revision refreshes a clean editor; genuinely unsaved edits stay visible with their earlier version identified, and approval remains disabled until they are reconciled. `lib/client.ts` sends the request and returns structured errors. A retry uses the same operation key and input. The component's load generation also rejects an outdated response; a 20-second delayed GET check confirmed that navigating away cancels the old view and preserves the new project’s unsaved input. Navigation controls are disabled while a load is pending. This does not separately unit-test every generation-guard branch. Unsaved text is not durable across closing the browser.
+`components/portal.tsx` owns the session, the loaded project and one job runner for every change. The composer in `components/chat.tsx` holds the answer being typed, so a failed request leaves it in place. `lib/client.ts` sends the request and returns structured errors. A retry reuses the same retry key and input, so a save whose response was lost is not made twice. A counter in the portal drops responses that arrive after the visitor has moved to another project or seat. An answer that has not been sent is not stored anywhere and is lost on reload.
 
 ## Expiry, reset and cleanup
 

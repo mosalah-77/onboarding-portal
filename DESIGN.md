@@ -1,322 +1,54 @@
----
-name: Client Brief
-description: Design system for the synthetic client onboarding portal.
-colors:
-  green: "#245442"
-  green-dark: "#173c2e"
-  ground: "#e9e6dd"
-  surface: "#f7f5ef"
-  ink: "#202e29"
-  muted: "#525f58"
-  line: "#cad1c9"
-  shell: "#dde4da"
-  success: "#d9e9dc"
-  success-ink: "#1f4d37"
-  warning: "#f3e4c2"
-  warning-ink: "#6b430e"
-  error: "#96291f"
-  error-bg: "#f6e2dc"
-  focus: "#2467bd"
-  dark-ground: "#111714"
-  dark-surface: "#19211d"
-  dark-ink: "#e4e9e3"
-  dark-muted: "#a2afa6"
-  dark-line: "#2b3731"
-  dark-accent: "#8acbab"
-  dark-action: "#2f7a5c"
-  dark-rail: "#15362a"
-typography:
-  display:
-    fontFamily: "Newsreader, Georgia, serif"
-    fontSize: "4.5rem"
-    fontWeight: 500
-    lineHeight: 1.05
-    letterSpacing: "-0.025em"
-  headline:
-    fontFamily: "Newsreader, Georgia, serif"
-    fontSize: "2.8rem"
-    fontWeight: 500
-    lineHeight: 1.1
-    letterSpacing: "-0.025em"
-  readiness:
-    fontFamily: "Newsreader, Georgia, serif"
-    fontSize: "1.6rem"
-    fontWeight: 550
-    lineHeight: 1.15
-  handoff:
-    fontFamily: "Newsreader, Georgia, serif"
-    fontSize: "1.8rem"
-    fontWeight: 550
-    lineHeight: 1.35
-  title:
-    fontFamily: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
-    fontSize: "1.2rem"
-    fontWeight: 650
-    lineHeight: 1.35
-  body:
-    fontFamily: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
-    fontSize: "1rem"
-    fontWeight: 400
-    lineHeight: 1.55
-  label:
-    fontFamily: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
-    fontSize: "0.9rem"
-    fontWeight: 600
-    lineHeight: 1.55
-  status:
-    fontFamily: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
-    fontSize: "0.75rem"
-    fontWeight: 650
-    lineHeight: 1.5
-  step:
-    fontFamily: "Newsreader, Georgia, serif"
-    fontSize: "2.5rem"
-    fontWeight: 400
-    lineHeight: 1
-rounded:
-  surface: "16px"
-  button: "10px"
-  field: "10px"
-  status: "999px"
-  diagram: "8px"
-spacing:
-  inline: "0.6rem"
-  field-gap: "1rem"
-  section: "1.8rem"
-  column: "2rem"
-  wide-column: "3rem"
-components:
-  button-primary:
-    backgroundColor: "{colors.green}"
-    textColor: "{colors.surface}"
-    rounded: "{rounded.button}"
-    padding: "0.6rem 1rem"
-  button-primary-hover:
-    backgroundColor: "{colors.green-dark}"
-    textColor: "{colors.surface}"
-  button-primary-active:
-    backgroundColor: "{colors.green-dark}"
-    textColor: "{colors.surface}"
-  button-secondary:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.button}"
-    padding: "0.6rem 0.9rem"
-  button-danger:
-    backgroundColor: "{colors.error}"
-    textColor: "{colors.surface}"
-    rounded: "{rounded.button}"
-    padding: "0.6rem 0.9rem"
-  input:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.field}"
-    padding: "0.65rem 0.8rem"
-    width: "100%"
-  navigation:
-    backgroundColor: "{colors.green-dark}"
-    textColor: "{colors.ground}"
-    padding: "1.6rem 1.1rem"
-  status-waiting:
-    backgroundColor: "{colors.warning}"
-    textColor: "{colors.warning-ink}"
-    typography: "{typography.status}"
-    rounded: "{rounded.status}"
-    padding: "0.23rem 0.7rem"
-  status-approved:
-    backgroundColor: "{colors.success}"
-    textColor: "{colors.success-ink}"
-    typography: "{typography.status}"
-    rounded: "{rounded.status}"
-    padding: "0.23rem 0.7rem"
-  editor:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.surface}"
-    padding: "2rem"
-  readiness:
-    backgroundColor: "{colors.warning}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.surface}"
-    padding: "1.4rem"
-  readiness-ready:
-    backgroundColor: "{colors.success}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.surface}"
-    padding: "1.4rem"
-  handoff:
-    backgroundColor: "{colors.shell}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.surface}"
-    padding: "1.8rem"
-  workflow-steps:
-    textColor: "{colors.muted}"
-    padding: "0"
----
+# Samepage design
 
-# Design System: Client Brief
+Updated 24 November 2026. `app/globals.css` is the source of truth; this page explains the choices behind it.
 
-## Overview
+## The idea
 
-**Creative North Star: "The working brief"**
-
-Warm cream pages and a dark green navigation rail frame a practical workspace. White fields give longer answers room to breathe. Newsreader adds an editorial voice to the project name, readiness and accepted handoff; system sans carries labels, requests and activity. Fine rules and restrained state fills keep the screen easy to scan.
-
-The same palette and type pairing carry into the reading guide. Its narrower measure and plain diagrams suit longer explanations. This reference records the implemented system in `app/globals.css` and the portal components, with the approved direction in `docs/surface.md`. The sidecar's generated tonal strips are preview aids; the frontmatter holds the shipped color values.
-
-This reference was revised on 23 November 2026 after an interface pass that changed corner sizes, the navigation rail, the readiness card and motion. The sidecar was not regenerated.
-
-**Key Characteristics:**
-
-- Stone ground, dark green framing and off-white editing surfaces, with a matching dark mode.
-- Editorial headings paired with compact, sentence-case controls.
-- Readiness, versions and accepted facts remain visibly distinct.
-- Flat surfaces with borders; one elevated confirmation dialog.
-- Short motion that never blocks input.
-
-## Colors
-
-The palette combines warm neutrals with a muted green accent and reserved colors for workflow state.
-
-### Primary
-
-`green` colors primary actions and text links. `green-dark` anchors the navigation rail, the current workflow stage and primary-button hover. The rail uses the light `ground` color for text and keyboard focus.
-
-### Neutral
-
-`ground` is the page and identity-bar background. `surface` is the white editor and field fill. `shell` separates accepted facts from the draft. `ink` carries primary text, `muted` carries supporting text, and `line` divides sections and repeated rows.
-
-### Light and dark
-
-Light mode is deliberately not white: the page is a warm stone (`ground`) and panels and fields are an off-white (`surface`), which keeps a long form from glaring. Dark mode uses a near-black green for the page, a slightly lighter green-black for panels, pale ink, and a lighter mint (`dark-accent`) for links and the brand. Primary buttons keep white text on a mid green (`dark-action`). Waiting and approved states become dark amber and dark green fills with light text. The navigation rail stays dark green in both modes, with the same light tiles for the current role and project.
-
-Every color in `app/globals.css` is a custom property declared once for light on `:root` and overridden for dark on `:root[data-theme=dark]`; no rule below those two blocks holds a literal color. A sun or moon button at the end of the identity bar switches mode. The first visit follows the system setting, and a choice is remembered in the browser. A short inline script applies the theme before first paint, so the page does not flash the other palette.
-
-### State and focus
-
-The `warning` pair marks incomplete or waiting work. The `success` pair marks readiness, approval and resolved requests. `error` marks invalid fields; `error-bg` fills the page-level error summary. `focus` is the blue keyboard outline on light surfaces. These state colors accompany readable labels and explanations.
-
-**The Named State Rule.** A colored status always names the state. A blocker names the missing input and links to its field.
-
-## Typography
-
-Newsreader is self-hosted in `public/fonts/newsreader-roman.woff2`, with Georgia and serif fallbacks. The file provides normal weights from 200 through 800 and loads with `font-display: swap`. The body uses the operating system's sans serif stack. There is no separate display-font dependency on a remote service.
-
-The frontmatter records the desktop hierarchy. Display type belongs to the welcome screen; the headline role belongs to project titles. Readiness and accepted-handoff headings use their own serif roles. Standard section headings, form labels and long answers use sans serif. The guide's title is slightly larger than a project title (3rem), while the brand link is smaller (2rem, weight 650).
-
-Body paragraphs have a maximum measure of 72ch. Introductory welcome copy uses 54ch; guide paragraphs use 70ch. Supporting text ranges from 0.75rem to 0.9rem. Workflow numbers use lining, tabular numerals so their widths remain stable.
-
-**The Editorial Heading Rule.** Use Newsreader for identity, the principal heading and the named workflow summaries. Keep editable content and ordinary section labels in system sans.
+A website brief is a short conversation between a studio and a client, so the interface is one. The studio asks six questions in a thread, the client answers in the composer, and a panel on the right shows where the brief stands. There is no form page.
 
 ## Layout
 
-The workspace has a sticky, translucent identity bar (60px) above a navigation rail that stays in view while the page scrolls. The default rail is 236px wide. In the workspace the brand is plain text; on the guide it links home. The content area has a maximum width of 1550px and uses a flexible editor column beside a 310px review column, with a 2rem gap. Readiness and requests occupy the right column; handoff and history continue below the editor. Activity sits beside those later sections.
+- A top bar with the mark, the current project, the seat switch (Client or Studio) and the theme button.
+- The thread on the left with the composer under it. The composer changes with the question: a text box, page tick boxes, two choices with a file picker, or a calendar.
+- A panel on the right, 22rem wide: a status card with the main action, then three stages (the client answers, the studio reviews, approved and work starts).
+- Under 860px the panel folds into a bar above the thread and opens on tap. The composer stays at the bottom.
+- The client seat shows its own project as a plain label. Only the studio seat gets a project menu.
 
-The DOM order is readiness, editor, requests, handoff, history, activity. Desktop grid areas create the two-column view; stacked layouts retain that source order. This preserves the small-screen reading and keyboard sequence.
+## Colour
 
-| Viewport | Implemented adaptation |
-| --- | --- |
-| At least 1550px | Content side padding and column gap grow to 3rem; the review column grows to 350px. |
-| At most 1200px | The rail narrows to 210px; the review column becomes 280px, with a 1.2rem gap. Editor padding reduces and paired fields stack. |
-| At most 1000px | Work sections form one vertical column with a 1.8rem gap. Readiness actions use their natural width. |
-| Height at most 600px | The bar and rail are no longer sticky. This covers short windows and a laptop zoomed to 200% or more. |
-| At most 650px | Navigation becomes a static block above the workspace. The role switcher lays its three options in one row. Section links wrap, fields stack, and editor actions fill the available width. The page uses 1rem side gutters. |
+Blues drawn from one family, with flat fills. No gradients.
 
-At the smallest breakpoint, project titles reduce to 2.1rem, the welcome title to 3.2rem and the guide title to 2.2rem. Workflow numbers reduce to 1.8rem and their supporting captions hide; the stage names remain visible. Accepted facts change from a 125px label column to stacked labels and values.
+| Token | Light | Dark | Used for |
+| --- | --- | --- | --- |
+| `--bg` | `#eef4fc` | `#17181c` | Page and thread background |
+| `--panel` | `#fff` | `#1f2126` | Bars, panel, inputs |
+| `--bubble` | `#fff` | `#2b2e35` | The other person's messages |
+| `--ink` | `#0f1b40` | `#eeeff2` | Text |
+| `--quiet` | `#56628a` | `#a6aab6` | Secondary text |
+| `--line` | `#d7e2f3` | `#33363e` | Rules and input borders |
+| `--me` | `#2553cc` | `#2a63d0` | Your own messages, status card, approval card |
+| `--accent` | `#1b62d6` | `#2463cc` | Primary buttons, stage markers |
+| `--sky` | `#8fd0ff` | `#36435f` | Avatars, focus ring on inputs |
+| `--soft` | `#dcedff` | `#273146` | Ticks, the editing chip |
 
-The reading guide is centered within 880px. Its four-part diagrams use equal columns on larger screens and stack at the smallest breakpoint. Tables keep their columns and use tighter padding on mobile. Existing 350px and 390px captures show the resulting narrow layouts.
+Dark mode is a neutral charcoal with the same blue for messages and actions. It is a second set of values for the same tokens, switched by `data-theme` on the root element. The first visit follows the system setting and the button remembers a choice.
 
-## Elevation & Depth
+## Type
 
-Work surfaces are flat. White, cream and pale green fills separate editing, supporting content and accepted facts. Fine borders carry grouping without a shadow on every panel.
+Figtree, self-hosted as one variable file, weights 400 to 600. Nothing heavier is used. Questions stand out by size (1.25rem at weight 450) and the status heading by size (1.6rem at 600). Body text is 1rem with a 1.5 line height.
 
-The native confirmation dialog is the only raised surface. It uses the shadow `0 16px 48px #102b2433`, with a translucent `#142e2366` backdrop. Its maximum width is 480px and its corners are 20px. The identity bar is translucent (90% ground color with a 16px backdrop blur) so content scrolls beneath it; it becomes solid under `prefers-reduced-transparency`.
+## Shape
 
-**The Dialog Depth Rule.** Reserve elevation for the confirmation dialog. Keep the editor, readiness and handoff surfaces flat.
+Corners are small and consistent: 11px on message bubbles with a 3px corner on the speaker's side, 9px on the status card, 8px on menus and the calendar, 7px on inputs, 6px on buttons. Only avatars and stage markers are round. Surfaces are flat. The project menu and the confirmation dialog are the only raised layers.
 
 ## Motion
 
-Motion is CSS-only and animates opacity and transform. The shared curve is `cubic-bezier(.2,.8,.2,1)`.
+Two things move: a message arriving (0.22s) and the tick on the approval card. Both are switched off under `prefers-reduced-motion`.
 
-| Where | What moves | Timing |
-| --- | --- | --- |
-| Workspace and welcome load | Sections rise 10px and fade in, staggered 40 to 70ms apart | 0.5 to 0.6s |
-| Status message, error summary, new comment | Rise and fade in | 0.3s |
-| Buttons | Color eases; a press scales to 0.98 | 0.12 to 0.16s |
-| Fields | Border color eases on hover and focus | 0.16s |
-| Disclosures | Chevron rotates; revealed content fades in | 0.22 to 0.28s |
-| Readiness card and workflow strip | Fill, rule and text color ease between states | 0.4s |
-| Confirmation dialog | Fades and scales from 0.97; backdrop fades | 0.2 to 0.26s |
-| Loading placeholder | A light band sweeps across | 1.6s loop |
-| In-page links | Smooth scroll | browser default |
+## Writing
 
-Nothing waits for an animation: controls respond while sections are still arriving. Under `prefers-reduced-motion` every animation and transition is removed and scrolling is instant.
+The studio speaks in the first person and asks plain questions. Labels are the words a client would use: "Photos and logo", "Launch date", "Anything else". Status lines say who has the brief and what happens next.
 
-**The Arrival Rule.** Motion marks something arriving or changing state. It never delays an action, and only the loading placeholder loops.
+## Accessibility
 
-## Shapes
-
-Panels use the shared 16px surface radius. Buttons and fields use 10px; status labels are small pills. Fine one-pixel borders appear on fields, editor panels, diagrams and row separators.
-
-The workflow strip uses large serif numbers and a two-pixel rule under each stage. Its current stage darkens the text and rule; a completed stage shows a check mark in place of its number and uses the action green. Dropdowns draw their own arrow so they match the other fields in every browser; date fields and checkboxes stay native. Disclosures use a drawn chevron that turns when opened.
-
-## Components
-
-### Buttons
-
-Primary actions have white text on green and use dark green on hover or press. Secondary actions are white with ink text and a muted border. The destructive confirmation uses white text on error red; that pairing remains on hover and press. The shared controls have a minimum height of 44px and semibold type (weight 600, line height 1.35). The welcome screen's start button is a larger variant. Secondary hover changes the fill to pale green and strengthens the border; the pressed state darkens that pale fill. Disabled buttons use reduced opacity (0.58) and the unavailable cursor.
-
-Keyboard focus uses a three-pixel outline with a three-pixel offset. The dark rail overrides its color with the light ground color. Labels identify the action and, for submission or approval, the version it affects.
-
-### Inputs and field messages
-
-Fields use a white fill, muted green-gray border and full available width. The border turns green on hover and focus; keyboard focus keeps the blue outline. Textareas resize vertically. Disabled fields keep full text opacity with a pale fill and muted text. An invalid field gains an error-colored border and a nearby written explanation. `aria-invalid` and `aria-describedby` connect that explanation and the existing help to the field.
-
-Labels stay above the controls. Required and optional notes sit beside the label on larger screens and below it on mobile. Small uppercase group titles (The basics, Scope, Assets and timing, Project files) divide the brief form. Date fields keep the nearby explanation that a requested date requires a delivery agreement.
-
-### Navigation
-
-The dark rail groups the role switcher, project selection and in-page links under small uppercase headings. The role switcher is a group of three buttons; the current role is a white tile with `aria-pressed="true"`. A selected project becomes a white tile with dark green text and `aria-current="page"`. Other rail items show a faint light fill on hover. The foot of the rail states when the demo expires and holds the start-over action. The mobile rail remains visible above the workspace and wraps its links into available rows.
-
-### Status labels
-
-Waiting and approved labels share the compact status typography and pill shape. Their text distinguishes Draft, Submitted, Approved, Required, Optional and Resolved. Version labels use the same approved treatment within accepted handoff. These labels are static information rather than controls.
-
-### Editor and readiness
-
-The editor is the main white panel, with a ruled heading and a saved-version or unsaved-change label. Once a brief is approved, the editor states that it is locked and drops its save and upload controls.
-
-Readiness is a separate tinted card labelled "Next step". Its serif heading says what is left and who acts ("1 thing to finish before submitting", "Waiting for the agency owner", "Ready for your approval"). Below it sit the linked blockers or a one-line explanation, the single next action, and the saved version the check used. A client who has submitted gets a button that switches to the agency owner. Its fill switches from amber to pale green when the required inputs and requests are complete.
-
-### Approved handoff
-
-The pale green handoff panel, titled "Approved handoff", has a serif heading and a visible approved-version label. Fact rows use muted labels and readable values. Long values wrap. The suggested checklist retains its planning qualification and links each item to its source fact. The download action follows the list. An empty handoff uses the same surface with an explanation of the required approval.
-
-### Requests and history
-
-Disclosure sections use ruled rows. Open requests expose the explanation, existing comments and a labeled reply field. Comment blocks use a pale green fill and modest corners. Saved revisions are readable disclosures; activity uses compact text rows with separate actor and time metadata.
-
-### Workflow strip and reading diagrams
-
-The three-stage strip is an ordered list with a programmatically named current step. Its numbers are decorative, while Brief, Review and Handoff remain readable stage names. The guide uses a separate four-column diagram pattern: white cells, thin rules and a bold sentence-case lead in each cell.
-
-## Do's and Don'ts
-
-### Do:
-
-- Do keep the warm ground, off-white editor and dark green navigation together.
-- Do add any new color as a token with both a light and a dark value.
-- Do preserve Newsreader headings and the system sans used by fields and longer requests.
-- Do pair state colors with written labels, linked blockers and visible version numbers.
-- Do keep readiness before the editor in the source order used by stacked layouts.
-- Do retain visible keyboard focus, linked field errors and the existing control sizes.
-- Do keep synthetic-data labels visible where they appear.
-
-### Don't:
-
-- Don't apply the dark rail's background color to the long-form editing surface.
-- Don't replace state explanations with color alone.
-- Don't turn the suggested checklist or requested deadline into a delivery promise.
-- Don't add shadows to the flat work panels.
-- Don't hide workflow stage names when their smaller captions are removed.
-- Don't add motion that loops, bounces or makes a control wait.
+Every control has a visible label or an `aria-label`. Focus is always visible. The calendar takes arrow keys, and focus moves to the new control when the composer changes. Speaker names are read out before each message.

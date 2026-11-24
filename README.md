@@ -1,38 +1,38 @@
-# Client Brief
+# Samepage
 
-An independent portfolio prototype by Mohamed Elmorshedy, built with AI assistance. Two fictional clients and an agency owner turn an incomplete website brief into an approved version and a useful handoff. This is not commissioned work or evidence of paying clients, adoption or time saved.
+Website briefs for studios and their clients. This is a portfolio prototype I built on my own, with AI assistance. A fictional studio asks a fictional client six questions in a chat, the client sends the brief, and the studio approves one version or sends it back with a note. Nobody commissioned it, and I am not claiming paying clients, adoption or time saved.
 
 [Open the public demo](https://samepage.mosalah-77.workers.dev) · [Browse the core logic](https://github.com/mosalah-77/samepage/tree/main/lib) · [How it works](https://samepage.mosalah-77.workers.dev/how-it-works)
 
-The demo runs on the Cloudflare Workers free plan. The hosted workflow, access boundaries and a file round trip were checked there on 23 November 2026; see [verification](docs/verification.md).
+The demo runs on the Cloudflare Workers free plan. See [verification](docs/verification.md) for what was checked there and when.
 
 ## Try the workflow
 
-1. Start a demo as Client A. The **Next step** card says one thing is left: the audience is missing, so submission is blocked.
-2. Enter an audience and save. Constraints and deadline can stay blank.
-3. Submit the saved version. Choose **Continue as agency owner** on the card (or use **Viewing as** in the side rail) and approve that exact version.
-4. Read the approved facts and suggested delivery checklist. Reopen with a reason to make a new revision; the previous approval stays in history.
-5. As the owner, copy Client B's project URL. Switch to Client A and open it: the server denies access.
+1. Start a demo. You are Jackie, the client. Answer the four required questions; the two optional ones can be skipped.
+2. Choose **Send for approval**. Then switch the seat at the top right to **Studio**. You are now Viktor.
+3. Choose **Ask for changes** and write a note. Switch back to **Client**, change an answer with its **Edit** link and send version 2.
+4. As the studio, approve version 2. The panel shows the first jobs and **Download handoff** saves them as text.
+5. As the studio, open the project menu and pick Marsh Lane Vets. Switch to **Client**: the menu is gone, because Jackie's seat belongs to one project and the server refuses the other.
 
-Persona switching simulates roles within one visitor's isolated run. It is not production customer authentication. Use synthetic text and files only. Runs expire after 24 hours.
+Seat switching simulates roles within one visitor's isolated run. It is not production customer authentication. Use made-up text and files only. Runs expire after 24 hours.
 
 ## What works
 
-- D1-backed projects, immutable brief versions, rule-based missing inputs and request comments.
-- Owner approval of an exact submitted version, recorded reopening reasons, activity history and downloadable handoff.
-- A scheduling reminder when the accepted brief has no deadline. The date remains optional; an entered date produces a task to review it.
+- A conversation interface: one question at a time, a composer that changes with the question (text, page tick boxes, a file picker, a calendar) and a side panel with the status and the next action.
+- Every answer is saved as an immutable revision in D1. The thread is rebuilt from saved data, so a reload or the other seat shows the same conversation.
+- The studio approves one sent revision, or hands the brief back with a note. An approved brief can be reopened with a reason, and the approved version stays the agreed scope until another is approved.
+- A downloadable handoff with a first-jobs list. A missing launch date adds a job to agree one; an entered date adds a job to check it.
 - Private file uploads, stored in D1, with membership checks on every download, bounded storage and recoverable retries.
-- Server-side permission, concurrency, validation and idempotency checks. The browser keeps unsaved inputs after failed saves and warns before navigation.
-- A next-step card that names what is left and who acts, a three-way role switcher, and a brief form grouped under plain headings.
-- Responsive layouts, keyboard focus, linked field errors and an in-app explanation at `/how-it-works`. Motion is short and CSS-only, and is switched off for visitors who ask for reduced motion.
-- A softer light mode and a dark mode. The first visit follows the system setting; a button in the top bar switches and remembers the choice.
+- Server-side permission, concurrency, validation and idempotency checks. A failed request leaves the typed answer in place and offers a retry that cannot save twice.
+- Light and dark themes. The first visit follows the system setting; the button in the top bar switches and remembers the choice.
+- Phone layout, keyboard operation, visible focus and an in-app explanation at `/how-it-works`. Two things animate, a message arriving and the approval tick, and both are off for visitors who ask for reduced motion.
 - Operator-triggered expired-run cleanup. It deletes stored files before releasing their SQL quota.
 
-There are no real invitations, email sending, invoices, contracts, payments or runtime AI calls. The checklist is a deterministic suggestion for human review.
+There are no real invitations, email sending, invoices, contracts, payments or runtime AI calls. The first-jobs list is a deterministic suggestion for human review. The API also has request and comment endpoints from the earlier form interface; the conversation interface does not use them.
 
 ## Run locally
 
-Requires Git and Node.js 22.13 or newer; verified here with Node 26.6.0. Use the lockfile:
+Requires Git and Node.js 22.13 or newer. I run it on Node 26.6.0. Use the lockfile:
 
 ```sh
 npm run install:ci
@@ -69,13 +69,13 @@ npm run build
 npm test
 ```
 
-The current suite contains 32 unit, storage-fault and client checks plus 15 real Worker API checks. The API runner applies all migrations to disposable local D1 state. It checks access boundaries, invalid inputs, conflicting saves/approvals, safe retries, upload failure recovery, reset and cleanup. See [observed results and limits](docs/verification.md).
+The current suite contains 35 unit, storage-fault, client and conversation checks plus 15 real Worker API checks. The API runner applies all migrations to disposable local D1 state. It checks access boundaries, invalid inputs, conflicting saves/approvals, safe retries, upload failure recovery, reset and cleanup. See [observed results and limits](docs/verification.md).
 
 ## Follow the data
 
 ```mermaid
 flowchart LR
-  UI[React form and demo personas] --> API[Worker API: session, CSRF, membership]
+  UI[React conversation and seat switch] --> API[Worker API: session, CSRF, membership]
   API --> RULES[Validation and readiness rules]
   RULES --> SQL[(D1: versions, requests, approvals, events)]
   API --> FILES[(D1: private file bytes)]
@@ -83,12 +83,12 @@ flowchart LR
   VIEW --> UI
 ```
 
-Start with [the learner's walkthrough](docs/how-it-works.md), then [the code graph guide](docs/code-graph.md). Graphify is an optional local developer tool; `npm run graph` refreshes its AST graph without model calls or code upload. SQL-string relationships still need source inspection. Read [decisions](docs/decisions.md), [issues](docs/issues.md), [design review](docs/design-review.md) and [operator instructions](docs/operator.md) for maintenance.
+Start with [the learner's walkthrough](docs/how-it-works.md), then [the code graph guide](docs/code-graph.md). Graphify is an optional local developer tool; `npm run graph` refreshes its AST graph without model calls or code upload. SQL-string relationships still need source inspection. Read [decisions](docs/decisions.md), [issues](docs/issues.md), [the design notes](DESIGN.md) and [operator instructions](docs/operator.md) for maintenance.
 
-## Limits and contribution record
+## Limits, and how I built it
 
-The public demo stores at most 20 runs, including expired runs until cleanup; it has no per-IP rate limiter. Cleanup is manual. An interrupted upload can leave a durable write claim that requires operator investigation; capacity stays reserved until it is safely repaired. Unsaved form edits live in memory, not durable browser storage. Uploaded files receive size, type and signature checks, not malware scanning. A file can be at most 1.9 MB because its bytes are stored in a D1 row.
+The public demo stores at most 20 runs, including expired runs until cleanup; it has no per-IP rate limiter. Cleanup is manual. An interrupted upload can leave a durable write claim that requires operator investigation; capacity stays reserved until it is safely repaired. An answer that has not been sent lives in memory, not durable browser storage. Uploaded files receive size, type and signature checks, not malware scanning. A file can be at most 1.9 MB because its bytes are stored in a D1 row.
 
-Mohamed built this project using AI coding assistants as tools: GPT/Codex for the first version and Claude for the 23 November 2026 interface, theme, reliability and hosting work. He set the scope, chose the stack and visual direction, directed and reviewed the work, and made the predictions recorded in [learning](docs/learning.md). The assistants generated most of the implementation, tests and documentation, and AI review passes checked the design and code. He also completed a guided code change himself: the deadline reminder and its two tests, with the checks run and the result confirmed on screen and in the downloaded handoff. Not every line was written unaided; see [decisions](docs/decisions.md) for the reasoning behind the main choices.
+I built this project using AI coding assistants as tools: GPT/Codex for the first version, and Claude for the November 2026 work, which covers the reliability fixes, the move to Cloudflare and the conversation interface that replaced the original form. I set the scope, chose the stack and the visual direction, and directed and reviewed the work. The assistants generated most of the implementation, tests and documentation, and I used AI review passes to check the design and the code. I also made one guided code change myself: the deadline reminder and its two tests. I ran the checks and confirmed the result on screen and in the downloaded handoff. I did not write every line unaided. My predictions from that exercise are in [learning](docs/learning.md), and [decisions](docs/decisions.md) has the reasoning behind the main choices.
 
-Third-party notices remain in [ATTRIBUTION.md](ATTRIBUTION.md) and the referenced licence files. No separate licence has yet been selected for the original project code. No Halvern client material or Quin's code was used.
+Third-party notices are in [ATTRIBUTION.md](ATTRIBUTION.md) and the licence files it points to. I have not chosen a licence for my own code yet. I used no Halvern client material and none of Quin's code.
