@@ -54,6 +54,12 @@ export async function handlePortalRequest(request: Request, env: PortalEnv): Pro
     const actor = await requireActor(request, env.DB);
     if (request.method === 'POST') checkCsrf(request, actor);
     if (request.method === 'POST' && path.join('/') === 'demo/reset') { await jsonBody(request); return await startDemo(env.DB, request, actor); }
+    if (request.method === 'POST' && path.join('/') === 'demo/end') {
+      // Leaving the demo expires the run, so its data is unreachable at once and is removed by the next cleanup.
+      await jsonBody(request);
+      await env.DB.prepare('UPDATE runs SET expires_at=0 WHERE id=?').bind(actor.runId).run();
+      return Response.json({ ended: true }, { headers: { 'Set-Cookie': 'portal_session=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0', 'Cache-Control': 'no-store' } });
+    }
     if (request.method === 'GET' && path.length === 2 && path[0] === 'assets') return await downloadAsset(env, actor, path[1]);
     let result: unknown;
     if (request.method === 'GET' && path.join('/') === 'session') result = await sessionView(env.DB, actor);

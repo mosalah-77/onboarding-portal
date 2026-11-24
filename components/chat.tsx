@@ -67,7 +67,7 @@ function Calendar({ value, onChange }: { value: string; onChange: (value: string
     <p className="cal-pick">{value ? <>Launch by <b>{day(value)}</b></> : 'Pick a day, or skip.'}</p></>;
 }
 
-const PAGE_IDEAS = ['Home', 'About us', 'Our kitchens', 'Past projects', 'Prices', 'Contact', 'Journal'];
+const PAGE_IDEAS = ['Home', 'About us', 'Services', 'Prices', 'Bookings', 'Reviews', 'Contact'];
 function Answer({ k, editing, project, state, busy, actions }: { k: FieldKey; editing: boolean; project: ProjectView; state: Progress; busy: boolean; actions: Actions }) {
   const brief = project.latestRevision.brief, f = field(k);
   const [text, setText] = useState(k === 'goal' || k === 'audience' || k === 'constraints' ? brief[k] : '');

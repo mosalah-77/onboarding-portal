@@ -226,4 +226,11 @@ test('real backend: tenant boundaries, saves and retries', async t => {
     assert.deepEqual(last.map(r => r.started.status).sort(), [200, 429]);
     assert.equal((await demo()).started.status, 429);
   });
+  await t.test('leaving the demo ends the run and clears the session', async () => {
+    assert.equal((await other.call('/demo/end', {}, { headers: { 'X-CSRF-Token': '' } })).status, 403);
+    const ended = await other.call('/demo/end', {});
+    assert.equal(ended.status, 200);
+    assert.match(ended.headers.get('set-cookie'), /Max-Age=0/);
+    assert.equal((await other.call(`/projects/${otherStart.data.projects[0].id}`)).status, 401);
+  });
 });

@@ -5,14 +5,14 @@ import type { ProjectView } from './workflow.ts';
 // so a reload, or the other seat, sees the same thread.
 export type FieldKey = 'goal' | 'audience' | 'pages' | 'assetPlan' | 'deadline' | 'constraints';
 export type Seat = 'client' | 'studio';
-export const STUDIO = 'Fenwick Studio';
+export const STUDIO = 'Silverhand Studio';
 export const PEOPLE: Record<string, { name: string; first: string; init: string }> = {
   'client-a': { name: 'Jackie Welles', first: 'Jackie', init: 'JW' },
   'client-b': { name: 'Priya Nair', first: 'Priya', init: 'PN' },
   owner: { name: 'Viktor Vektor', first: 'Viktor', init: 'VV' },
 };
 export const FIELDS: { k: FieldKey; label: string; q: string; help?: string; need?: boolean }[] = [
-  { k: 'goal', label: 'Goal', q: 'What should the website do for the business?', help: 'More quote requests, fewer phone calls, online orders.', need: true },
+  { k: 'goal', label: 'Goal', q: 'What should the website do for the business?', help: 'More bookings, fewer phone calls, quotes online.', need: true },
   { k: 'audience', label: 'Audience', q: 'Who are you trying to reach?', need: true },
   { k: 'pages', label: 'Pages', q: 'Which pages do you want?', need: true },
   { k: 'assetPlan', label: 'Photos and logo', q: 'Who is supplying the photos and logo?', need: true },

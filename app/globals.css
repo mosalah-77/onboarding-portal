@@ -9,13 +9,13 @@
   /* Blues taken from the layers of the Outlook mark: sky, azure, deep indigo. */
   --bg:#eef4fc; --panel:#fff; --ink:#0f1b40; --quiet:#56628a; --line:#d7e2f3;
   --me:#2553cc; --me-ink:#fff; --me-quiet:#cddcff;
-  --accent:#1b62d6; --accent-ink:#fff; --sky:#8fd0ff; --on-sky:#0f1b40; --soft:#dcedff; --soft-ink:#0b469a; --faint:#8f95a8;
+  --accent:#1b62d6; --accent-ink:#fff; --sky:#8fd0ff; --on-sky:#0f1b40; --soft:#dcedff; --soft-ink:#0b469a; --faint:#666d88;
   --lift:0 1px 2px #0000000f; --bubble:#fff; color-scheme:light;
 }
 :root[data-theme=dark]{
   --bg:#17181c; --panel:#1f2126; --bubble:#2b2e35; --ink:#eeeff2; --quiet:#a6aab6; --line:#33363e;
-  --me:#2a63d0; --me-quiet:#d6e3ff;
-  --accent:#2463cc; --accent-ink:#fff; --sky:#36435f; --on-sky:#dbe7ff; --soft:#273146; --soft-ink:#b9d2ff; --faint:#7f8492;
+  --me:#265bc2; --me-quiet:#d6e3ff;
+  --accent:#2463cc; --accent-ink:#fff; --sky:#36435f; --on-sky:#dbe7ff; --soft:#273146; --soft-ink:#b9d2ff; --faint:#9095a3;
   --lift:none; color-scheme:dark;
 }
 :root[data-theme=dark] .mk,:root[data-theme=dark] .here,:root[data-theme=dark] .link{color:#9cc3ff}
@@ -211,6 +211,7 @@ input[type=file]::file-selector-button{font:inherit;font-weight:550;border:1.5px
 .row.flush{margin:0}
 .btn[disabled],.seg button[disabled],.link[disabled]{cursor:not-allowed}
 .logo{color:inherit;text-decoration:none}
+button.logo{border:0;background:none;padding:0}
 dialog{border:0;border-radius:8px;padding:1.4rem;max-width:26rem;background:var(--panel);color:var(--ink);box-shadow:0 0 0 1px var(--line),0 24px 60px -20px #0f1b4080}
 dialog::backdrop{background:#0f1b4066}
 dialog h2{font-size:1.2rem;font-weight:600;letter-spacing:-.01em}

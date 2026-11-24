@@ -8,7 +8,7 @@ export default function Guide() {
       <p>Jackie, Viktor and their companies are made up, and switching seats is a shortcut for signing in as someone else. The rest is real. Answers go into a database, files go into storage, and the server decides who may see what. This page follows one brief through all of it.</p>
 
       <h2>When Jackie answers a question</h2>
-      <p>Say Jackie answers &ldquo;Who are you trying to reach?&rdquo; with &ldquo;Homeowners planning a new kitchen&rdquo;. The browser sends the whole brief with that answer in it, plus the version token it last saw and a retry key. The server then does four things.</p>
+      <p>Say Jackie answers &ldquo;Who are you trying to reach?&rdquo; with &ldquo;Drivers within a few miles of the shop&rdquo;. The browser sends the whole brief with that answer in it, plus the version token it last saw and a retry key. The server then does four things.</p>
       <ol>
         <li>It reads the session cookie to work out who is asking, and checks that their seat belongs to the project&rsquo;s workspace.</li>
         <li>It checks the brief: the right types, sensible lengths, a date that exists on a calendar. A half-finished brief is fine at this point.</li>

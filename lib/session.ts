@@ -41,9 +41,9 @@ export async function startDemo(db: D1Database, request: Request, reset?: ActorC
     AND (? IS NULL OR EXISTS(SELECT 1 FROM runs r JOIN sessions s ON s.run_id=r.id WHERE r.id=? AND r.expires_at>? AND s.id=? AND s.persona=?))`).bind(runId, now, now + 86400000, reset?.runId ?? null, reset?.runId ?? null, now, reset?.sessionId ?? null, reset?.personaId ?? null)];
   const exists = 'EXISTS(SELECT 1 FROM runs WHERE id=?)';
   if (reset) batch.push(db.prepare(`UPDATE runs SET expires_at=0 WHERE id=? AND ${exists}`).bind(reset.runId, runId));
-  // Calder Street starts empty so the visitor answers every question. Marsh Lane is a finished draft the studio can read.
+  // Jackie's Auto Shop starts empty so the visitor answers every question. Marsh Lane is a finished draft the studio can read.
   const empty: BriefInput = { goal: '', audience: '', pages: [], constraints: '', deadline: null, assetPlan: '', assetIds: [] };
-  const seeds: [string, BriefInput][] = [['Calder Street Kitchens', empty], ['Marsh Lane Vets', { ...empty, goal: 'Let pet owners book appointments online.', audience: 'Pet owners within a few miles of the surgery.', pages: ['Home', 'Services', 'Contact'], assetPlan: 'create' }]];
+  const seeds: [string, BriefInput][] = [["Jackie's Auto Shop", empty], ['Marsh Lane Vets', { ...empty, goal: 'Let pet owners book appointments online.', audience: 'Pet owners within a few miles of the surgery.', pages: ['Home', 'Services', 'Contact'], assetPlan: 'create' }]];
   for (const [index, [name, brief]] of seeds.entries()) {
     const workspace = id(), project = id(), revision = id(), persona = index ? 'client-b' : 'client-a';
     batch.push(db.prepare(`INSERT INTO workspaces (id,run_id,name) SELECT ?,?,? WHERE ${exists}`).bind(workspace, runId, name, runId));

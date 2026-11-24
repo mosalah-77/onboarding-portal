@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { BriefInput } from '@/lib/brief';
 import { ApiError, requestPortal } from '@/lib/client';
@@ -22,7 +23,7 @@ export function Portal() {
   // Skipped optional questions are remembered for this page only. After a reload an unanswered one is asked again.
   const [skipped, setSkipped] = useState<Record<string, FieldKey[]>>({});
   const [edit, setEdit] = useState<FieldKey | null>(null), [noting, setNoting] = useState(false);
-  const [menu, setMenu] = useState(false), [confirm, setConfirm] = useState(false);
+  const [menu, setMenu] = useState(false), [confirm, setConfirm] = useState<'over' | 'home' | null>(null);
   const epoch = useRef(0), dialog = useRef<HTMLDialogElement>(null), switcher = useRef<HTMLDivElement>(null);
   const busy = pending || loading;
 
@@ -54,6 +55,12 @@ export function Portal() {
     setPending(true); setError(null);
     try { const s = await requestPortal<Session>(reset ? '/demo/reset' : '/demo', session?.csrf, {}); setSession(s); setSkipped({}); await loadProject(s.projects[0].id); }
     catch (e) { setError(asError(e, 'The demo could not start. Try again shortly.')); }
+    finally { setPending(false); }
+  }
+  async function endDemo() {
+    setPending(true); setError(null);
+    try { await requestPortal('/demo/end', session?.csrf, {}); epoch.current++; setSession(null); setProject(null); setSkipped({}); setLoading(false); }
+    catch (e) { setError(asError(e, 'The demo could not be ended. Try again shortly.')); }
     finally { setPending(false); }
   }
   async function takeSeat(seat: Seat) {
@@ -121,7 +128,7 @@ export function Portal() {
 
   return <div className="app">
     <header className="bar">
-      <Logo />
+      {session ? <button type="button" className="logo" aria-label="Samepage home" onClick={() => setConfirm('home')}><Logo /></button> : <Link className="logo" href="/" aria-label="Samepage home"><Logo /></Link>}
       {session && shownProject ? <div className="proj" ref={switcher}>
         {many ? <button type="button" className="proj-btn" aria-haspopup="true" aria-expanded={menu} disabled={pending} onClick={() => setMenu(!menu)}>{label(shownProject)}<Chev d="M4 6l4 4 4-4" /></button> : <div className="proj-btn solo">{label(shownProject)}</div>}
         {menu && many ? <div className="menu"><p>Projects</p>{session.projects.map(p => <button type="button" key={p.id} aria-current={p.id === project?.id} disabled={pending} onClick={() => { setMenu(false); if (p.id !== project?.id) void loadProject(p.id); }}>{label(p)}{p.id === project?.id ? <span className="here"><Tick /></span> : null}</button>)}</div> : null}
@@ -135,19 +142,19 @@ export function Portal() {
         <Thread key={`${project.id}-${seat}`} project={project} state={state} seat={seat} canEdit={canEdit} onEdit={actions.edit} />
         <Composer project={project} state={state} seat={seat} edit={canEdit ? edit : null} noting={noting} busy={busy} error={error} actions={actions} />
       </main>
-      <BriefPanel project={project} state={state} seat={seat} canEdit={canEdit} edit={canEdit ? edit : null} busy={busy} expiresAt={session.expiresAt} actions={actions} startOver={() => setConfirm(true)} />
+      <BriefPanel project={project} state={state} seat={seat} canEdit={canEdit} edit={canEdit ? edit : null} busy={busy} expiresAt={session.expiresAt} actions={actions} startOver={() => setConfirm('over')} />
     </div> : !session && !loading ? <main className="hero"><div>
       <div className="pitch">
         <h1>Get your client on the same page.</h1>
         <p className="lead">Samepage is a website brief done as a chat. The studio asks six questions, the client answers them, and the studio approves the version it is going to build.</p>
-        <p>You get both seats. Start as Jackie, who wants a new website for a kitchen company. Then swap over and review the brief as Viktor, who runs the studio.</p>
+        <p>You get both seats. Start as Jackie, who wants a new website for an auto shop. Then swap over and review the brief as Viktor, who runs the studio.</p>
         <div className="acts"><button type="button" className="btn" disabled={pending} onClick={() => void startDemo()}>{pending ? 'Starting…' : 'Start the demo'}</button><a href="/how-it-works">How it works</a></div>
         {error ? <p className="err" role="alert">{error.message}</p> : null}
         <p className="note">A portfolio demo by Mohamed Elmorshedy. The people and companies are made up, and each demo expires after 24 hours.</p>
       </div>
       <div className="stage" aria-hidden="true">
         <div className="msg"><span className="face">VV</span><div className="bub q">Which pages do you want?</div></div>
-        <div className="msg mine"><div className="bub">Home, Our kitchens, Prices, Contact</div></div>
+        <div className="msg mine"><div className="bub">Home, Services, Prices, Contact</div></div>
         <div className="msg"><span className="face">VV</span><div className="bub q">Is there a date you need it by?</div></div>
         <div className="msg mine"><div className="bub">1 March 2027</div></div>
         <p className="event">Jackie sent version 1</p>
@@ -157,7 +164,8 @@ export function Portal() {
       {loading ? <p role="status">Loading the brief…</p> : session ? <><h1>That brief isn&rsquo;t available</h1><button type="button" className="btn" onClick={() => void loadProject(session.projects[0].id)}>Back to {session.projects[0].name}</button></> : null}
       {error && !loading ? <p className="err" role="alert">{error.message}{error.status === 401 ? <button type="button" className="link" onClick={() => void startDemo()}>Start a new demo</button> : null}</p> : null}
     </main>}
-    <dialog ref={dialog} onClose={() => setConfirm(false)} aria-labelledby="over-title"><h2 id="over-title">Start the demo over?</h2><p>This ends the current demo, with both projects and every saved answer, and starts a fresh one.</p>
-      <div className="acts"><button type="button" className="btn plain" autoFocus onClick={() => setConfirm(false)}>Cancel</button><button type="button" className="btn" onClick={() => { setConfirm(false); void startDemo(true); }}>Start over</button></div></dialog>
+    <dialog ref={dialog} onClose={() => setConfirm(null)} aria-labelledby="confirm-title"><h2 id="confirm-title">{confirm === 'home' ? 'Leave the demo?' : 'Start the demo over?'}</h2>
+      <p>{confirm === 'home' ? 'Going back to the home page ends this demo, with both projects and every saved answer.' : 'This ends the current demo, with both projects and every saved answer, and starts a fresh one.'}</p>
+      <div className="acts"><button type="button" className="btn plain" autoFocus onClick={() => setConfirm(null)}>Cancel</button><button type="button" className="btn" onClick={() => { const leave = confirm === 'home'; setConfirm(null); void (leave ? endDemo() : startDemo(true)); }}>{confirm === 'home' ? 'End the demo' : 'Start over'}</button></div></dialog>
   </div>;
 }
