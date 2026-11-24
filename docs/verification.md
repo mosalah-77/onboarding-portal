@@ -148,3 +148,13 @@ Author: Mohamed Elmorshedy
 - The first screen loads 12 requests. The scripts are about 160 KB compressed, most of it the framework, with 19 KB of styles and a 20 KB font.
 - In Chromium and WebKit, the logo with a demo running opened a confirmation. Cancel kept the demo. Confirming returned to the home screen, the session then answered 401, and a new demo started with an empty brief.
 - Not checked: the hosted site, a screen reader, a real phone, and the rate limits under real Cloudflare addresses.
+
+## Samepage release, 24 November 2026
+
+- Deployed from the `cloudflare-hosting` branch to https://samepage.mosalah-77.workers.dev with the two rate limit bindings attached.
+- Against the public URL: two visitors each started a demo and one could not read the other's project (404). A 1,900,000-byte file uploaded and came back byte for byte, and one byte more returned 413. A wrong CSRF token returned 403, cleanup without the operator token returned 401, and the client seat was refused approval (403). Ending a demo returned 200 and the session then answered 401.
+- The page carried the content security policy and the no-framing, no-sniff and referrer headers. A hashed script was served as immutable for a year. The client seat's session listed one project, Jackie's Auto Shop.
+- Eight demo starts in a row from one address: five succeeded and the rest returned 429. The limit is set to six a minute and Cloudflare counts approximately.
+- In Chromium against the public URL, the whole flow from first answer to downloaded handoff completed at 1440×900 and 390×844 in light and in dark, with no page errors and no sideways scrolling. The thread held 15 messages after a reload.
+- Every test row was deleted from the remote database afterwards.
+- Not checked on the public URL: a second visitor downloading the first visitor's file (covered by the API suite and checked on the earlier deployment), WebKit, a real phone and a screen reader.
