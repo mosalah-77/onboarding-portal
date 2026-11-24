@@ -120,3 +120,9 @@ Author: Mohamed Elmorshedy
 - The test runs and their files were deleted from the remote database afterwards; it held no runs when this was written.
 - Not checked: behaviour at the free plan's daily request and storage limits, and the hosted site in WebKit or on a real phone.
 - The earlier entries on this page that mention Sites describe the previous host.
+
+## Rename to Samepage, 24 November 2026
+
+- The Worker is now `samepage` and the public URL is https://samepage.mosalah-77.workers.dev. The GitHub repository is `mosalah-77/samepage`. The old Worker `client-brief` was deleted, so the earlier address on this page no longer answers. The interface still shows the old product name until the redesign lands.
+- Against the new URL: two visitors each started a demo and one could not read the other's project (404). A 1,900,000-byte file uploaded and downloaded byte for byte, and one byte more returned 413. A wrong CSRF token returned 403. Cleanup without the operator token returned 401.
+- The approval flow completed in Chromium on the new URL in light and dark mode with no page errors. The test runs were deleted from the database afterwards.

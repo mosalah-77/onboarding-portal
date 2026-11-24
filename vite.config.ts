@@ -16,7 +16,7 @@ export default defineConfig(async () => {
         inspectorPort: false,
         // The Worker and its D1 database on Cloudflare. A database ID is not a secret.
         config: {
-          name: "client-brief",
+          name: "samepage",
           main: "./worker/index.ts",
           compatibility_flags: ["nodejs_compat"],
           d1_databases: [

@@ -2,7 +2,7 @@
 
 An independent portfolio prototype by Mohamed Elmorshedy, built with AI assistance. Two fictional clients and an agency owner turn an incomplete website brief into an approved version and a useful handoff. This is not commissioned work or evidence of paying clients, adoption or time saved.
 
-[Open the public demo](https://client-brief.mosalah-77.workers.dev) · [Browse the core logic](https://github.com/mosalah-77/onboarding-portal/tree/main/lib) · [How it works](https://client-brief.mosalah-77.workers.dev/how-it-works)
+[Open the public demo](https://samepage.mosalah-77.workers.dev) · [Browse the core logic](https://github.com/mosalah-77/samepage/tree/main/lib) · [How it works](https://samepage.mosalah-77.workers.dev/how-it-works)
 
 The demo runs on the Cloudflare Workers free plan. The hosted workflow, access boundaries and a file round trip were checked there on 23 November 2026; see [verification](docs/verification.md).
 
