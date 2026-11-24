@@ -1,6 +1,4 @@
-# Operating the synthetic demo
-
-Author: Mohamed Elmorshedy. Updated 23 November 2026.
+# Operating the demo
 
 `DEMO_ADMIN_TOKEN` is a Worker secret, set with `wrangler secret put DEMO_ADMIN_TOKEN`. Never put it in `vite.config.ts`, a public environment variable, browser code, a URL or Git. Local environment files are ignored. Keep a separate private copy for maintenance.
 
@@ -20,10 +18,10 @@ The server deletes all stored file rows for a run before deleting its SQL row an
 
 Every upload attempt holds a durable `asset_writes` claim while writing storage. Cleanup skips runs with claims, so an upload cannot recreate an object after cleanup frees its quota. `runsWaitingForUploads` reports expired runs with outstanding claims.
 
-If a Worker terminates before releasing a claim, it remains reserved. Investigate the run and object keys before repair. Do not expire claims merely because a timer elapsed: the corresponding write might still be running. This prototype has no automatic abandoned-claim repair. For larger public use, add a coordinated cancellation/repair mechanism and abuse throttling.
+If a Worker terminates before releasing a claim, it remains reserved. Investigate the run and object keys before repair. Do not expire claims merely because a timer elapsed: the corresponding write might still be running. This prototype has no automatic abandoned-claim repair. For larger public use, add a coordinated cancellation/repair mechanism and stronger abuse controls.
 
 ## Capacity and release
 
 There are at most 20 stored runs, 500 workflow mutations per project, 50 manual requests per project, five asset slots per project, 1.9 MB per asset, 20 MiB reserved per run and 200 MiB reserved globally. Pending uploads count toward storage caps. These are demo bounds, not production service guarantees.
 
-The demo is the Worker `samepage` with the D1 database `client-brief`, on the Cloudflare free plan. The database kept its original name when the Worker was renamed. `npm run build` then `npm run deploy` publishes the current source. Apply a new migration to the remote database with `wrangler d1 execute DB --remote --config dist/server/wrangler.json --file <migration>` before deploying code that needs it. The second migration adds write-claim storage and the third adds the `objects` table for file bytes. D1 limits a row to 2 MB, which is why a file is capped at 1.9 MB. A rollback must retain compatible database tables. Use `wrangler rollback` to return to the previous Worker version; do not erase data or reverse migrations as a routine rollback.
+The demo is the Worker `samepage` with the D1 database `samepage`, on the Cloudflare free plan. `npm run build` then `npm run deploy` publishes the current source. Apply a new migration to the remote database with `wrangler d1 execute DB --remote --config dist/server/wrangler.json --file <migration>` before deploying code that needs it. The second migration adds write-claim storage and the third adds the `objects` table for file bytes. D1 limits a row to 2 MB, which is why a file is capped at 1.9 MB. A rollback must retain compatible database tables. Use `wrangler rollback` to return to the previous Worker version; do not erase data or reverse migrations as a routine rollback.

@@ -43,11 +43,5 @@ export default function Guide() {
         <li>Viktor approves version 2. He can reopen it later if he gives a reason, and version 2 stays the agreed scope until he approves another.</li>
       </ol>
       <p>If Jackie skips the launch date, the first-jobs list tells the studio to agree one. If there is a date, the list says to review it. Either way the date is a request.</p>
-
-      <h2>Try a change yourself</h2>
-      <p>This part is a learning exercise and has nothing to do with the product&rsquo;s requirements.</p>
-      <p>Open <code>lib/brief.ts</code> and find <code>readiness</code>. It takes a brief and the IDs of the files that are ready, and returns what is still missing. It saves nothing. <code>lib/workflow.ts</code> calls it whenever a brief is saved or sent.</p>
-      <p>Read the missing-audience test in <code>tests/brief.test.mjs</code>, guess the result, then run <code>npm run test:unit</code>. After that, change one sentence in <code>checklist</code>, fix the test that expects the old wording, and say which answer the sentence comes from.</p>
-      <p>The repository has the diagrams in <code>docs/how-it-works.md</code>, and <code>npm run graph</code> rebuilds the code map.</p>
     </main></div>;
 }

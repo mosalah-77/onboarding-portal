@@ -1,8 +1,6 @@
-# How a brief moves through the portal
+# How a brief moves through Samepage
 
-Author: Mohamed Elmorshedy. Updated 24 November 2026 for the conversation interface. Mohamed's guided deadline-reminder change is from 8 November 2026.
-
-This is Mohamed's project guide. Start with one action and follow its value into storage. The diagrams describe observable code and design decisions. The browser workflow and backend are implemented. Deployment verification is recorded separately.
+This follows one action from the browser into storage, then covers files, approval, failures and cleanup. Each section names the code and the tests that back it.
 
 ## Follow one change
 
@@ -79,17 +77,7 @@ D1 stores structured records and, in a separate `objects` table, file bytes. Rea
 | How do field requests stay connected to comments? | `syncRuleRequests` in workflow | API test: automatic request resolves and reopens with the same ID and comment |
 | What happens at the HTTP boundary? | [`lib/http.ts`](../lib/http.ts) | API tests: missing CSRF and malformed input fail |
 
-The checked behaviour is recorded in [verification](verification.md). A passing test establishes the scenario it ran; it does not establish every possible failure case.
-
-## A learning checkpoint you can use
-
-Before changing the audience rule, locate `readiness`. Explain which input it receives, what it returns, and why it does not write to SQL itself. Then read the test for the missing audience and predict the result before running `npm run test:unit`.
-
-This is a practice exercise, not a request to choose product requirements. It is fine to follow the example and ask for an explanation first. Mohamed completed the guided deadline-reminder variation described below; [the learning record](learning.md) distinguishes his edits and checks from the guidance he was given.
-
-## Keeping this guide useful
-
-When an implementation task changes the flow, update the matching diagram and evidence row in the same commit. Replace a planned arrow only after the behaviour has passed its check. [The code graph guide](code-graph.md) explains the supplementary graph used during maintenance.
+A passing test establishes the scenario it ran. It does not establish every possible failure. [Testing](testing.md) lists what was checked and what was not.
 
 ## Follow a file upload
 
@@ -150,7 +138,7 @@ flowchart TD
 
 `lib/workflow.ts` calls the function when reading a project; `components/brief-panel.tsx` uses the returned tasks for both the screen and the text download. These are derived suggestions, so changing this rule also updates the checklist shown for an existing accepted brief. The saved facts and approval remain unchanged.
 
-`tests/brief.test.mjs` imports `checklist` from `lib/brief.ts`. The JavaScript test describes the expected output; the TypeScript file implements it. Mohamed first ran a failing blank-date test, edited the empty branch of the condition, and reran it successfully. A second test checks that an entered date still produces exactly one deadline task.
+`tests/brief.test.mjs` covers both branches: a blank date adds the reminder, and an entered date keeps one requested-date task.
 
 ## Follow a failed save in the browser
 

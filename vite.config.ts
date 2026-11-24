@@ -27,8 +27,8 @@ export default defineConfig(async () => {
           d1_databases: [
             {
               binding: "DB",
-              database_name: "client-brief",
-              database_id: "9615e155-516a-479f-b2a3-48af1527da9e",
+              database_name: "samepage",
+              database_id: "9cca17c0-65a3-4a56-adf4-582893a32993",
             },
           ],
         },
