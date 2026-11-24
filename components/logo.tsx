@@ -1,0 +1,3 @@
+export function Logo() {
+  return <span className="logo"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M5 2h16a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H11l-6 5v-5a4 4 0 0 1-4-4V6a4 4 0 0 1 4-4z" fill="#2450c4" /><rect x="6.5" y="7.5" width="13" height="2.6" rx="1.3" fill="#fff" /><rect x="6.5" y="12.2" width="8" height="2.6" rx="1.3" fill="#8fd0ff" /></svg>Samepage</span>;
+}

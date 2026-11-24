@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Client Brief · Independent portfolio demo",
-  description: "A synthetic client onboarding workflow with versioned briefs, private files and exact-version approval.",
+  title: "Samepage · website briefs for studios and their clients",
+  description: "A portfolio demo: a studio asks a client for a website brief one question at a time, then approves one version of it.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",

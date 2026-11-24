@@ -13,7 +13,7 @@
     "deploy": "node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js deploy --config dist/server/wrangler.json",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
-    "test:unit": "node --experimental-strip-types --test tests/brief.test.mjs tests/assets.test.mjs tests/approval.test.mjs tests/client.test.mjs tests/cleanup.test.mjs",
+    "test:unit": "node --experimental-strip-types --test tests/brief.test.mjs tests/assets.test.mjs tests/approval.test.mjs tests/client.test.mjs tests/cleanup.test.mjs tests/conversation.test.mjs",
     "test:api": "node scripts/test-api.mjs",
     "test": "npm run test:unit && npm run test:api",
     "typecheck": "tsc --noEmit",

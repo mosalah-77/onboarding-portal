@@ -1,17 +1,53 @@
 import Link from 'next/link';
+import { Logo } from '@/components/logo';
 import { ThemeToggle } from '@/components/theme-toggle';
 
 export default function Guide() {
-  return <><header className="topbar"><Link className="brand" href="/">Client Brief</Link><span className="demo-label">Portfolio demo · Synthetic data</span><Link href="/">Open the workspace</Link><ThemeToggle /></header>
-    <main className="guide"><h1>Follow one brief through the system</h1><p>This guide explains the input, where it is saved, what can fail and how the result is checked. The project uses synthetic data. Roles are simulated; the database, file storage and permission checks are real.</p>
-      <nav aria-label="Guide contents"><a href="#save">Saving a brief</a><a href="#files">Files and access</a><a href="#approval">Approval</a><a href="#practice">Try a small change</a></nav>
-      <section id="save"><h2>What happens when you save?</h2><p>Suppose Client A enters “Local residents” as the audience. The browser sends the brief, the version token it last saw and a retry key. The server follows these steps in order.</p>
-        <ol className="flow-diagram" aria-label="Brief save data flow"><li><strong>1. Check access</strong><span>The session identifies the current run and persona. Workspace membership determines which project it can reach.</span></li><li><strong>2. Check the input</strong><span>Validate field types, lengths and dates. A draft can be incomplete. Optional blanks do not prevent submission.</span></li><li><strong>3. Save together</strong><span>A SQL transaction inserts the version, retry receipt and activity, then updates the current version and missing-input requests.</span></li><li><strong>4. Return the result</strong><span>The browser shows the saved version and remaining blockers. It keeps typed values when a request fails.</span></li></ol>
-        <p>The brief is stored in D1, a SQL database. Each save adds a row to <code>versions</code>. The <code>projects</code> row points to the current draft. Earlier versions remain readable in history.</p>
-        <table><thead><tr><th>If this happens</th><th>The server does this</th><th>Evidence</th></tr></thead><tbody><tr><td>Two tabs save with the same token</td><td>One succeeds; the other gets a 409 conflict.</td><td>Concurrent-save API test</td></tr><tr><td>A successful response is lost</td><td>The same retry key and values return the same operation.</td><td>Idempotent-retry API test</td></tr><tr><td>A required field is missing</td><td>Draft saving succeeds; submission is blocked with an explanation.</td><td>Readiness rule tests</td></tr><tr><td>A rule becomes satisfied, then missing again</td><td>The same information request reopens with its comments preserved.</td><td>Automatic-request API test</td></tr></tbody></table>
-      </section>
-      <section id="files"><h2>A file has two kinds of storage</h2><p>File details and status live in the SQL <code>assets</code> table. Its bytes live in a separate <code>objects</code> table that only the server reads. A pending row reserves capacity before bytes are written. Only a ready file can be attached to a saved brief.</p><ol className="flow-diagram" aria-label="Private upload data flow"><li><strong>1. Validate</strong><span>Check membership, size, filename, declared type and file signature.</span></li><li><strong>2. Reserve</strong><span>A pending row claims an upload slot and byte capacity.</span></li><li><strong>3. Store</strong><span>Write a new private object. Never overwrite an accepted file.</span></li><li><strong>4. Mark ready</strong><span>Commit the status and activity. The brief can now attach its ID.</span></li></ol><p>If storage fails, the brief stays saved. If the SQL update fails after storage succeeds, the pending record and object remain available for a retry. Select the same file again to recover that upload.</p><p>Knowing a file URL does not grant access. Every download checks workspace membership before reading storage. Client A requesting Client B’s file receives the same 404 response as a missing file. File signature checks are not malware scanning; use synthetic files only.</p></section>
-      <section id="approval"><h2>Approval freezes one version</h2><p>Only the agency owner can approve the current submitted version. Approval points to its exact ID. The handoff and checklist read that accepted version, even if a later draft exists.</p><ol className="flow-diagram" aria-label="Approval and revision flow"><li><strong>Submit version 2</strong><span>The required fields and requests are complete.</span></li><li><strong>Approve version 2</strong><span>The owner records approval. The handoff uses version 2.</span></li><li><strong>Reopen with a reason</strong><span>The reason enters the activity history. Version 2 stays accepted.</span></li><li><strong>Save version 3</strong><span>The new draft needs another submission and owner review.</span></li></ol><p>A checklist item links to the fact that produced it. An empty deadline remains “Not agreed”. An entered date is a requested date, never an automatic delivery promise.</p></section>
-      <section id="practice"><h2>Make one small change you can explain</h2><p>Start with <code>lib/brief.ts</code>. Its <code>readiness</code> function receives a brief and the IDs of ready files, then returns the blockers. It does not save records itself. <code>lib/workflow.ts</code> uses that result when processing a save or submission.</p><p>Read the missing-audience case in <code>tests/brief.test.mjs</code>. Predict the result, run <code>npm run test:unit</code>, and compare it with your prediction. Then change one checklist sentence in <code>checklist</code>, update its expected test text, and explain which accepted fact the sentence uses.</p><p>This is a learning exercise. Your own change and explanation are recorded only after you make them. The repository’s <code>docs/how-it-works.md</code> contains the detailed diagrams; <code>npm run graph</code> refreshes the supplementary code-navigation graph.</p></section>
-    </main></>;
+  return <div className="app guide-page"><header className="bar"><Link className="logo" href="/"><Logo /></Link><Link href="/">Open the demo</Link><div className="view lone"><ThemeToggle /></div></header>
+    <main className="guide"><h1>How it works</h1>
+      <p>Jackie, Viktor and their companies are made up, and switching seats is a shortcut for signing in as someone else. The rest is real. Answers go into a database, files go into storage, and the server decides who may see what. This page follows one brief through all of it.</p>
+
+      <h2>When Jackie answers a question</h2>
+      <p>Say Jackie answers &ldquo;Who are you trying to reach?&rdquo; with &ldquo;Homeowners planning a new kitchen&rdquo;. The browser sends the whole brief with that answer in it, plus the version token it last saw and a retry key. The server then does four things.</p>
+      <ol>
+        <li>It reads the session cookie to work out who is asking, and checks that their seat belongs to the project&rsquo;s workspace.</li>
+        <li>It checks the brief: the right types, sensible lengths, a date that exists on a calendar. A half-finished brief is fine at this point.</li>
+        <li>It writes the new revision, a receipt for the retry key and an activity entry in one SQL batch, and points the project at the new revision.</li>
+        <li>It sends the saved project back, and the page redraws the conversation from that. This is why a reload shows the same thread, and so does the other seat.</li>
+      </ol>
+      <p>Each answer is a new row in a table called <code>versions</code>, in Cloudflare D1. Old rows are never edited. The version number on screen counts something else, though: how many times the brief has been sent. Version 1 is the first brief Viktor reads, however many answers it took to get there.</p>
+      <table><thead><tr><th>What goes wrong</th><th>What the server does</th><th>Tested by</th></tr></thead><tbody>
+        <tr><td>Two tabs save at once</td><td>One wins. The other gets a 409 and the page loads the saved brief.</td><td>Concurrent-save API test</td></tr>
+        <tr><td>The save works but the reply never arrives</td><td>Trying again with the same retry key returns the first result. Nothing is saved twice.</td><td>Lost-response API test</td></tr>
+        <tr><td>A required answer is missing</td><td>Saving still works. Sending is refused, with a list of what is missing.</td><td>Readiness tests</td></tr>
+        <tr><td>Jackie opens a link to the other client&rsquo;s project</td><td>404, the same answer a project that doesn&rsquo;t exist would get.</td><td>Tenant-boundary API test</td></tr>
+      </tbody></table>
+
+      <h2>Files</h2>
+      <p>A file&rsquo;s details go in the <code>assets</code> table. Its bytes go in a separate table, <code>objects</code>, that only the server reads. (The bytes are in D1 because R2 asks for a payment card even on its free tier. That is also why a file stops at 1.9 MB: a D1 row holds 2 MB.)</p>
+      <ol>
+        <li>Check membership, size, filename, declared type and the file&rsquo;s signature.</li>
+        <li>Reserve an upload slot and the space with a pending row.</li>
+        <li>Write the bytes as a new object. An accepted file is never overwritten.</li>
+        <li>Mark the row ready. Only now can an answer attach the file.</li>
+      </ol>
+      <p>If the write fails, the brief is untouched. If the write works and the status update fails, the pending row and the object wait, and choosing the same file again picks up where it stopped.</p>
+      <p>Knowing a file&rsquo;s URL gets you nothing. Every download checks membership first, and someone else&rsquo;s file returns the same 404 as one that was never uploaded. The signature check is not a virus scan, so please only upload made-up files.</p>
+
+      <h2>Sending, changes and approval</h2>
+      <p>Only the studio seat can approve, and only the revision that was sent. The approval stores that revision&rsquo;s ID, and the handoff reads from it even when a newer draft exists.</p>
+      <ol>
+        <li>Jackie sends version 1. Every required answer has to be in. If Jackie edits an answer after sending, the brief goes back to draft.</li>
+        <li>Viktor asks for changes. His note is saved in the activity history and appears in the thread.</li>
+        <li>Jackie changes an answer, which makes a new revision, and sends version 2.</li>
+        <li>Viktor approves version 2. He can reopen it later if he gives a reason, and version 2 stays the agreed scope until he approves another.</li>
+      </ol>
+      <p>If Jackie skips the launch date, the first-jobs list tells the studio to agree one. If there is a date, the list says to review it. Either way the date is a request.</p>
+
+      <h2>Try a change yourself</h2>
+      <p>This part is a learning exercise and has nothing to do with the product&rsquo;s requirements.</p>
+      <p>Open <code>lib/brief.ts</code> and find <code>readiness</code>. It takes a brief and the IDs of the files that are ready, and returns what is still missing. It saves nothing. <code>lib/workflow.ts</code> calls it whenever a brief is saved or sent.</p>
+      <p>Read the missing-audience test in <code>tests/brief.test.mjs</code>, guess the result, then run <code>npm run test:unit</code>. After that, change one sentence in <code>checklist</code>, fix the test that expects the old wording, and say which answer the sentence comes from.</p>
+      <p>The repository has the diagrams in <code>docs/how-it-works.md</code>, and <code>npm run graph</code> rebuilds the code map.</p>
+    </main></div>;
 }
