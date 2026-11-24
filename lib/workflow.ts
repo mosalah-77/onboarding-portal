@@ -1,4 +1,4 @@
-import { PortalError, readiness, textValue, validateBrief, checklist, type BriefInput } from './brief.ts';
+import { PortalError, readiness, ruleLabels, textValue, validateBrief, checklist, type BriefInput } from './brief.ts';
 import { digest, id, type ActorContext } from './session.ts';
 import type { projects, versions, requests, assets, events, receipts, comments, approvals } from '../db/schema';
 
@@ -110,11 +110,10 @@ export async function saveRevision(db: D1Database, a: ActorContext, projectId: s
   ]);
 }
 function syncRuleRequests(db: D1Database, projectId: string, brief: BriefInput, ready: Set<string>, guard: string, operationId: string) {
-  const labels = { goal: 'Business goal', audience: 'Intended audience', pages: 'Pages the site needs', constraints: 'Constraints', assetPlan: 'Images and files', deadline: 'Requested deadline', assetIds: 'Project files' };
   return [db.prepare(`UPDATE requests SET status='resolved' WHERE project_id=? AND rule_key IS NOT NULL AND ${guard}`).bind(projectId, operationId),
     ...readiness(brief, ready).map(b => db.prepare(`INSERT INTO requests (id,project_id,rule_key,title,explanation,required,status,actor,created_at)
       SELECT ?,?,?,?,?,1,'open','system',? WHERE ${guard}
-      ON CONFLICT(project_id,rule_key) DO UPDATE SET status='open',explanation=excluded.explanation`).bind(id(), projectId, b.key, labels[b.field], b.message, Date.now(), operationId)),
+      ON CONFLICT(project_id,rule_key) DO UPDATE SET status='open',explanation=excluded.explanation`).bind(id(), projectId, b.key, ruleLabels[b.field], b.message, Date.now(), operationId)),
   ];
 }
 export function requireOwner(a: ActorContext) {
@@ -184,12 +183,15 @@ export async function approveBrief(db: D1Database, a: ActorContext, projectId: s
     db.prepare(`UPDATE projects SET state='approved',accepted_revision_id=? WHERE id=? AND ${guard}`).bind(revisionId, p.id, op),
   ]);
 }
+// The owner hands a brief back to the client with a reason. From "submitted" that is a request for changes;
+// from "approved" it reopens agreed scope, and the approved version stays the accepted one until another is approved.
 export async function reopenBrief(db: D1Database, a: ActorContext, projectId: string, input: unknown, expected: unknown, key: unknown) {
   const p = await getProject(db, a, projectId); requireOwner(a);
-  const reason = textValue(input, 'Reason for reopening', 2000, true), data = { action: 'reopen', reason, expected };
+  const reason = textValue(input, 'Reason', 2000, true), data = { action: 'reopen', reason, expected };
   const replay = await existingOperation(db, a, projectId, key, data); if (replay) return replay;
-  if (p.state !== 'approved') throw new PortalError(409, 'This brief is already open for revision.');
-  return mutate(db, a, p, expected, key, data, 'brief_reopened', { id: id() }, { reason, revisionId: p.acceptedRevision?.id }, (guard, op) => [
+  if (p.state === 'draft') throw new PortalError(409, 'This brief is already open for revision.');
+  const returned = p.state === 'submitted';
+  return mutate(db, a, p, expected, key, data, returned ? 'brief_returned' : 'brief_reopened', { id: id() }, { reason, revisionId: returned ? p.submittedRevisionId : p.acceptedRevision?.id }, (guard, op) => [
     db.prepare(`UPDATE projects SET state='draft',submitted_revision_id=NULL WHERE id=? AND ${guard}`).bind(p.id, op),
   ]);
 }

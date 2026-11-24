@@ -1,8 +1,8 @@
-import { PortalError } from './brief.ts';
+import { PortalError, readiness, ruleLabels, type BriefInput } from './brief.ts';
 
 export type Persona = 'client-a' | 'client-b' | 'owner';
 export type ActorContext = { sessionId: string; runId: string; personaId: Persona; workspaceIds: string[]; role: 'client' | 'owner'; csrf: string };
-export const personaNames = { 'client-a': 'Demo Client A', 'client-b': 'Demo Client B', owner: 'Demo Agency Owner' };
+export const personaNames = { 'client-a': 'Jackie Welles', 'client-b': 'Priya Nair', owner: 'Viktor Vektor' };
 export const id = () => crypto.randomUUID();
 export async function digest(value: string | Uint8Array): Promise<string> {
   const bytes = typeof value === 'string' ? new TextEncoder().encode(value) : value;
@@ -41,14 +41,16 @@ export async function startDemo(db: D1Database, request: Request, reset?: ActorC
     AND (? IS NULL OR EXISTS(SELECT 1 FROM runs r JOIN sessions s ON s.run_id=r.id WHERE r.id=? AND r.expires_at>? AND s.id=? AND s.persona=?))`).bind(runId, now, now + 86400000, reset?.runId ?? null, reset?.runId ?? null, now, reset?.sessionId ?? null, reset?.personaId ?? null)];
   const exists = 'EXISTS(SELECT 1 FROM runs WHERE id=?)';
   if (reset) batch.push(db.prepare(`UPDATE runs SET expires_at=0 WHERE id=? AND ${exists}`).bind(reset.runId, runId));
-  for (const [index, label] of ['A', 'B'].entries()) {
+  // Calder Street starts empty so the visitor answers every question. Marsh Lane is a finished draft the studio can read.
+  const empty: BriefInput = { goal: '', audience: '', pages: [], constraints: '', deadline: null, assetPlan: '', assetIds: [] };
+  const seeds: [string, BriefInput][] = [['Calder Street Kitchens', empty], ['Marsh Lane Vets', { ...empty, goal: 'Let pet owners book appointments online.', audience: 'Pet owners within a few miles of the surgery.', pages: ['Home', 'Services', 'Contact'], assetPlan: 'create' }]];
+  for (const [index, [name, brief]] of seeds.entries()) {
     const workspace = id(), project = id(), revision = id(), persona = index ? 'client-b' : 'client-a';
-    const brief = { goal: index ? 'Present a synthetic neighbourhood workshop.' : 'Help visitors understand our fictional studio services.', audience: index ? 'Local residents looking for a workshop' : '', pages: ['Home', 'Services', 'Contact'], constraints: '', deadline: null, assetPlan: 'create', assetIds: [] };
-    batch.push(db.prepare(`INSERT INTO workspaces (id,run_id,name) SELECT ?,?,? WHERE ${exists}`).bind(workspace, runId, `Demo Client ${label}`, runId));
+    batch.push(db.prepare(`INSERT INTO workspaces (id,run_id,name) SELECT ?,?,? WHERE ${exists}`).bind(workspace, runId, name, runId));
     for (const person of [persona, 'owner']) batch.push(db.prepare(`INSERT INTO memberships (run_id,persona,workspace_id,role) SELECT ?,?,?,? WHERE ${exists}`).bind(runId, person, workspace, person === 'owner' ? 'owner' : 'client', runId));
-    batch.push(db.prepare(`INSERT INTO projects (id,workspace_id,name,state,token,latest_revision_id) SELECT ?,?,?,'draft',1,? WHERE ${exists}`).bind(project, workspace, `Client ${label} · Website brief`, revision, runId));
+    batch.push(db.prepare(`INSERT INTO projects (id,workspace_id,name,state,token,latest_revision_id) SELECT ?,?,?,'draft',1,? WHERE ${exists}`).bind(project, workspace, name, revision, runId));
     batch.push(db.prepare(`INSERT INTO versions (id,project_id,version,body,actor,created_at) SELECT ?,?,1,?,?,? WHERE ${exists}`).bind(revision, project, JSON.stringify(brief), persona, now, runId));
-    if (!index) batch.push(db.prepare(`INSERT INTO requests (id,project_id,rule_key,title,explanation,required,status,actor,created_at) SELECT ?,?,'audience.required','Intended audience','Add the audience before submitting.',1,'open','system',? WHERE ${exists}`).bind(id(), project, now, runId));
+    for (const blocker of readiness(brief, new Set())) batch.push(db.prepare(`INSERT INTO requests (id,project_id,rule_key,title,explanation,required,status,actor,created_at) SELECT ?,?,?,?,?,1,'open','system',? WHERE ${exists}`).bind(id(), project, blocker.key, ruleLabels[blocker.field], blocker.message, now, runId));
     batch.push(db.prepare(`INSERT INTO events (id,project_id,actor,action,details,created_at) SELECT ?,?,'system','demo_created','{}',? WHERE ${exists}`).bind(id(), project, now, runId));
   }
   batch.push(db.prepare(`INSERT INTO sessions (id,run_id,persona,csrf) SELECT ?,?,'client-a',? WHERE ${exists}`).bind(sessionId, runId, csrf, runId));

@@ -7,7 +7,7 @@ async function submitted(f) {
   f.env.DB.sqlite.prepare("UPDATE sessions SET persona='owner' WHERE id=?").run(f.actor.sessionId);
   f.actor.personaId = 'owner'; f.actor.role = 'owner';
   let p = await getProject(f.env.DB, f.actor, f.projectId);
-  p = (await saveRevision(f.env.DB, f.actor, f.projectId, p.token, crypto.randomUUID(), { ...p.latestRevision.brief, audience: 'Workshop visitors' })).project;
+  p = (await saveRevision(f.env.DB, f.actor, f.projectId, p.token, crypto.randomUUID(), { ...p.latestRevision.brief, goal: 'Explain the workshop', audience: 'Workshop visitors', pages: ['Home', 'Services', 'Contact'], assetPlan: 'create' })).project;
   return (await submitBrief(f.env.DB, f.actor, f.projectId, p.latestRevision.id, p.token, crypto.randomUUID())).project;
 }
 test('a failed conditional approval cannot leave an approval, receipt or event', async t => {
@@ -63,4 +63,14 @@ for (const kind of ['save', 'comment', 'request']) test(`overlapping identical $
   if (kind === 'save') assert.equal(after.revisions.length, before.revisions.length + 1);
   if (kind === 'comment') assert.equal(after.requests[0].comments.length, 1);
   if (kind === 'request') assert.equal(after.requests.length, before.requests.length + 1);
+});
+test('the owner can send a submitted brief back with a note, and a draft cannot be sent back', async t => {
+  const f = await fixture(); t.after(f.close); let p = await submitted(f);
+  const sent = p.submittedRevisionId;
+  p = (await reopenBrief(f.env.DB, f.actor, p.id, 'Add a prices page.', p.token, crypto.randomUUID())).project;
+  assert.equal(p.state, 'draft');
+  assert.equal(p.submittedRevisionId, null);
+  assert.equal(p.approvals.length, 0);
+  assert.deepEqual(p.activity.find(e => e.action === 'brief_returned').details, { reason: 'Add a prices page.', revisionId: sent });
+  await assert.rejects(reopenBrief(f.env.DB, f.actor, p.id, 'Again', p.token, crypto.randomUUID()), e => e.status === 409);
 });

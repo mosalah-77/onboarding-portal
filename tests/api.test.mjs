@@ -82,9 +82,10 @@ test('real backend: tenant boundaries, saves and retries', async t => {
     }
     project = (await a.call(`/projects/${projectId}`)).data;
     assert.equal(project.requests.filter(r => r.ruleKey === 'audience.required').length, 1);
-    assert.equal(project.requests[0].id, original.id);
-    assert.equal(project.requests[0].status, 'open');
-    assert.equal(project.requests[0].comments.length, 1);
+    const reopened = project.requests.find(r => r.ruleKey === 'audience.required');
+    assert.equal(reopened.id, original.id);
+    assert.equal(reopened.status, 'open');
+    assert.equal(reopened.comments.length, 1);
     assert.equal((await a.call(`/projects/${projectId}/submit`, { revisionId: project.latestRevision.id, expectedToken: project.token, key: crypto.randomUUID() })).status, 422);
     assert.equal((await a.call(`/requests/${original.id}/comments`, { text: ' ', key: crypto.randomUUID() })).status, 422);
     assert.equal((await a.call(`/requests/${original.id}/comments`, { text: 'x'.repeat(2001), key: crypto.randomUUID() })).status, 422);

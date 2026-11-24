@@ -47,6 +47,7 @@ export function validateBrief(input: unknown): BriefInput {
     assetPlan, deadline, assetIds: field('assetIds', () => list(b.assetIds ?? [], 'Assets', 5, 100)),
   };
 }
+export const ruleLabels = { goal: 'Business goal', audience: 'Intended audience', pages: 'Pages the site needs', constraints: 'Constraints', assetPlan: 'Images and files', deadline: 'Requested deadline', assetIds: 'Project files' };
 export function readiness(b: BriefInput, readyAssetIds: Set<string>): Blocker[] {
   const blockers: Blocker[] = [];
   if (!b.goal.trim()) blockers.push({ key: 'goal.required', field: 'goal', message: 'Describe what the website needs to achieve.' });
