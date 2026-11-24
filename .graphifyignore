@@ -6,7 +6,6 @@ dist/
 .superpowers/
 .git/
 graphify-out/
-components/ui/
 docs/
 public/
 *.lock
