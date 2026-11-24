@@ -57,7 +57,7 @@ Author: Mohamed Elmorshedy
 ## Conversation interface, 24 November 2026
 
 - The form workspace was replaced. It showed the brief, requests, history and activity at once, and a visitor had to work out the order. The new interface is a chat: the studio asks six questions, the client answers one at a time, and a side panel holds the status and the one action that moves the brief on. Cost: the version history and activity lists are no longer on screen, though the thread shows sends, notes, changes and approvals in order.
-- The product is called Samepage in the interface. The people are Jackie Welles (client), Viktor Vektor (studio) and Priya Nair (the second client), and the projects are Calder Street Kitchens and Marsh Lane Vets.
+- The product is called Samepage in the interface. The people are Jackie Welles (client), Viktor Vektor (studio) and Priya Nair (the second client), and the projects are Jackie's Auto Shop and Marsh Lane Vets.
 - Each answer is saved as its own revision through the existing save route. The interface counts a version each time the brief is sent, because "version 7" on a first send would only confuse a client. Approval still names one stored revision by ID. Cost: the number on screen is not the revision number in the database.
 - The thread, version number and status are derived from the saved project in `lib/conversation.ts`. The browser keeps no copy of the conversation, so a reload and the other seat agree. The exception is a skipped optional question, which is remembered for the page only and asked again after a reload until the brief has been sent once.
 - The seat switch offers Client and Studio. The client seat is Jackie and sees one project as a plain label. The project menu exists only for the studio seat. The second client still exists on the server and in the API tests, where it proves that one client cannot read another's project.
@@ -65,9 +65,21 @@ Author: Mohamed Elmorshedy
 - After a brief is handed back, the interface asks for a changed answer before it can be sent again, and Save stays disabled on an edit that changes nothing. The server enforces this only for a reopened approval; for a returned brief it is an interface rule.
 - Editing an answer on a sent brief takes it back to draft, which the save route already did. The composer says so instead of locking the answers.
 - Choosing to send files requires one attached file before the answer can be sent, because the server refuses to send a brief without one. A sample image can be attached with one click.
-- The demo starts with an empty brief for Calder Street so a visitor answers every question. Marsh Lane starts as a finished draft the studio can read. Seeded missing-answer requests are now created from the same readiness rule as saved ones.
+- The demo starts with an empty brief for Jackie's Auto Shop so a visitor answers every question. Marsh Lane starts as a finished draft the studio can read. Seeded missing-answer requests are now created from the same readiness rule as saved ones.
 - The request and comment routes stay in the API with their tests. The interface no longer uses them, because the studio's note on a returned brief covers the need.
 - `reconcileEditor` and its tests were removed with the form. There is no long-lived editor state to reconcile now.
 - Figtree replaces Newsreader and the system font. One self-hosted variable file, weights 400 to 600. The palette is a family of blues with flat fills, and dark mode is neutral charcoal. See `DESIGN.md`.
 - The starter favicon was replaced with the Samepage mark.
 - `.impeccable/design.json` and `docs/design-review.md` described the old interface and were deleted. `DESIGN.md` is the design record.
+
+## Final check before release, 24 November 2026
+
+- The studio is Silverhand Studio and the first client's company is Jackie's Auto Shop. The suggested pages and example answers fit a garage.
+- React, Next and the server-components package were pinned to versions with published critical advisories. They moved to React 19.3.1 and Next 16.4.6, and vinext moved from a beta to 1.4.6 with current Vite, Wrangler and the Cloudflare plugin. `npm audit --omit=dev` now reports nothing.
+- The starter's unused UI components went, with the 25 packages only they needed and the Tailwind setup that nothing used. Fewer packages means less to keep patched.
+- The Worker adds security headers to every page and API response: a content security policy limited to this origin, no framing, no content sniffing, a same-origin referrer and a permissions policy. Inline scripts and styles stay allowed because the framework emits inline page data. Cost: the policy does not stop an injected inline script, though the review found no place to inject one.
+- The API has two per-visitor limits through Cloudflare's rate limiting binding: 240 requests a minute overall and 6 demo starts or resets a minute. This replaces the earlier ruling that there is no per-IP throttle. Loopback addresses are exempt so the local test suite runs at full speed. Cost: visitors behind one shared address share a limit.
+- The stored-run cap still counts expired runs. Changing that would loosen the storage bound the cap exists for.
+- Three colour values changed after an automated contrast check: faint text in both themes and the dark-mode message blue.
+- The font is preloaded so text does not swap after first paint.
+- The logo goes to the home screen. With a demo running it asks first, because leaving ends the demo: a new `POST /demo/end` route expires the run and clears the session cookie. The expired run holds its slot until cleanup, the same as a reset.

@@ -10,7 +10,7 @@ Author: Mohamed Elmorshedy. Updated 24 November 2026.
 - Resolved 24 November 2026: the stale `.impeccable/design.json` was deleted with the old interface. `DESIGN.md` is the design record.
 - Verified: a delayed GET released after leaving its page did not replace the new project or its unsaved goal. Navigation controls were disabled during the held load; the generation guard itself is also inspected in source.
 - Known limit: an abruptly interrupted upload can leave a durable write claim requiring operator investigation. Capacity stays reserved.
-- Known limit: no per-IP throttling or automated cleanup; stored runs are capped at 20.
+- Known limit: no automated cleanup; stored runs are capped at 20. Per-visitor rate limits were added on 24 November 2026.
 - Impeccable launcher and detector could not execute; manual fallback and independent rendered review were used.
 - Resolved: unsent request comments now trigger navigation protection; cancelling keeps them, successful posting clears them.
 - Resolved: success status receives focus; a reopened accepted version asks for a new save; server errors are associated with fields; mobile reading order and dark-rail focus were corrected and reviewed.
@@ -18,8 +18,10 @@ Author: Mohamed Elmorshedy. Updated 24 November 2026.
 - Resolved 23 November 2026: the API suite failed about once in fifteen local runs with a 503 on reset or cleanup. Cause: when the server rejected a request (401 or 403) before reading its body, local Wrangler sometimes answered the next request with "Your worker restarted mid-request". The server now reads and drops an unread body before replying. See verification for the numbers.
 - Known limit: no real Safari, VoiceOver or other screen reader session has been run. See verification for what stood in for them.
 - Entries above that mention the form, the next-step card, request comments or navigation protection describe the interface that was replaced on 24 November 2026.
-- Open: the hosted site has not been redeployed with the conversation interface.
 - Known limit: a skipped optional question is remembered for the page only. After a reload it is asked again until the brief has been sent once.
 - Known limit: an answer being typed is lost if the visitor switches seat or reloads before sending it.
-- Known limit: the new screens have had no automated accessibility scan and no screen reader session.
-- Known limit: the starter's unused UI primitives and their dependencies are still in the repository.
+- Known limit: no screen reader session has been run on the new screens. The automated scan is in verification.
+- Resolved 24 November 2026: the starter's unused UI components and 25 packages only they used were removed.
+- Known limit: the content security policy allows inline scripts and styles, because the framework writes its page data as inline scripts. A per-request nonce would be tighter.
+- Known limit: `npm audit` reports 8 moderate advisories, all in development tools (esbuild inside drizzle-kit, and fflate). None is in the deployed Worker.
+- Known limit: the font is revalidated on each visit instead of being cached for a long time. It is 20 KB.

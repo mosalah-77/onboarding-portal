@@ -26,7 +26,7 @@ Blues drawn from one family, with flat fills. No gradients.
 | `--ink` | `#0f1b40` | `#eeeff2` | Text |
 | `--quiet` | `#56628a` | `#a6aab6` | Secondary text |
 | `--line` | `#d7e2f3` | `#33363e` | Rules and input borders |
-| `--me` | `#2553cc` | `#2a63d0` | Your own messages, status card, approval card |
+| `--me` | `#2553cc` | `#265bc2` | Your own messages, status card, approval card |
 | `--accent` | `#1b62d6` | `#2463cc` | Primary buttons, stage markers |
 | `--sky` | `#8fd0ff` | `#36435f` | Avatars, focus ring on inputs |
 | `--soft` | `#dcedff` | `#273146` | Ticks, the editing chip |

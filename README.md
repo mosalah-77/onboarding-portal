@@ -26,6 +26,7 @@ Seat switching simulates roles within one visitor's isolated run. It is not prod
 - Server-side permission, concurrency, validation and idempotency checks. A failed request leaves the typed answer in place and offers a retry that cannot save twice.
 - Light and dark themes. The first visit follows the system setting; the button in the top bar switches and remembers the choice.
 - Phone layout, keyboard operation, visible focus and an in-app explanation at `/how-it-works`. Two things animate, a message arriving and the approval tick, and both are off for visitors who ask for reduced motion.
+- Security headers on every page and API response (a content security policy, no framing, no content sniffing) and per-visitor rate limits on the API.
 - Operator-triggered expired-run cleanup. It deletes stored files before releasing their SQL quota.
 
 There are no real invitations, email sending, invoices, contracts, payments or runtime AI calls. The first-jobs list is a deterministic suggestion for human review. The API also has request and comment endpoints from the earlier form interface; the conversation interface does not use them.
@@ -69,7 +70,7 @@ npm run build
 npm test
 ```
 
-The current suite contains 35 unit, storage-fault, client and conversation checks plus 15 real Worker API checks. The API runner applies all migrations to disposable local D1 state. It checks access boundaries, invalid inputs, conflicting saves/approvals, safe retries, upload failure recovery, reset and cleanup. See [observed results and limits](docs/verification.md).
+The current suite contains 35 unit, storage-fault, client and conversation checks plus 16 real Worker API checks. The API runner applies all migrations to disposable local D1 state. It checks access boundaries, invalid inputs, conflicting saves/approvals, safe retries, upload failure recovery, reset and cleanup. See [observed results and limits](docs/verification.md).
 
 ## Follow the data
 
@@ -87,7 +88,7 @@ Start with [the learner's walkthrough](docs/how-it-works.md), then [the code gra
 
 ## Limits, and how I built it
 
-The public demo stores at most 20 runs, including expired runs until cleanup; it has no per-IP rate limiter. Cleanup is manual. An interrupted upload can leave a durable write claim that requires operator investigation; capacity stays reserved until it is safely repaired. An answer that has not been sent lives in memory, not durable browser storage. Uploaded files receive size, type and signature checks, not malware scanning. A file can be at most 1.9 MB because its bytes are stored in a D1 row.
+The public demo stores at most 20 runs, including expired runs until cleanup. Each visitor's address is limited to 240 API requests a minute and 6 demo starts a minute, which slows abuse but does not stop a determined one from filling the 20 slots. Cleanup is manual. An interrupted upload can leave a durable write claim that requires operator investigation; capacity stays reserved until it is safely repaired. An answer that has not been sent lives in memory, not durable browser storage. Uploaded files receive size, type and signature checks, not malware scanning. A file can be at most 1.9 MB because its bytes are stored in a D1 row.
 
 I built this project using AI coding assistants as tools: GPT/Codex for the first version, and Claude for the November 2026 work, which covers the reliability fixes, the move to Cloudflare and the conversation interface that replaced the original form. I set the scope, chose the stack and the visual direction, and directed and reviewed the work. The assistants generated most of the implementation, tests and documentation, and I used AI review passes to check the design and the code. I also made one guided code change myself: the deadline reminder and its two tests. I ran the checks and confirmed the result on screen and in the downloaded handoff. I did not write every line unaided. My predictions from that exercise are in [learning](docs/learning.md), and [decisions](docs/decisions.md) has the reasoning behind the main choices.
 

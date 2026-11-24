@@ -6,7 +6,7 @@ This is Mohamed's project guide. Start with one action and follow its value into
 
 ## Follow one change
 
-Imagine Jackie, the client, answers “Who are you trying to reach?” with “Homeowners planning a new kitchen”. Sending the answer saves another revision of the brief. The previous revision stays in the database, so a later approval can point to one record.
+Imagine Jackie, the client, answers “Who are you trying to reach?” with “Drivers within a few miles of the shop”. Sending the answer saves another revision of the brief. The previous revision stays in the database, so a later approval can point to one record.
 
 ```mermaid
 flowchart TD
