@@ -19,6 +19,8 @@ export default defineConfig(async () => {
           name: "samepage",
           main: "./worker/index.ts",
           compatibility_flags: ["nodejs_compat"],
+          // Hourly removal of expired demos, handled by `scheduled` in worker/index.ts.
+          triggers: { crons: ["0 * * * *"] },
           // Per-visitor request limits, enforced in worker/index.ts.
           ratelimits: [
             { name: "API_LIMIT", namespace_id: "1001", simple: { limit: 240, period: 60 } },

@@ -34,6 +34,8 @@ axe-core checked the WCAG 2.0, 2.1 and 2.2 A and AA rules on twelve screens, at 
 
 After each deploy: one visitor cannot read another's project (404). A 1,900,000-byte file uploads and comes back byte for byte, and one byte more returns 413. A wrong CSRF token returns 403, cleanup without the operator token returns 401, and the client seat cannot approve (403). The security headers are present and hashed scripts are cached for a year. Repeated demo starts from one address are cut off with 429. Test data is deleted afterwards.
 
+The hourly cleanup was run locally by firing the scheduled event against a database holding one live and one expired demo. It removed the expired one and left the other.
+
 ## Not checked
 
 - A screen reader, and a real phone.

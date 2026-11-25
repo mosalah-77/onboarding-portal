@@ -162,9 +162,9 @@ flowchart LR
   A[Run expires or visitor resets] --> B[Server denies further access]
   B --> C{Any upload write claims?}
   C -->|Yes| D[Keep stored data and reserved capacity]
-  C -->|No| E[Operator deletes private objects]
+  C -->|No| E[Hourly cleanup deletes private objects]
   E -->|All deleted| F[Delete run and cascade SQL metadata]
   E -->|Failure| G[Keep metadata; retry safely]
 ```
 
-An upload releases its claim after its storage attempt ends. If the Worker terminates first, an operator must investigate the remaining claim. This fails closed: it holds capacity instead of risking an orphan file. Read `lib/cleanup.ts`, `tests/cleanup.test.mjs` and [operator instructions](operator.md). At most 20 runs remain stored, including expired runs waiting for cleanup.
+An upload releases its claim after its storage attempt ends. If the Worker terminates first, an operator must investigate the remaining claim. This fails closed: it holds capacity instead of risking an orphan file. Read `lib/cleanup.ts`, `tests/cleanup.test.mjs` and [operator instructions](operator.md). Cleanup runs every hour from a cron trigger (`scheduled` in `worker/index.ts`). At most 20 runs remain stored, including expired runs waiting for it.

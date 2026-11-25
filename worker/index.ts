@@ -1,4 +1,6 @@
 import handler from "vinext/server/fetch-handler";
+import { cleanupExpiredRuns } from "../lib/cleanup.ts";
+import { d1Store } from "../lib/storage.ts";
 
 // Sent with every page and API response. Scripts and styles stay 'unsafe-inline' because the framework
 // writes its hydration data as inline scripts; everything else is limited to this origin.
@@ -28,6 +30,11 @@ const worker = {
     const secured = new Response(response.body, response);
     for (const [name, value] of Object.entries(securityHeaders)) secured.headers.set(name, value);
     return secured;
+  },
+  // Runs on the cron in vite.config.ts. Removes expired demos so they stop counting toward the cap of 20.
+  // Runs with an upload still in flight are skipped and picked up by a later run.
+  async scheduled(_controller: ScheduledController, env: Cloudflare.Env, ctx: ExecutionContext) {
+    ctx.waitUntil(cleanupExpiredRuns({ DB: env.DB, BUCKET: d1Store(env.DB) }, 20).then(result => console.log("cleanup", JSON.stringify(result))));
   },
 };
 

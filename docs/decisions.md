@@ -29,7 +29,7 @@ The choices that shaped Samepage, with what each one cost.
 ## Hosting and limits
 
 - **One Cloudflare Worker and one D1 database on the free plan.** No paid services and no custom domain.
-- **Bounded on purpose.** At most 20 stored demos, 500 changes per project, five files per project, 20 MiB per demo and 200 MiB overall. Expired demos count toward the cap until cleanup, which keeps storage bounded. Cost: a determined visitor can fill the 20 slots, and cleanup is a manual operator step.
+- **Bounded on purpose.** At most 20 stored demos, 500 changes per project, five files per project, 20 MiB per demo and 200 MiB overall. Expired demos count toward the cap until cleanup, which keeps storage bounded. A cron trigger on the Worker runs cleanup every hour. Cost: a determined visitor can fill the 20 slots for up to an hour after the demos expire.
 - **Per-visitor rate limits.** 240 API requests a minute and 6 demo starts a minute per address. Cost: people behind one shared address share a limit.
 - **Security headers on every response.** The content security policy still allows inline scripts and styles, because the framework writes its page data inline. A per-request nonce would be tighter.
 - **Few dependencies.** React, Next's API through vinext, and Drizzle for the schema. The starter's UI library was removed because nothing used it.

@@ -6,13 +6,15 @@
 
 Sessions expire after 24 hours. Expiry immediately prevents reads and writes; it does not immediately delete stored bytes. Reset atomically expires only the current run and seeds a replacement. If capacity is full, reset fails without expiring the existing run.
 
-Run the operator script with the secret in the process environment:
+Cleanup runs by itself every hour. The cron trigger is set in `vite.config.ts` and handled by `scheduled` in `worker/index.ts`, which removes up to 20 expired runs and logs the counts. It needs no token because it never passes through the HTTP API.
+
+To run it by hand between those times, use the operator script with the secret in the process environment:
 
 ```sh
 node --env-file=.env.operator scripts/cleanup-demo.mjs https://your-demo-host
 ```
 
-It requests up to five expired runs. Repeat until `runsRemoved` is zero. HTTPS is required outside loopback, redirects are refused and the token is not logged. Do not schedule this command until a recurring schedule has been explicitly chosen.
+It requests up to five expired runs. Repeat until `runsRemoved` is zero. HTTPS is required outside loopback, redirects are refused and the token is not logged.
 
 The server deletes all stored file rows for a run before deleting its SQL row and cascading metadata. If storage deletion fails, the SQL rows and their quota remain available for a safe retry. Re-deleting an already removed object is harmless. Active runs are never eligible.
 

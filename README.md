@@ -79,7 +79,7 @@ It is one Worker and one D1 database. Sign in with Wrangler, create a D1 databas
 ## Limits
 
 - It is a demo. There are no accounts, invitations, emails or payments, and switching seats is not authentication.
-- The site holds at most 20 demos, including expired ones, until I run cleanup by hand. Rate limits slow abuse of that cap but do not prevent it.
+- The site holds at most 20 demos at a time. A demo expires after 24 hours or when the visitor leaves it, and an hourly job removes expired ones. Rate limits slow abuse of that cap but do not prevent it.
 - A file can be at most 1.9 MB, because its bytes live in a D1 row. Files get size, type and signature checks, not a virus scan.
 - An answer that has not been sent lives in the page and is lost on reload.
 - No one has tested it with a screen reader or on a real phone. The automated accessibility scan is clean.
