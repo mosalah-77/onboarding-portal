@@ -1,3 +1,5 @@
+import { day } from './conversation.ts';
+
 export type BriefInput = {
   goal: string; audience: string; pages: string[]; constraints: string;
   assetPlan: 'supplied' | 'create' | ''; deadline: string | null; assetIds: string[];
@@ -65,7 +67,7 @@ export function checklist(accepted: BriefInput) {
     { id: 'accessibility', text: 'Review responsive layouts and accessibility for the accepted pages', source: 'pages' },
     ...(accepted.constraints ? [{ id: 'constraints', text: 'Review the stated constraints before implementation', source: 'constraints' }] : []),
     ...(accepted.deadline
-      ? [{ id: 'deadline', text: `Review the requested date: ${accepted.deadline}`, source: 'deadline' }]
+      ? [{ id: 'deadline', text: `Review the requested date: ${day(accepted.deadline)}`, source: 'deadline' }]
       : [{ id: 'deadline', text: 'Agree a delivery date before scheduling work.', source: 'deadline' }]),
   ];
 }

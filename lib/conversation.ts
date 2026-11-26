@@ -86,12 +86,12 @@ export function summary(project: ProjectView, p: Progress, seat: Seat): { stage:
   const who = PEOPLE[p.client]?.first ?? 'The client', studio = PEOPLE.owner;
   if (project.state === 'approved') return { stage: 2, head: 'Approved', sub: `${studio.name}${p.approvedAt ? `, ${clock(p.approvedAt)}` : ''}` };
   if (project.state === 'submitted') return { stage: 1, head: `With ${STUDIO}`, sub: `${studio.first} is reading version ${p.round}.` };
-  const optional = FIELDS.filter(f => !f.need && !filled(project.latestRevision.brief, f.k)).length;
+  const optional = FIELDS.filter(f => !f.need && !p.items.some(item => item.key === `a-${f.k}`)).length;
   if (seat === 'studio' && p.sent === 0) return { stage: 0, head: 'Not sent yet', sub: p.missing ? `${plural(p.missing, 'required answer')} still missing.` : 'Every required answer is in.' };
   const head = p.handedBack === 'returned' ? 'Sent back for changes' : p.handedBack === 'reopened' ? 'Reopened for changes' : p.handedBack ? 'Back in draft'
     : p.missing ? `${plural(p.missing, 'answer')} to go` : p.ask ? 'Almost there' : 'Ready to send';
   const sub = seat === 'studio' ? (p.edited ? `${who} is changing it.` : `Waiting for ${who}.`)
     : p.handedBack ? (p.edited ? 'Changed. Send it again when ready.' : `${studio.first} ${p.handedBack === 'returned' ? 'asked for a change' : 'reopened the approved brief'}.`)
-    : p.missing ? `${studio.first} can quote once the four required answers are in.` : p.ask ? `${plural(optional, 'optional question')} left.` : `Send it to ${studio.first} when you're happy.`;
+    : p.missing ? `${studio.first} can quote once the four required answers are in.` : p.ask ? `Answer or skip the ${optional === 1 ? 'last optional question' : `${optional} optional questions`}, then send it.` : `Send it to ${studio.first} when you're happy.`;
   return { stage: 0, head, sub };
 }

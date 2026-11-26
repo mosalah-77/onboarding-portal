@@ -55,7 +55,7 @@ test('a brief with a deadline keeps its requested-date task', () => {
 
   assert.deepEqual(deadlineTasks, [{
     id: 'deadline',
-    text: 'Review the requested date: 2026-12-01',
+    text: 'Review the requested date: 1 December 2026',
     source: 'deadline',
   }]);
 });

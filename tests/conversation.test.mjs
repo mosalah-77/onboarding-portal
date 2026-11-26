@@ -22,6 +22,9 @@ test('a new brief asks one question at a time and cannot be sent early', () => {
 test('optional questions are asked until answered or skipped, then the brief can go', () => {
   const p = project('draft', full, [event('brief_saved')]);
   assert.equal(progress(p).ask, 'deadline');
+  assert.equal(canSend(p, progress(p)), false);
+  assert.equal(summary(p, progress(p), 'client').sub, 'Answer or skip the 2 optional questions, then send it.');
+  assert.equal(summary(p, progress(p, ['deadline']), 'client').sub, 'Answer or skip the last optional question, then send it.');
   const state = progress(p, ['deadline', 'constraints']);
   assert.equal(state.ask, null);
   assert.equal(canSend(p, state), true);
