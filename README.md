@@ -10,6 +10,10 @@ A studio asks a client six questions in a thread. The client answers one at a ti
 
 ![The studio's side after approval, in dark mode](docs/screenshot-dark.png)
 
+A one-minute walkthrough of both seats:
+
+https://github.com/user-attachments/assets/f7570f14-5ad3-48ff-b76e-0b978d9fdb41
+
 This is a portfolio project. The people and companies in it are made up, nobody commissioned it, and I am not claiming users or results. I built it with AI assistance, which I describe [below](#how-i-built-it).
 
 ## Try it
