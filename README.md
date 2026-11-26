@@ -4,7 +4,7 @@ Website briefs for studios and their clients, done as a chat.
 
 A studio asks a client six questions in a thread. The client answers one at a time and sends the brief. The studio approves one version or sends it back with a note, and an approved brief becomes a handoff with a first-jobs list.
 
-**[Try the live demo](https://samepage.mosalah-77.workers.dev)** · [How it works](docs/how-it-works.md) · [Decisions](docs/decisions.md) · [Testing](docs/testing.md)
+**[Try the live demo](https://samepage.mosalah-77.workers.dev)** · [Watch the one-minute walkthrough](docs/walkthrough.mp4) · [How it works](docs/how-it-works.md) · [Decisions](docs/decisions.md) · [Testing](docs/testing.md)
 
 ![The client's side of a brief: the studio's questions, the answers so far and the status panel](docs/screenshot-light.png)
 
