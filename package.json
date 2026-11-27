@@ -18,7 +18,8 @@
     "test:api": "node scripts/test-api.mjs",
     "test": "npm run test:unit && npm run test:api",
     "typecheck": "tsc --noEmit",
-    "graph": "node scripts/refresh-graph.mjs"
+    "graph": "node scripts/refresh-graph.mjs",
+    "prepare": "husky"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",
@@ -37,6 +38,8 @@
     "drizzle-kit": "0.31.10",
     "eslint": "9.39.4",
     "eslint-config-next": "16.4.6",
+    "husky": "9.1.7",
+    "lint-staged": "17.6.2",
     "react-server-dom-webpack": "19.3.1",
     "typescript": "5.9.3",
     "vinext": "1.4.6",
