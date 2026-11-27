@@ -90,7 +90,7 @@ It is one Worker and one D1 database. Sign in with Wrangler, create a D1 databas
 
 ## How I built it
 
-I built Samepage with AI coding assistants: GPT/Codex for the first version, and Claude for the November 2026 rebuild, which covers the conversation interface, the move to Cloudflare and the security work. The assistants wrote most of the code, the tests and the first drafts of these documents.
+I built Samepage with AI assistance. The assistants wrote most of the code, the tests and the first drafts of these documents, in the first version and in the November 2026 rebuild that brought the conversation interface, the move to Cloudflare and the security work.
 
 My part was deciding what to build and holding it to a standard. I set the scope, chose the stack, and went through several rounds of design, throwing out the ones that did not work. I reviewed what came back, caught problems such as a client being able to see the whole project list, and decided what shipped.
 
